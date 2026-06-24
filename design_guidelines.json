@@ -1,0 +1,199 @@
+{
+  "app_name": "Neighbourly",
+  "personality": "1 iOS-Native Clean",
+  "personality_one_liner": "A trustworthy, fresh, and content-forward neighbourhood feed that feels distinctly local, safe, and community-driven.",
+  "color": {
+    "surface": "#FBFBF9",
+    "onSurface": "#1C1C1A",
+    "surfaceSecondary": "#FFFFFF",
+    "onSurfaceSecondary": "#1C1C1A",
+    "surfaceTertiary": "#F2F2EE",
+    "onSurfaceTertiary": "#4A4A48",
+    "surfaceInverse": "#262624",
+    "onSurfaceInverse": "#FFFFFF",
+    "brand": "#2E5C3B",
+    "brandPrimary": "#2E5C3B",
+    "onBrandPrimary": "#FFFFFF",
+    "brandSecondary": "#437A53",
+    "onBrandSecondary": "#FFFFFF",
+    "brandTertiary": "#E6EFE9",
+    "onBrandTertiary": "#2E5C3B",
+    "success": "#288046",
+    "onSuccess": "#FFFFFF",
+    "warning": "#B58500",
+    "onWarning": "#FFFFFF",
+    "error": "#B83A3A",
+    "onError": "#FFFFFF",
+    "info": "#4A4A48",
+    "onInfo": "#FFFFFF",
+    "border": "#E8E8E3",
+    "borderStrong": "#D1D1C9",
+    "divider": "#E8E8E3",
+    "category_general": "#4A4A48",
+    "category_recommendations": "#437A53",
+    "category_safety": "#B83A3A",
+    "category_events": "#B58500",
+    "category_forsale": "#2E5C3B"
+  },
+  "typography": {
+    "displayFontFamily": "Plus Jakarta Sans",
+    "textFontFamily": "Plus Jakarta Sans",
+    "scale": {
+      "sm": 12,
+      "base": 14,
+      "lg": 16,
+      "xl": 20,
+      "2xl": 24
+    }
+  },
+  "spacing": {
+    "rule": "Generous vertical rhythm. Cards never flush to screen edges. Whitespace provides structure.",
+    "xs": 4,
+    "sm": 8,
+    "md": 12,
+    "lg": 16,
+    "xl": 24,
+    "2xl": 32,
+    "3xl": 48
+  },
+  "radius_tokens": {
+    "sm": 6,
+    "md": 12,
+    "lg": 20,
+    "pill": 999
+  },
+  "shadow_tier": 1,
+  "navigation": "bottom_tabs",
+  "icon_set": "Feather",
+  "glassmorphism": {
+    "enabled": true,
+    "do's": [
+      "Use for bottom tab bar (when content scrolls behind it).",
+      "Use for sticky header backgrounds over the scrolling feed.",
+      "Use for bottom-sheet handles and modal scrims."
+    ],
+    "dont's": [
+      "Do not use on post cards, buttons, or form fields."
+    ]
+  },
+  "platform_libraries": {
+    "glass": {
+      "ios": "expo-glass-effect",
+      "android": "expo-blur",
+      "low_end_android_fallback": "solid surfaceSecondary"
+    },
+    "image": "expo-image",
+    "blur": "expo-blur",
+    "bottom_sheet": "@gorhom/bottom-sheet",
+    "animation": "react-native-reanimated",
+    "gesture": "react-native-gesture-handler"
+  },
+  "haptics": {
+    "events": {
+      "tab_press": "light",
+      "like_post": "medium",
+      "rsvp_event": "success",
+      "pull_to_refresh": "light"
+    }
+  },
+  "screens": [
+    {
+      "name": "Onboarding",
+      "purpose": "Select city (Delhi NCR) and locality to join the correct neighbourhood.",
+      "states": {
+        "loading": "Centered spinner",
+        "empty": "N/A",
+        "error": "Error message with 'Try again' button"
+      },
+      "layout": "Full-bleed image background (India Gate/Delhi scene) with a heavy bottom gradient scrim. Bottom 40% contains a solid surface card with locality picker and primary 'Join' CTA. Safe area at bottom."
+    },
+    {
+      "name": "Feed",
+      "purpose": "Main neighbourhood news feed with text, image posts, and category tags.",
+      "states": {
+        "loading": "Skeleton cards representing posts.",
+        "empty": "Illustration of houses with 'No posts yet. Be the first to greet your neighbours!' and a 'Create Post' CTA.",
+        "error": "Error message with 'Retry' button"
+      },
+      "layout": "Sticky glass header containing the City/Locality switcher. Scrollable list of cards (`surfaceSecondary` on `surface` background). Cards have avatar + name top-left, muted location tag (📍 Sector 14), category pill top-right, content, timestamp, and action buttons. Floating Action Button (FAB) for 'Create Post' placed at bottom right."
+    },
+    {
+      "name": "Create Post",
+      "purpose": "Allow users to write a post, select a category, and attach images.",
+      "states": {
+        "loading": "Submitting spinner in CTA",
+        "empty": "N/A",
+        "error": "Error toast"
+      },
+      "layout": "Presented as a full-screen modal or sheet. Category picker horizontally scrollable chips. Large text input area. Sticky 'Post' CTA above the keyboard."
+    },
+    {
+      "name": "Events",
+      "purpose": "Listing of local events with RSVP functionality.",
+      "states": {
+        "loading": "Skeleton event cards",
+        "empty": "Empty state illustration with 'No upcoming events.'",
+        "error": "Error message with 'Retry'"
+      },
+      "layout": "Two-column grid or list of event cards. Each card features an image with a gradient scrim, overlaying the date/time. Prominent 'RSVP' button."
+    },
+    {
+      "name": "Marketplace",
+      "purpose": "Local directory and items for sale.",
+      "states": {
+        "loading": "Skeleton item cards",
+        "empty": "Empty state illustration with 'Nothing for sale nearby.'",
+        "error": "Error message with 'Retry'"
+      },
+      "layout": "Two-column grid layout for products. Images take up the top half of the card. Price formatted with '₹'. Title and seller name below."
+    },
+    {
+      "name": "Profile",
+      "purpose": "User details, verification badge, and past activity.",
+      "states": {
+        "loading": "Skeleton profile layout",
+        "empty": "N/A",
+        "error": "Error message with 'Retry'"
+      },
+      "layout": "Cover image with user avatar overlapping. Verification badge prominently displayed next to the name. Locality listed below. Tabs or segments for 'My Posts' and 'Saved'."
+    }
+  ],
+  "images": {
+    "hero_delhi_neighbourhood": {
+      "url": "https://images.pexels.com/photos/7485729/pexels-photo-7485729.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "alt": "Dense urban neighbourhood rooftops"
+    },
+    "marketplace_street": {
+      "url": "https://images.pexels.com/photos/22591327/pexels-photo-22591327.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "alt": "Bustling Indian street market"
+    },
+    "onboarding_india_gate": {
+      "url": "https://images.pexels.com/photos/16960242/pexels-photo-16960242.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "alt": "India Gate at sunset"
+    },
+    "avatar_user_1": {
+      "url": "https://images.pexels.com/photos/12327289/pexels-photo-12327289.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "alt": "Portrait of an Indian man"
+    },
+    "avatar_user_2": {
+      "url": "https://images.pexels.com/photos/12936955/pexels-photo-12936955.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "alt": "Portrait of an Indian man outdoors"
+    },
+    "home_cooked_food": {
+      "url": "https://images.pexels.com/photos/7351644/pexels-photo-7351644.jpeg",
+      "alt": "Traditional Indian meal on a tray"
+    },
+    "logo_house": {
+      "url": "https://images.unsplash.com/photo-1490197415175-074fd86b1fcc",
+      "alt": "House icon representation"
+    }
+  },
+  "instructions_to_main_agent": [
+    "Strictly follow the color palette, using the Botanical Forest Green (#2E5C3B) as the core brand color to evoke trust and community. Do not introduce any blue or purple.",
+    "Implement the Feed card layout exactly as specified: avatar/name top-left, location tag (📍 Sector/City) next to timestamp, and category color-coded pills.",
+    "Apply Glassmorphism only to the floating bottom tabs and the sticky header containing the locality switcher. Ensure scrolling content blurs beautifully beneath them.",
+    "Use the Plus Jakarta Sans font for a clean, highly readable, iOS-native feel.",
+    "For any image with text overlaid (like the Onboarding screen or Event cards), you MUST apply the gradient-to-dark scrim pattern (Layer 1: expo-linear-gradient, transparent to ≥70% surfaceInverse) to ensure text contrast.",
+    "Ensure the Indian Rupee symbol '₹' is used for the Marketplace screen."
+  ]
+}
