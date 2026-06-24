@@ -1,0 +1,74 @@
+// Real Delhi NCR localities (most-populated residential areas)
+export const CITIES = ["Delhi", "Gurugram", "Noida", "Ghaziabad", "Faridabad"] as const;
+export type City = (typeof CITIES)[number];
+
+export const LOCALITIES: Record<City, string[]> = {
+  Delhi: [
+    "Connaught Place", "Karol Bagh", "Paharganj", "Civil Lines", "Daryaganj",
+    "Chandni Chowk", "Hauz Khas", "Saket", "Lajpat Nagar", "South Extension",
+    "Greater Kailash", "Defence Colony", "Vasant Vihar", "Vasant Kunj",
+    "RK Puram", "Munirka", "Dwarka Sector 1", "Dwarka Sector 6", "Dwarka Sector 12",
+    "Dwarka Sector 19", "Janakpuri", "Rajouri Garden", "Punjabi Bagh", "Pitampura",
+    "Rohini Sector 3", "Rohini Sector 7", "Rohini Sector 13", "Rohini Sector 24",
+    "Shalimar Bagh", "Model Town", "GTB Nagar", "Mukherjee Nagar", "Mayur Vihar Phase 1",
+    "Mayur Vihar Phase 3", "Preet Vihar", "Laxmi Nagar", "Patparganj", "Shahdara",
+    "Dilshad Garden", "Yamuna Vihar", "Najafgarh", "Mehrauli", "Chhattarpur",
+    "Vasant Kunj Sector A", "Malviya Nagar", "Green Park", "Safdarjung Enclave",
+  ],
+  Gurugram: [
+    "DLF Phase 1", "DLF Phase 2", "Sector 14",
+    "Sector 15", "Sector 17", "Sector 21", "Sector 23",
+    "Sector 27", "Sector 28", "Sector 29", "Sector 31", "Sector 38", "Sector 40",
+    "Sector 42", "Sector 43", "Sector 44", "Sector 45", "Sector 46", "Sector 47",
+    "Sector 49", "Sector 50", "Sector 52", "Sector 53", "Sector 54", "Sector 55",
+    "Sector 56", "Sector 57", "Sector 65", "Sector 66", "Sector 67", "Sector 69",
+    "Sector 70", "Sector 79", "Sector 81", "Sector 83", "Sector 86", "Sector 89",
+    "Sector 92", "Sector 93", "Sector 102", "Sector 109", "Sushant Lok 1",
+    "Sushant Lok 2", "Sushant Lok 3", "MG Road", "Sohna Road", "Golf Course Road",
+    "Golf Course Extension Road", "Manesar", "South City 1", "South City 2",
+    "Palam Vihar", "Old Gurugram", "Cyber City",
+  ],
+  Noida: [
+    "Sector 15", "Sector 15A", "Sector 16", "Sector 18", "Sector 19", "Sector 20",
+    "Sector 22", "Sector 23", "Sector 25", "Sector 26", "Sector 27", "Sector 30",
+    "Sector 31", "Sector 33", "Sector 34", "Sector 35", "Sector 37", "Sector 40",
+    "Sector 41", "Sector 44", "Sector 46", "Sector 47", "Sector 49", "Sector 50",
+    "Sector 51", "Sector 52", "Sector 55", "Sector 56", "Sector 61", "Sector 62",
+    "Sector 63", "Sector 70", "Sector 71", "Sector 72", "Sector 73", "Sector 74",
+    "Sector 75", "Sector 76", "Sector 77", "Sector 78", "Sector 82", "Sector 93",
+    "Sector 93A", "Sector 93B", "Sector 100", "Sector 104", "Sector 107",
+    "Sector 110", "Sector 119", "Sector 121", "Sector 128", "Sector 134",
+    "Sector 137", "Sector 142", "Sector 143", "Sector 150", "Sector 168",
+    "Greater Noida West (Sector 1)", "Greater Noida West (Sector 4)",
+    "Greater Noida West (Sector 16)", "Greater Noida (Alpha 1)",
+    "Greater Noida (Beta 1)", "Greater Noida (Gamma 1)", "Greater Noida (Pari Chowk)",
+  ],
+  Ghaziabad: [
+    "Indirapuram", "Vaishali", "Vasundhara", "Kaushambi", "Crossings Republik",
+    "Raj Nagar", "Raj Nagar Extension", "Shipra Sun City", "Shipra Suncity",
+    "Pratap Vihar", "Govindpuram", "Sahibabad", "Mohan Nagar", "Kavi Nagar",
+    "Nehru Nagar", "Lohia Nagar", "Patel Nagar", "Modinagar", "Loni",
+    "Shastri Nagar", "Vijay Nagar", "Surya Nagar", "Lal Kuan", "Madhuban Bapudham",
+    "Niti Khand 1", "Niti Khand 2", "Shakti Khand 1", "Shakti Khand 2",
+    "Ahinsa Khand 1", "Ahinsa Khand 2", "Gyan Khand", "Abhay Khand",
+    "NH-24 Bypass", "Tronica City", "Muradnagar",
+  ],
+  Faridabad: [
+    "Sector 14", "Sector 15", "Sector 15A", "Sector 16", "Sector 17", "Sector 18",
+    "Sector 19", "Sector 21A", "Sector 21B", "Sector 21C", "Sector 21D",
+    "Sector 28", "Sector 29", "Sector 30", "Sector 31", "Sector 37", "Sector 41",
+    "Sector 45", "Sector 46", "Sector 48", "Sector 49", "Sector 55", "Sector 75",
+    "Sector 76", "Sector 77", "Sector 78", "Sector 79", "Sector 80", "Sector 81",
+    "Sector 82", "Sector 83", "Sector 84", "Sector 85", "Sector 86", "Sector 87",
+    "Sector 88", "Sector 89", "NIT 1", "NIT 2", "NIT 3", "NIT 4", "NIT 5",
+    "Old Faridabad", "Ballabgarh", "Surajkund", "Greenfield Colony", "Charmwood Village",
+  ],
+};
+
+export const CATEGORIES = [
+  { key: "general", label: "General", color: "#4A4A48" },
+  { key: "recommendations", label: "Recos", color: "#437A53" },
+  { key: "safety", label: "Safety", color: "#B83A3A" },
+  { key: "events", label: "Events", color: "#B58500" },
+  { key: "forsale", label: "For Sale", color: "#2E5C3B" },
+] as const;

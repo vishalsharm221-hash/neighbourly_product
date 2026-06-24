@@ -32,6 +32,14 @@ export default function RootLayout() {
               name="create-post"
               options={{ presentation: "modal", animation: "slide_from_bottom" }}
             />
+            <Stack.Screen
+              name="create-event"
+              options={{ presentation: "modal", animation: "slide_from_bottom" }}
+            />
+            <Stack.Screen
+              name="create-market"
+              options={{ presentation: "modal", animation: "slide_from_bottom" }}
+            />
           </Stack>
         </AuthProvider>
       </SafeAreaProvider>

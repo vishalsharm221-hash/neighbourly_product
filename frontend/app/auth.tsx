@@ -24,7 +24,7 @@ const HERO =
 
 export default function AuthScreen() {
   const router = useRouter();
-  const { login, signup } = useAuth();
+  const { signIn, signUp } = useAuth();
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -42,12 +42,16 @@ export default function AuthScreen() {
       setErr("Name required");
       return;
     }
+    if (mode === "signup" && password.length < 8) {
+      setErr("Password must be at least 8 characters");
+      return;
+    }
     setBusy(true);
     try {
       if (mode === "login") {
-        await login(email.trim(), password);
+        await signIn(email.trim(), password);
       } else {
-        await signup(name.trim(), email.trim(), password);
+        await signUp(name.trim(), email.trim(), password);
       }
       router.replace("/");
     } catch (e: any) {
@@ -130,7 +134,7 @@ export default function AuthScreen() {
               />
               <TextInput
                 testID="auth-password-input"
-                placeholder="Password"
+                placeholder={mode === "signup" ? "Password (min 8 chars)" : "Password"}
                 placeholderTextColor={colors.muted}
                 value={password}
                 onChangeText={setPassword}
@@ -164,7 +168,7 @@ export default function AuthScreen() {
               </Pressable>
 
               <Text style={styles.helper}>
-                Demo: priya@neighbourly.in · password123
+                By continuing you agree to be a kind neighbour.
               </Text>
             </View>
           </ScrollView>

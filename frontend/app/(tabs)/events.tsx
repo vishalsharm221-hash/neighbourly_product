@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import {
   View,
   Text,
@@ -9,40 +9,48 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
+import { useRouter, useFocusEffect } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
 
-import { api } from "@/src/api";
+import { useAuth } from "@/src/auth-context";
+import {
+  EventDoc,
+  listEvents,
+  fetchRsvpMap,
+  rsvpEvent,
+  unrsvpEvent,
+} from "@/src/db";
 import { colors, spacing, radius } from "@/src/theme";
 
-type Event = {
-  id: string;
-  title: string;
-  description: string;
-  date: string;
-  location: string;
-  host_name: string;
-  rsvp_count: number;
-  rsvped: boolean;
-};
-
 export default function Events() {
-  const [events, setEvents] = useState<Event[]>([]);
+  const router = useRouter();
+  const { profile } = useAuth();
+  const [events, setEvents] = useState<EventDoc[]>([]);
+  const [rsvpMap, setRsvpMap] = useState<{ counts: Record<string, number>; mine: Record<string, string> }>({ counts: {}, mine: {} });
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
   const load = useCallback(async () => {
+    if (!profile?.city) return;
     try {
-      const data = await api.listEvents();
+      const data = await listEvents(profile.city);
       setEvents(data);
+      if (profile.userId) {
+        const map = await fetchRsvpMap(data.map((e) => e.$id), profile.userId);
+        setRsvpMap(map);
+      }
     } catch (e) {
       console.warn(e);
     }
-  }, []);
+  }, [profile?.city, profile?.userId]);
 
-  useEffect(() => {
-    load().finally(() => setLoading(false));
-  }, [load]);
+  useFocusEffect(
+    useCallback(() => {
+      setLoading(true);
+      load().finally(() => setLoading(false));
+    }, [load])
+  );
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -50,17 +58,29 @@ export default function Events() {
     setRefreshing(false);
   };
 
-  const onRsvp = async (ev: Event) => {
+  const onRsvp = async (ev: EventDoc) => {
+    if (!profile?.userId) return;
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-    setEvents((prev) =>
-      prev.map((x) =>
-        x.id === ev.id
-          ? { ...x, rsvped: !x.rsvped, rsvp_count: x.rsvp_count + (x.rsvped ? -1 : 1) }
-          : x
-      )
-    );
+    const going = !!rsvpMap.mine[ev.$id];
+    setRsvpMap((prev) => {
+      const counts = { ...prev.counts };
+      const mine = { ...prev.mine };
+      if (going) {
+        counts[ev.$id] = Math.max(0, (counts[ev.$id] || 1) - 1);
+        delete mine[ev.$id];
+      } else {
+        counts[ev.$id] = (counts[ev.$id] || 0) + 1;
+        mine[ev.$id] = "pending";
+      }
+      return { counts, mine };
+    });
     try {
-      await api.rsvp(ev.id);
+      if (going) {
+        await unrsvpEvent(rsvpMap.mine[ev.$id]);
+      } else {
+        const doc = await rsvpEvent(ev.$id, profile.userId);
+        setRsvpMap((prev) => ({ ...prev, mine: { ...prev.mine, [ev.$id]: (doc as any).$id } }));
+      }
     } catch {
       load();
     }
@@ -69,7 +89,7 @@ export default function Events() {
   return (
     <SafeAreaView style={styles.root} edges={["top"]}>
       <View style={styles.header}>
-        <Text style={styles.eyebrow}>WHAT'S HAPPENING</Text>
+        <Text style={styles.eyebrow}>WHAT IS HAPPENING</Text>
         <Text style={styles.title}>Local Events</Text>
       </View>
 
@@ -81,55 +101,66 @@ export default function Events() {
         <FlatList
           testID="events-list"
           data={events}
-          keyExtractor={(e) => e.id}
+          keyExtractor={(e) => e.$id}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.brand} />}
-          contentContainerStyle={{ padding: spacing.lg, paddingBottom: 100, gap: spacing.md }}
+          contentContainerStyle={{ padding: spacing.lg, paddingBottom: 120, gap: spacing.md }}
           ListEmptyComponent={
             <View style={styles.empty}>
               <Feather name="calendar" size={32} color={colors.muted} />
-              <Text style={styles.emptyText}>No upcoming events nearby.</Text>
+              <Text style={styles.emptyTitle}>No events near {profile?.locality}</Text>
+              <Text style={styles.emptyText}>Be the first to plan a meet-up.</Text>
             </View>
           }
-          renderItem={({ item }) => (
-            <View testID={`event-${item.id}`} style={styles.card}>
-              <View style={styles.dateBox}>
-                <Text style={styles.dateMonth}>
-                  {new Date(item.date).toLocaleDateString("en-IN", { month: "short" }).toUpperCase()}
-                </Text>
-                <Text style={styles.dateDay}>{new Date(item.date).getDate()}</Text>
-              </View>
-              <View style={{ flex: 1 }}>
-                <Text style={styles.evTitle}>{item.title}</Text>
-                <Text style={styles.evDesc} numberOfLines={2}>
-                  {item.description}
-                </Text>
-                <View style={styles.evMetaRow}>
-                  <Feather name="map-pin" size={12} color={colors.muted} />
-                  <Text style={styles.evMeta} numberOfLines={1}>{item.location}</Text>
-                </View>
-                <View style={styles.evMetaRow}>
-                  <Feather name="user" size={12} color={colors.muted} />
-                  <Text style={styles.evMeta}>by {item.host_name} · {item.rsvp_count} going</Text>
-                </View>
-                <Pressable
-                  testID={`rsvp-${item.id}`}
-                  onPress={() => onRsvp(item)}
-                  style={[styles.rsvpBtn, item.rsvped && styles.rsvpBtnActive]}
-                >
-                  <Feather
-                    name={item.rsvped ? "check" : "plus"}
-                    size={14}
-                    color={item.rsvped ? colors.onBrand : colors.brand}
-                  />
-                  <Text style={[styles.rsvpText, item.rsvped && styles.rsvpTextActive]}>
-                    {item.rsvped ? "Going" : "RSVP"}
+          renderItem={({ item }) => {
+            const going = !!rsvpMap.mine[item.$id];
+            const count = rsvpMap.counts[item.$id] || 0;
+            return (
+              <View testID={`event-${item.$id}`} style={styles.card}>
+                <View style={styles.dateBox}>
+                  <Text style={styles.dateMonth}>
+                    {new Date(item.date).toLocaleDateString("en-IN", { month: "short" }).toUpperCase()}
                   </Text>
-                </Pressable>
+                  <Text style={styles.dateDay}>{new Date(item.date).getDate()}</Text>
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.evTitle}>{item.title}</Text>
+                  <Text style={styles.evDesc} numberOfLines={2}>{item.description}</Text>
+                  <View style={styles.evMetaRow}>
+                    <Feather name="map-pin" size={12} color={colors.muted} />
+                    <Text style={styles.evMeta} numberOfLines={1}>{item.location}</Text>
+                  </View>
+                  <View style={styles.evMetaRow}>
+                    <Feather name="user" size={12} color={colors.muted} />
+                    <Text style={styles.evMeta}>by {item.hostName} · {count} going</Text>
+                  </View>
+                  <Pressable
+                    testID={`rsvp-${item.$id}`}
+                    onPress={() => onRsvp(item)}
+                    style={[styles.rsvpBtn, going && styles.rsvpBtnActive]}
+                  >
+                    <Feather
+                      name={going ? "check" : "plus"}
+                      size={14}
+                      color={going ? colors.onBrand : colors.brand}
+                    />
+                    <Text style={[styles.rsvpText, going && styles.rsvpTextActive]}>
+                      {going ? "Going" : "RSVP"}
+                    </Text>
+                  </Pressable>
+                </View>
               </View>
-            </View>
-          )}
+            );
+          }}
         />
       )}
+
+      <Pressable
+        testID="events-fab-create"
+        onPress={() => router.push("/create-event")}
+        style={styles.fab}
+      >
+        <Feather name="plus" size={26} color={colors.onBrand} />
+      </Pressable>
     </SafeAreaView>
   );
 }
@@ -137,33 +168,23 @@ export default function Events() {
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.surface },
   header: {
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.sm,
-    paddingBottom: spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    paddingHorizontal: spacing.lg, paddingTop: spacing.sm, paddingBottom: spacing.md,
+    borderBottomWidth: 1, borderBottomColor: colors.border,
   },
   eyebrow: { fontSize: 10, fontWeight: "700", color: colors.brand, letterSpacing: 1.2 },
   title: { fontSize: 24, fontWeight: "800", color: colors.onSurface, marginTop: 2 },
   center: { flex: 1, alignItems: "center", justifyContent: "center" },
   empty: { alignItems: "center", padding: spacing.xxxl, gap: spacing.md },
-  emptyText: { color: colors.muted, fontSize: 14 },
+  emptyTitle: { color: colors.onSurface, fontSize: 16, fontWeight: "700", textAlign: "center" },
+  emptyText: { color: colors.muted, fontSize: 13, textAlign: "center", lineHeight: 19 },
   card: {
-    flexDirection: "row",
-    gap: spacing.md,
-    backgroundColor: colors.surfaceSecondary,
-    borderRadius: radius.lg,
-    padding: spacing.lg,
-    borderWidth: 1,
-    borderColor: colors.border,
+    flexDirection: "row", gap: spacing.md,
+    backgroundColor: colors.surfaceSecondary, borderRadius: radius.lg, padding: spacing.lg,
+    borderWidth: 1, borderColor: colors.border,
   },
   dateBox: {
-    width: 56,
-    height: 64,
-    borderRadius: radius.md,
-    backgroundColor: colors.brandTertiary,
-    alignItems: "center",
-    justifyContent: "center",
+    width: 56, height: 64, borderRadius: radius.md,
+    backgroundColor: colors.brandTertiary, alignItems: "center", justifyContent: "center",
   },
   dateMonth: { fontSize: 10, fontWeight: "700", color: colors.brand, letterSpacing: 1 },
   dateDay: { fontSize: 22, fontWeight: "800", color: colors.brand },
@@ -172,19 +193,18 @@ const styles = StyleSheet.create({
   evMetaRow: { flexDirection: "row", alignItems: "center", gap: 4, marginTop: 4 },
   evMeta: { fontSize: 12, color: colors.muted, flex: 1 },
   rsvpBtn: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-    alignSelf: "flex-start",
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: radius.pill,
-    borderWidth: 1,
-    borderColor: colors.brand,
-    marginTop: spacing.sm,
+    flexDirection: "row", alignItems: "center", gap: 4, alignSelf: "flex-start",
+    paddingHorizontal: 12, paddingVertical: 6, borderRadius: radius.pill,
+    borderWidth: 1, borderColor: colors.brand, marginTop: spacing.sm,
     backgroundColor: colors.surfaceSecondary,
   },
   rsvpBtnActive: { backgroundColor: colors.brand },
   rsvpText: { fontSize: 12, fontWeight: "700", color: colors.brand },
   rsvpTextActive: { color: colors.onBrand },
+  fab: {
+    position: "absolute", right: spacing.lg, bottom: 80,
+    width: 56, height: 56, borderRadius: 28, backgroundColor: colors.brand,
+    alignItems: "center", justifyContent: "center",
+    shadowColor: "#000", shadowOpacity: 0.2, shadowRadius: 8, shadowOffset: { width: 0, height: 4 }, elevation: 6,
+  },
 });

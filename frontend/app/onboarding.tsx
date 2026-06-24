@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   View,
   Text,
@@ -11,33 +11,27 @@ import { useRouter } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { api } from "@/src/api";
 import { useAuth } from "@/src/auth-context";
+import { CITIES, LOCALITIES, City } from "@/src/data";
 import { colors, spacing, radius } from "@/src/theme";
-
-const CITIES = ["Delhi", "Gurugram", "Noida", "Ghaziabad"];
 
 export default function Onboarding() {
   const router = useRouter();
-  const { refresh } = useAuth();
-  const [city, setCity] = useState<string | null>(null);
+  const { saveLocation } = useAuth();
+  const [city, setCity] = useState<City | null>(null);
   const [locality, setLocality] = useState<string | null>(null);
-  const [localitiesMap, setLocalitiesMap] = useState<Record<string, string[]>>({});
   const [busy, setBusy] = useState(false);
-
-  useEffect(() => {
-    api.localities().then(setLocalitiesMap).catch(() => {});
-  }, []);
+  const [err, setErr] = useState<string | null>(null);
 
   const submit = async () => {
     if (!city || !locality) return;
     setBusy(true);
+    setErr(null);
     try {
-      await api.onboard(city, locality);
-      await refresh();
+      await saveLocation(city, locality);
       router.replace("/(tabs)");
-    } catch (e) {
-      console.warn(e);
+    } catch (e: any) {
+      setErr(e?.message || "Failed to save");
     } finally {
       setBusy(false);
     }
@@ -49,7 +43,7 @@ export default function Onboarding() {
         <Text style={styles.eyebrow}>WELCOME TO NEIGHBOURLY</Text>
         <Text style={styles.title}>Where do you call home?</Text>
         <Text style={styles.subtitle}>
-          Pick your city and locality. You'll only see posts from your neighbours.
+          Pick your city and locality. You will only see posts from your neighbours.
         </Text>
       </View>
 
@@ -83,16 +77,19 @@ export default function Onboarding() {
 
         {city && (
           <>
-            <Text style={[styles.section, { marginTop: spacing.xl }]}>Your locality</Text>
+            <Text style={[styles.section, { marginTop: spacing.xl }]}>
+              Your locality ({LOCALITIES[city].length} options)
+            </Text>
             <View style={styles.localityList}>
-              {(localitiesMap[city] || []).map((l) => {
+              {LOCALITIES[city].map((l, idx) => {
                 const active = locality === l;
+                const last = idx === LOCALITIES[city].length - 1;
                 return (
                   <Pressable
                     key={l}
                     testID={`onboard-locality-${l}`}
                     onPress={() => setLocality(l)}
-                    style={[styles.locRow, active && styles.locRowActive]}
+                    style={[styles.locRow, last && { borderBottomWidth: 0 }, active && styles.locRowActive]}
                   >
                     <Text style={[styles.locText, active && styles.locTextActive]}>{l}</Text>
                     {active && <Feather name="check" size={18} color={colors.brand} />}
@@ -105,6 +102,7 @@ export default function Onboarding() {
       </ScrollView>
 
       <View style={styles.footer}>
+        {err ? <Text style={styles.err}>{err}</Text> : null}
         <Pressable
           testID="onboard-join-button"
           disabled={!city || !locality || busy}
@@ -126,71 +124,39 @@ const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.surface },
   header: { paddingHorizontal: spacing.lg, paddingTop: spacing.md, paddingBottom: spacing.lg },
   eyebrow: {
-    fontSize: 11,
-    fontWeight: "700",
-    color: colors.brand,
-    letterSpacing: 1.2,
-    marginBottom: spacing.sm,
+    fontSize: 11, fontWeight: "700", color: colors.brand, letterSpacing: 1.2, marginBottom: spacing.sm,
   },
   title: { fontSize: 28, fontWeight: "800", color: colors.onSurface, lineHeight: 34 },
-  subtitle: {
-    fontSize: 15,
-    color: colors.onSurfaceTertiary,
-    marginTop: spacing.sm,
-    lineHeight: 21,
-  },
+  subtitle: { fontSize: 15, color: colors.onSurfaceTertiary, marginTop: spacing.sm, lineHeight: 21 },
   section: { fontSize: 13, fontWeight: "700", color: colors.onSurfaceTertiary, marginBottom: spacing.md },
   cityRow: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },
   cityChip: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    backgroundColor: colors.surfaceTertiary,
-    borderRadius: radius.pill,
-    borderWidth: 1,
-    borderColor: colors.border,
+    flexDirection: "row", alignItems: "center", gap: 6,
+    paddingHorizontal: 14, paddingVertical: 10,
+    backgroundColor: colors.surfaceTertiary, borderRadius: radius.pill,
+    borderWidth: 1, borderColor: colors.border,
   },
   cityChipActive: { backgroundColor: colors.brand, borderColor: colors.brand },
   cityChipText: { fontSize: 14, fontWeight: "600", color: colors.onSurfaceTertiary },
   cityChipTextActive: { color: colors.onBrand },
   localityList: {
-    backgroundColor: colors.surfaceSecondary,
-    borderRadius: radius.lg,
-    borderWidth: 1,
-    borderColor: colors.border,
-    overflow: "hidden",
+    backgroundColor: colors.surfaceSecondary, borderRadius: radius.lg,
+    borderWidth: 1, borderColor: colors.border, overflow: "hidden",
   },
   locRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: spacing.lg,
-    paddingVertical: 14,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    flexDirection: "row", alignItems: "center", justifyContent: "space-between",
+    paddingHorizontal: spacing.lg, paddingVertical: 14,
+    borderBottomWidth: 1, borderBottomColor: colors.border,
   },
   locRowActive: { backgroundColor: colors.brandTertiary },
   locText: { fontSize: 15, color: colors.onSurface },
   locTextActive: { color: colors.brand, fontWeight: "700" },
   footer: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.md,
-    paddingBottom: spacing.xl,
-    backgroundColor: colors.surface,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
+    position: "absolute", bottom: 0, left: 0, right: 0,
+    paddingHorizontal: spacing.lg, paddingTop: spacing.md, paddingBottom: spacing.xl,
+    backgroundColor: colors.surface, borderTopWidth: 1, borderTopColor: colors.border,
   },
-  cta: {
-    backgroundColor: colors.brand,
-    borderRadius: radius.pill,
-    paddingVertical: 16,
-    alignItems: "center",
-  },
+  cta: { backgroundColor: colors.brand, borderRadius: radius.pill, paddingVertical: 16, alignItems: "center" },
   ctaText: { color: colors.onBrand, fontSize: 16, fontWeight: "700" },
+  err: { color: colors.error, fontSize: 13, textAlign: "center", marginBottom: spacing.sm },
 });

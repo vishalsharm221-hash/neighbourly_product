@@ -5,7 +5,7 @@ import { useAuth } from "@/src/auth-context";
 import { colors } from "@/src/theme";
 
 export default function Index() {
-  const { user, loading } = useAuth();
+  const { user, profile, loading } = useAuth();
 
   if (loading) {
     return (
@@ -19,6 +19,6 @@ export default function Index() {
   }
 
   if (!user) return <Redirect href="/auth" />;
-  if (!user.city || !user.locality) return <Redirect href="/onboarding" />;
+  if (!profile?.city || !profile?.locality) return <Redirect href="/onboarding" />;
   return <Redirect href="/(tabs)" />;
 }
