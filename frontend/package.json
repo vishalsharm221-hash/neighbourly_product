@@ -3,14 +3,13 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
-    "preinstall": "./scripts/cmd-guard.js --preinstall",
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
     "lint": "expo lint",
-    "postinstall": "node scripts/dedupe-rn.js"
+    "build:web": "expo export --platform web"
   },
   "dependencies": {
     "@expo/metro-runtime": "6.1.2",
@@ -18,7 +17,7 @@
     "@react-native-async-storage/async-storage": "2.2.0",
     "@react-navigation/bottom-tabs": "7.4.0",
     "@react-navigation/elements": "2.3.8",
-    "@react-navigation/native": "7.1.8",
+    "@react-navigation/native": "7.1.16",
     "@react-navigation/native-stack": "7.3.16",
     "date-fns": "4.1.0",
     "dayjs": "1.11.13",
