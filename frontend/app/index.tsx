@@ -1,30 +1,24 @@
-import { Text, View, StyleSheet, Image } from "react-native";
+import { ActivityIndicator, View } from "react-native";
+import { Redirect } from "expo-router";
 
-const EXPO_PUBLIC_BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
+import { useAuth } from "@/src/auth-context";
+import { colors } from "@/src/theme";
 
 export default function Index() {
-  console.log(EXPO_PUBLIC_BACKEND_URL, "EXPO_PUBLIC_BACKEND_URL");
+  const { user, loading } = useAuth();
 
-  return (
-    <View style={styles.container}>
-      <Image
-        source={require("../assets/images/app-image.png")}
-        style={styles.image}
-      />
-    </View>
-  );
+  if (loading) {
+    return (
+      <View
+        testID="splash-loader"
+        style={{ flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: colors.surface }}
+      >
+        <ActivityIndicator color={colors.brand} size="large" />
+      </View>
+    );
+  }
+
+  if (!user) return <Redirect href="/auth" />;
+  if (!user.city || !user.locality) return <Redirect href="/onboarding" />;
+  return <Redirect href="/(tabs)" />;
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#0c0c0c",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  image: {
-    width: "100%",
-    height: "100%",
-    resizeMode: "contain",
-  },
-});
