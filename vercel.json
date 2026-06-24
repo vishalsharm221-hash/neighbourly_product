@@ -1,5 +1,4 @@
 {
-  "outputDirectory": "dist",
   "experimentalServices": {
     "web": {
       "root": "frontend",
