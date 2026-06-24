@@ -1,9 +1,11 @@
 import { View, Text, StyleSheet, Pressable, ScrollView } from "react-native";
 import { Feather } from "@expo/vector-icons";
+import { Image } from "expo-image";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 
 import { useAuth } from "@/src/auth-context";
+import { imagePreviewUrl } from "@/src/db";
 import { colors, spacing, radius } from "@/src/theme";
 
 export default function Profile() {
@@ -18,9 +20,18 @@ export default function Profile() {
   return (
     <SafeAreaView style={styles.root} edges={["top"]}>
       <ScrollView contentContainerStyle={{ padding: spacing.lg, paddingBottom: 120 }}>
+        {/* Hero */}
         <View style={styles.heroCard}>
           <View style={styles.avatarBig}>
-            <Text style={styles.avatarBigText}>{profile?.name?.[0]?.toUpperCase() || "?"}</Text>
+            {profile?.avatarFileId ? (
+              <Image
+                source={imagePreviewUrl(profile.avatarFileId)}
+                style={StyleSheet.absoluteFillObject}
+                contentFit="cover"
+              />
+            ) : (
+              <Text style={styles.avatarBigText}>{profile?.name?.[0]?.toUpperCase() || "?"}</Text>
+            )}
           </View>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginTop: spacing.md }}>
             <Text testID="profile-name" style={styles.name}>{profile?.name}</Text>
@@ -32,25 +43,26 @@ export default function Profile() {
               {profile?.locality} · {profile?.city}
             </Text>
           </View>
+          {profile?.bio ? <Text style={styles.bio}>{profile.bio}</Text> : null}
           <Text style={styles.email}>{user?.email}</Text>
-        </View>
 
-        <View style={styles.statsRow}>
-          <View style={styles.statCard}>
-            <Feather name="shield" size={18} color={colors.brand} />
-            <Text style={styles.statValue}>{profile?.verified ? "Verified" : "New"}</Text>
-            <Text style={styles.statLabel}>Trust</Text>
+          {/* Insta-style stats */}
+          <View style={styles.statsRow}>
+            <Stat value={profile?.postCount ?? 0} label="Posts" />
+            <View style={styles.statDivider} />
+            <Stat value={profile?.followerCount ?? 0} label="Followers" />
+            <View style={styles.statDivider} />
+            <Stat value={profile?.followingCount ?? 0} label="Following" />
           </View>
-          <View style={styles.statCard}>
-            <Feather name="home" size={18} color={colors.brand} />
-            <Text style={styles.statValue}>{profile?.city || "—"}</Text>
-            <Text style={styles.statLabel}>City</Text>
-          </View>
-          <View style={styles.statCard}>
-            <Feather name="cloud" size={18} color={colors.brand} />
-            <Text style={styles.statValue}>Appwrite</Text>
-            <Text style={styles.statLabel}>Backend</Text>
-          </View>
+
+          <Pressable
+            testID="edit-profile-button"
+            onPress={() => router.push("/edit-profile")}
+            style={styles.editBtn}
+          >
+            <Feather name="edit-2" size={14} color={colors.brand} />
+            <Text style={styles.editBtnText}>Edit profile</Text>
+          </Pressable>
         </View>
 
         <Pressable
@@ -83,6 +95,15 @@ export default function Profile() {
   );
 }
 
+function Stat({ value, label }: { value: number; label: string }) {
+  return (
+    <View style={styles.stat}>
+      <Text style={styles.statValue}>{value}</Text>
+      <Text style={styles.statLabel}>{label}</Text>
+    </View>
+  );
+}
+
 function MenuRow({ icon, label, last }: { icon: any; label: string; last?: boolean }) {
   return (
     <Pressable style={[styles.menuRow, last && { borderBottomWidth: 0 }]}>
@@ -100,22 +121,27 @@ const styles = StyleSheet.create({
     padding: spacing.xl, borderWidth: 1, borderColor: colors.border,
   },
   avatarBig: {
-    width: 80, height: 80, borderRadius: 40,
+    width: 88, height: 88, borderRadius: 44,
     backgroundColor: colors.brandTertiary, alignItems: "center", justifyContent: "center",
+    overflow: "hidden",
   },
-  avatarBigText: { color: colors.brand, fontWeight: "800", fontSize: 32 },
+  avatarBigText: { color: colors.brand, fontWeight: "800", fontSize: 36 },
   name: { fontSize: 20, fontWeight: "800", color: colors.onSurface },
   locRow: { flexDirection: "row", alignItems: "center", gap: 4, marginTop: 4 },
   locText: { fontSize: 13, color: colors.onSurfaceTertiary },
+  bio: { fontSize: 14, color: colors.onSurface, marginTop: spacing.md, textAlign: "center", lineHeight: 20 },
   email: { fontSize: 12, color: colors.muted, marginTop: spacing.xs },
-  statsRow: { flexDirection: "row", gap: spacing.md, marginTop: spacing.lg },
-  statCard: {
-    flex: 1, alignItems: "center", gap: spacing.xs,
-    backgroundColor: colors.surfaceSecondary, borderWidth: 1, borderColor: colors.border,
-    borderRadius: radius.lg, padding: spacing.lg,
+  statsRow: { flexDirection: "row", alignItems: "center", marginTop: spacing.lg, alignSelf: "stretch" },
+  stat: { flex: 1, alignItems: "center" },
+  statDivider: { width: 1, height: 28, backgroundColor: colors.border },
+  statValue: { fontSize: 18, fontWeight: "800", color: colors.onSurface },
+  statLabel: { fontSize: 11, color: colors.muted, marginTop: 2 },
+  editBtn: {
+    flexDirection: "row", alignItems: "center", gap: 6,
+    paddingHorizontal: 16, paddingVertical: 8, borderRadius: radius.pill,
+    borderWidth: 1, borderColor: colors.brand, marginTop: spacing.lg,
   },
-  statValue: { fontSize: 13, fontWeight: "700", color: colors.onSurface, textAlign: "center" },
-  statLabel: { fontSize: 11, color: colors.muted },
+  editBtnText: { color: colors.brand, fontWeight: "700", fontSize: 13 },
   menuRowSolo: {
     flexDirection: "row", alignItems: "center", gap: spacing.md,
     marginTop: spacing.lg, paddingHorizontal: spacing.lg, paddingVertical: 14,

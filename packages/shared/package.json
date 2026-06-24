@@ -1,0 +1,9 @@
+{
+  "name": "@neighbourly/shared",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "dependencies": {
+    "appwrite": "^17.0.0"
+  }
+}

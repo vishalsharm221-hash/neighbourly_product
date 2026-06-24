@@ -28,6 +28,11 @@ export default function RootLayout() {
       <SafeAreaProvider>
         <AuthProvider>
           <Stack screenOptions={{ headerShown: false, animation: "fade" }}>
+            <Stack.Screen name="profile-setup" options={{ animation: "slide_from_right" }} />
+            <Stack.Screen
+              name="edit-profile"
+              options={{ presentation: "modal", animation: "slide_from_bottom" }}
+            />
             <Stack.Screen
               name="create-post"
               options={{ presentation: "modal", animation: "slide_from_bottom" }}

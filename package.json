@@ -1,0 +1,5 @@
+{
+  "name": "neighbourly-monorepo",
+  "private": true,
+  "workspaces": ["apps/*", "packages/*"]
+}

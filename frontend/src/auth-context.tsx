@@ -1,45 +1,45 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { account, ID } from "@/src/appwrite";
-import { getOrCreateProfile, updateProfile } from "@/src/db";
+import { getProfileByUserId, createProfile, updateProfile, Profile } from "@/src/db";
 
-export type Profile = {
-  $id: string;
-  userId: string;
-  name: string;
-  email: string;
-  city: string | null;
-  locality: string | null;
-  verified: boolean;
-};
+type AuthUser = { $id: string; email: string; name: string };
 
 type AuthCtx = {
-  user: { $id: string; email: string; name: string } | null;
+  user: AuthUser | null;
   profile: Profile | null;
   loading: boolean;
-  signIn: (email: string, password: string) => Promise<void>;
-  signUp: (name: string, email: string, password: string) => Promise<void>;
+  // OTP flow
+  sendOtp: (email: string) => Promise<string>; // returns userId
+  verifyOtp: (userId: string, otp: string) => Promise<void>;
   signOut: () => Promise<void>;
+  // Profile mgmt
+  saveProfileSetup: (data: { name: string; gender?: string; dob?: string }) => Promise<void>;
   saveLocation: (city: string, locality: string) => Promise<void>;
+  updateMe: (patch: Partial<Profile>) => Promise<void>;
   refresh: () => Promise<void>;
 };
 
 const Ctx = createContext<AuthCtx | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<AuthCtx["user"]>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const loadProfile = useCallback(async (u: { $id: string; name: string; email: string }) => {
-    const p = (await getOrCreateProfile(u.$id, u.name, u.email)) as any;
+  const loadProfile = useCallback(async (u: AuthUser) => {
+    let p = await getProfileByUserId(u.$id);
+    if (!p) {
+      p = await createProfile(u.$id, u.email, u.name || "");
+    }
     setProfile(p);
   }, []);
 
   const refresh = useCallback(async () => {
     try {
       const u = await account.get();
-      setUser({ $id: u.$id, email: u.email, name: u.name });
-      await loadProfile({ $id: u.$id, name: u.name, email: u.email });
+      const auth = { $id: u.$id, email: u.email, name: u.name };
+      setUser(auth);
+      await loadProfile(auth);
     } catch {
       setUser(null);
       setProfile(null);
@@ -53,14 +53,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     })();
   }, [refresh]);
 
-  const signIn = async (email: string, password: string) => {
-    await account.createEmailPasswordSession({ email, password });
-    await refresh();
+  const sendOtp = async (email: string) => {
+    const tok = await account.createEmailToken({ userId: ID.unique(), email });
+    return tok.userId;
   };
 
-  const signUp = async (name: string, email: string, password: string) => {
-    await account.create({ userId: ID.unique(), email, password, name });
-    await account.createEmailPasswordSession({ email, password });
+  const verifyOtp = async (userId: string, otp: string) => {
+    await account.createSession({ userId, secret: otp });
     await refresh();
   };
 
@@ -72,15 +71,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setProfile(null);
   };
 
+  const saveProfileSetup = async (data: { name: string; gender?: string; dob?: string }) => {
+    if (!profile || !user) return;
+    // Also update auth account name
+    try {
+      await account.updateName({ name: data.name });
+    } catch {}
+    const updated = await updateProfile(profile.$id, data);
+    setProfile(updated);
+  };
+
   const saveLocation = async (city: string, locality: string) => {
     if (!profile) return;
-    const updated = (await updateProfile(profile.$id, { city, locality })) as any;
+    const updated = await updateProfile(profile.$id, { city, locality });
+    setProfile(updated);
+  };
+
+  const updateMe = async (patch: Partial<Profile>) => {
+    if (!profile) return;
+    const updated = await updateProfile(profile.$id, patch);
     setProfile(updated);
   };
 
   return (
     <Ctx.Provider
-      value={{ user, profile, loading, signIn, signUp, signOut, saveLocation, refresh }}
+      value={{ user, profile, loading, sendOtp, verifyOtp, signOut, saveProfileSetup, saveLocation, updateMe, refresh }}
     >
       {children}
     </Ctx.Provider>

@@ -24,38 +24,44 @@ const HERO =
 
 export default function AuthScreen() {
   const router = useRouter();
-  const { signIn, signUp } = useAuth();
-  const [mode, setMode] = useState<"login" | "signup">("login");
-  const [name, setName] = useState("");
+  const { sendOtp, verifyOtp } = useAuth();
+  const [step, setStep] = useState<"email" | "otp">("email");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [otp, setOtp] = useState("");
+  const [userId, setUserId] = useState("");
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
-  const submit = async () => {
+  const requestOtp = async () => {
     setErr(null);
-    if (!email.trim() || !password.trim()) {
-      setErr("Email and password required");
-      return;
-    }
-    if (mode === "signup" && !name.trim()) {
-      setErr("Name required");
-      return;
-    }
-    if (mode === "signup" && password.length < 8) {
-      setErr("Password must be at least 8 characters");
+    if (!email.trim() || !email.includes("@")) {
+      setErr("Enter a valid email");
       return;
     }
     setBusy(true);
     try {
-      if (mode === "login") {
-        await signIn(email.trim(), password);
-      } else {
-        await signUp(name.trim(), email.trim(), password);
-      }
+      const uid = await sendOtp(email.trim().toLowerCase());
+      setUserId(uid);
+      setStep("otp");
+    } catch (e: any) {
+      setErr(e?.message || "Could not send OTP");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const submitOtp = async () => {
+    setErr(null);
+    if (otp.trim().length < 6) {
+      setErr("Enter the 6-digit code from your email");
+      return;
+    }
+    setBusy(true);
+    try {
+      await verifyOtp(userId, otp.trim());
       router.replace("/");
     } catch (e: any) {
-      setErr(e?.message || "Something went wrong");
+      setErr(e?.message || "Wrong or expired code");
     } finally {
       setBusy(false);
     }
@@ -69,107 +75,73 @@ export default function AuthScreen() {
         style={StyleSheet.absoluteFillObject}
       />
       <SafeAreaView style={styles.safe} edges={["top", "bottom"]}>
-        <KeyboardAvoidingView
-          style={{ flex: 1 }}
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-        >
-          <ScrollView
-            contentContainerStyle={styles.scroll}
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
-          >
+        <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
+          <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
             <View style={styles.header}>
               <View style={styles.logoBadge}>
                 <Feather name="home" size={22} color={colors.onBrand} />
               </View>
               <Text style={styles.title}>Neighbourly</Text>
-              <Text style={styles.subtitle}>
-                The local feed for Delhi NCR neighbourhoods.
-              </Text>
+              <Text style={styles.subtitle}>The local feed for Delhi NCR neighbourhoods.</Text>
             </View>
 
             <View style={styles.card}>
-              <View style={styles.tabs}>
-                <Pressable
-                  testID="auth-tab-login"
-                  style={[styles.tab, mode === "login" && styles.tabActive]}
-                  onPress={() => setMode("login")}
-                >
-                  <Text style={[styles.tabText, mode === "login" && styles.tabTextActive]}>
-                    Log in
-                  </Text>
-                </Pressable>
-                <Pressable
-                  testID="auth-tab-signup"
-                  style={[styles.tab, mode === "signup" && styles.tabActive]}
-                  onPress={() => setMode("signup")}
-                >
-                  <Text style={[styles.tabText, mode === "signup" && styles.tabTextActive]}>
-                    Sign up
-                  </Text>
-                </Pressable>
-              </View>
-
-              {mode === "signup" && (
-                <TextInput
-                  testID="auth-name-input"
-                  placeholder="Full name"
-                  placeholderTextColor={colors.muted}
-                  value={name}
-                  onChangeText={setName}
-                  style={styles.input}
-                  autoCapitalize="words"
-                />
+              {step === "email" ? (
+                <>
+                  <Text style={styles.cardTitle}>Sign in with email</Text>
+                  <Text style={styles.cardHint}>We will send a 6-digit code to your inbox. No password needed.</Text>
+                  <TextInput
+                    testID="auth-email-input"
+                    placeholder="you@example.com"
+                    placeholderTextColor={colors.muted}
+                    value={email}
+                    onChangeText={setEmail}
+                    autoCapitalize="none"
+                    keyboardType="email-address"
+                    autoCorrect={false}
+                    style={styles.input}
+                  />
+                  {err ? <Text testID="auth-error" style={styles.err}>{err}</Text> : null}
+                  <Pressable
+                    testID="auth-send-otp"
+                    onPress={requestOtp}
+                    disabled={busy}
+                    style={({ pressed }) => [styles.cta, pressed && { opacity: 0.85 }, busy && { opacity: 0.6 }]}
+                  >
+                    {busy ? <ActivityIndicator color={colors.onBrand} /> : <Text style={styles.ctaText}>Send code</Text>}
+                  </Pressable>
+                </>
+              ) : (
+                <>
+                  <Text style={styles.cardTitle}>Enter the 6-digit code</Text>
+                  <Text style={styles.cardHint}>Sent to {email}. Check spam if you do not see it.</Text>
+                  <TextInput
+                    testID="auth-otp-input"
+                    placeholder="• • • • • •"
+                    placeholderTextColor={colors.muted}
+                    value={otp}
+                    onChangeText={setOtp}
+                    keyboardType="number-pad"
+                    maxLength={6}
+                    style={[styles.input, styles.otpInput]}
+                    autoFocus
+                  />
+                  {err ? <Text testID="auth-error" style={styles.err}>{err}</Text> : null}
+                  <Pressable
+                    testID="auth-verify-otp"
+                    onPress={submitOtp}
+                    disabled={busy}
+                    style={({ pressed }) => [styles.cta, pressed && { opacity: 0.85 }, busy && { opacity: 0.6 }]}
+                  >
+                    {busy ? <ActivityIndicator color={colors.onBrand} /> : <Text style={styles.ctaText}>Verify and continue</Text>}
+                  </Pressable>
+                  <Pressable testID="auth-change-email" onPress={() => { setStep("email"); setOtp(""); setErr(null); }} style={styles.link}>
+                    <Text style={styles.linkText}>Use a different email</Text>
+                  </Pressable>
+                </>
               )}
-              <TextInput
-                testID="auth-email-input"
-                placeholder="Email"
-                placeholderTextColor={colors.muted}
-                value={email}
-                onChangeText={setEmail}
-                autoCapitalize="none"
-                keyboardType="email-address"
-                autoCorrect={false}
-                style={styles.input}
-              />
-              <TextInput
-                testID="auth-password-input"
-                placeholder={mode === "signup" ? "Password (min 8 chars)" : "Password"}
-                placeholderTextColor={colors.muted}
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-                style={styles.input}
-              />
 
-              {err ? (
-                <Text testID="auth-error" style={styles.err}>
-                  {err}
-                </Text>
-              ) : null}
-
-              <Pressable
-                testID="auth-submit-button"
-                onPress={submit}
-                disabled={busy}
-                style={({ pressed }) => [
-                  styles.cta,
-                  pressed && { opacity: 0.85 },
-                  busy && { opacity: 0.6 },
-                ]}
-              >
-                {busy ? (
-                  <ActivityIndicator color={colors.onBrand} />
-                ) : (
-                  <Text style={styles.ctaText}>
-                    {mode === "login" ? "Log in" : "Create account"}
-                  </Text>
-                )}
-              </Pressable>
-
-              <Text style={styles.helper}>
-                By continuing you agree to be a kind neighbour.
-              </Text>
+              <Text style={styles.helper}>By continuing you agree to be a kind neighbour.</Text>
             </View>
           </ScrollView>
         </KeyboardAvoidingView>
@@ -184,51 +156,27 @@ const styles = StyleSheet.create({
   scroll: { flexGrow: 1, padding: spacing.xl, justifyContent: "space-between" },
   header: { marginTop: spacing.xxl, alignItems: "flex-start" },
   logoBadge: {
-    width: 44,
-    height: 44,
-    borderRadius: radius.md,
-    backgroundColor: colors.brand,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: spacing.md,
+    width: 44, height: 44, borderRadius: radius.md, backgroundColor: colors.brand,
+    alignItems: "center", justifyContent: "center", marginBottom: spacing.md,
   },
   title: { fontSize: 36, fontWeight: "800", color: colors.onSurfaceInverse, letterSpacing: -0.5 },
   subtitle: { fontSize: 16, color: "rgba(255,255,255,0.75)", marginTop: spacing.xs, lineHeight: 22 },
-  card: {
-    backgroundColor: colors.surfaceSecondary,
-    borderRadius: radius.lg,
-    padding: spacing.lg,
-    marginTop: spacing.xxl,
-  },
-  tabs: {
-    flexDirection: "row",
-    backgroundColor: colors.surfaceTertiary,
-    borderRadius: radius.pill,
-    padding: 4,
-    marginBottom: spacing.lg,
-  },
-  tab: { flex: 1, paddingVertical: 10, borderRadius: radius.pill, alignItems: "center" },
-  tabActive: { backgroundColor: colors.surfaceSecondary },
-  tabText: { fontSize: 14, fontWeight: "600", color: colors.onSurfaceTertiary },
-  tabTextActive: { color: colors.brand },
+  card: { backgroundColor: colors.surfaceSecondary, borderRadius: radius.lg, padding: spacing.lg, marginTop: spacing.xxl },
+  cardTitle: { fontSize: 18, fontWeight: "800", color: colors.onSurface, marginBottom: 6 },
+  cardHint: { fontSize: 13, color: colors.muted, marginBottom: spacing.lg, lineHeight: 19 },
   input: {
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: radius.md,
-    paddingHorizontal: spacing.md,
-    paddingVertical: 14,
-    fontSize: 15,
-    color: colors.onSurface,
-    marginBottom: spacing.sm,
+    borderWidth: 1, borderColor: colors.border, borderRadius: radius.md,
+    paddingHorizontal: spacing.md, paddingVertical: 14, fontSize: 15,
+    color: colors.onSurface, marginBottom: spacing.sm,
   },
+  otpInput: { fontSize: 24, letterSpacing: 8, textAlign: "center", fontWeight: "700" },
   err: { color: colors.error, marginTop: spacing.xs, fontSize: 13 },
   cta: {
-    backgroundColor: colors.brand,
-    borderRadius: radius.pill,
-    paddingVertical: 14,
-    alignItems: "center",
-    marginTop: spacing.md,
+    backgroundColor: colors.brand, borderRadius: radius.pill,
+    paddingVertical: 14, alignItems: "center", marginTop: spacing.md,
   },
   ctaText: { color: colors.onBrand, fontSize: 16, fontWeight: "700" },
+  link: { alignItems: "center", marginTop: spacing.md },
+  linkText: { color: colors.brand, fontSize: 13, fontWeight: "600" },
   helper: { textAlign: "center", marginTop: spacing.md, color: colors.muted, fontSize: 12 },
 });

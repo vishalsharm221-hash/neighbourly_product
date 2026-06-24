@@ -19,6 +19,7 @@ export default function Index() {
   }
 
   if (!user) return <Redirect href="/auth" />;
+  if (!profile?.name || !profile?.gender || !profile?.dob) return <Redirect href="/profile-setup" />;
   if (!profile?.city || !profile?.locality) return <Redirect href="/onboarding" />;
   return <Redirect href="/(tabs)" />;
 }
