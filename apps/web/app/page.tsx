@@ -4,6 +4,8 @@ import { account, ID } from "../lib/appwrite";
 import { APPWRITE_DB, APPWRITE_COL, Profile } from "@neighbourly/shared";
 import { databases, Query } from "../lib/appwrite";
 
+export const dynamic = "force-dynamic";
+
 export default function Home() {
   const [step, setStep] = useState<"email" | "otp" | "feed">("email");
   const [email, setEmail] = useState("");
