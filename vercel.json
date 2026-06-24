@@ -4,8 +4,7 @@
       "root": "frontend",
       "routePrefix": "/",
       "framework": "static",
-      "buildCommand": "npx expo export --platform web",
-      "outputDirectory": "dist"
+      "buildCommand": "npx expo export --platform web"
     },
     "backend": {
       "root": "backend",
