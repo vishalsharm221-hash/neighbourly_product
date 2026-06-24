@@ -1,9 +1,11 @@
 {
   "experimentalServices": {
     "web": {
-      "root": "apps/web",
+      "root": "frontend",
       "routePrefix": "/",
-      "framework": "nextjs"
+      "framework": "static",
+      "buildCommand": "npx expo export --platform web",
+      "outputDirectory": "dist"
     },
     "backend": {
       "root": "backend",
