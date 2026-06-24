@@ -77,6 +77,8 @@ export default function CreatePost() {
         content: content.trim(),
         city: profile.city!,
         locality: profile.locality || undefined,
+        audience: profile.userType === "student" ? "college" : "locality",
+        college: profile.userType === "student" ? profile.college : null,
         imageFileId: fileId,
       });
       router.back();

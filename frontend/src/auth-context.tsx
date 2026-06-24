@@ -14,7 +14,7 @@ type AuthCtx = {
   signOut: () => Promise<void>;
   // Profile mgmt
   saveProfileSetup: (data: { name: string; gender?: string; dob?: string }) => Promise<void>;
-  saveLocation: (city: string, locality: string) => Promise<void>;
+  saveLocation: (city: string, locality: string, opts?: { userType?: "resident" | "student"; college?: string | null }) => Promise<void>;
   updateMe: (patch: Partial<Profile>) => Promise<void>;
   refresh: () => Promise<void>;
 };
@@ -81,9 +81,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setProfile(updated);
   };
 
-  const saveLocation = async (city: string, locality: string) => {
+  const saveLocation = async (city: string, locality: string, opts?: { userType?: "resident" | "student"; college?: string | null }) => {
     if (!profile) return;
-    const updated = await updateProfile(profile.$id, { city, locality });
+    const patch: any = { city, locality };
+    if (opts?.userType) patch.userType = opts.userType;
+    if (opts && "college" in opts) patch.college = opts.college;
+    const updated = await updateProfile(profile.$id, patch);
     setProfile(updated);
   };
 

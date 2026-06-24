@@ -19,6 +19,8 @@ export type Profile = {
   handle?: string;
   city: string | null;
   locality: string | null;
+  userType?: "resident" | "student" | null;
+  college?: string | null;
   gender?: string | null;
   dob?: string | null;
   bio?: string | null;
@@ -80,9 +82,10 @@ export type PostDoc = {
   $createdAt: string;
 };
 
-export async function listPosts(city: string, category?: string): Promise<PostDoc[]> {
+export async function listPosts(city: string, category?: string, college?: string | null): Promise<PostDoc[]> {
   const queries = [Query.equal("city", city), Query.orderDesc("$createdAt"), Query.limit(50)];
   if (category && category !== "all") queries.push(Query.equal("category", category));
+  if (college) queries.push(Query.equal("college", college));
   const res = await databases.listDocuments({ databaseId: DB, collectionId: COL.posts, queries });
   return res.documents as any;
 }
@@ -98,7 +101,9 @@ export async function listPostsByAuthor(authorId: string): Promise<PostDoc[]> {
 
 export async function createPost(data: {
   authorId: string; authorName: string; authorLocality?: string; authorVerified?: boolean;
-  category: string; content: string; city: string; locality?: string; imageFileId?: string | null;
+  category: string; content: string; city: string; locality?: string;
+  audience?: "all" | "college" | "locality"; college?: string | null;
+  imageFileId?: string | null;
 }) {
   return await databases.createDocument({
     databaseId: DB, collectionId: COL.posts, documentId: ID.unique(), data,

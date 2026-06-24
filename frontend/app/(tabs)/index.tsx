@@ -54,7 +54,8 @@ export default function Feed() {
   const load = useCallback(async () => {
     if (!profile?.city) return;
     try {
-      const data = await listPosts(profile.city, filter);
+      const collegeScope = profile.userType === "student" ? profile.college : null;
+      const data = await listPosts(profile.city, filter, collegeScope);
       setPosts(data);
       if (profile.userId) {
         const ids = data.map((p) => p.$id);
@@ -64,7 +65,7 @@ export default function Feed() {
     } catch (e) {
       console.warn(e);
     }
-  }, [profile?.city, profile?.userId, filter]);
+  }, [profile?.city, profile?.userId, profile?.userType, profile?.college, filter]);
 
   useFocusEffect(
     useCallback(() => {
@@ -112,9 +113,10 @@ export default function Feed() {
     <SafeAreaView style={styles.root} edges={["top"]}>
       <View style={styles.header}>
         <View style={{ flex: 1 }}>
-          <Text style={styles.headerEyebrow}>YOUR NEIGHBOURHOOD</Text>
+          <Text style={styles.headerEyebrow}>YOUR {profile?.userType === "student" ? "COLLEGE" : "NEIGHBOURHOOD"}</Text>
           <Text testID="feed-locality" style={styles.headerTitle}>
-            <Feather name="map-pin" size={16} color={colors.brand} /> {profile?.locality} · {profile?.city}
+            <Feather name={profile?.userType === "student" ? "book-open" : "map-pin"} size={16} color={colors.brand} />{" "}
+            {profile?.userType === "student" ? profile?.college : profile?.locality} · {profile?.city}
           </Text>
         </View>
       </View>

@@ -66,6 +66,7 @@ export const LOCALITIES: Record<City, string[]> = {
 };
 
 export const CATEGORIES = [
+  { key: "newhere", label: "New to area", color: "#2E5C3B" },
   { key: "general", label: "General", color: "#4A4A48" },
   { key: "recommendations", label: "Recos", color: "#437A53" },
   { key: "safety", label: "Safety", color: "#B83A3A" },
