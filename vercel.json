@@ -1,15 +1,5 @@
 {
-  "outputDirectory": "frontend/dist",
-  "experimentalServices": {
-    "web": {
-      "root": "frontend",
-      "routePrefix": "/",
-      "framework": "static",
-      "buildCommand": "npm run build:web"
-    },
-    "backend": {
-      "root": "backend",
-      "routePrefix": "/_/backend"
-    }
-  }
+  "buildCommand": "cd frontend && npm install && npm run build:web",
+  "outputDirectory": "dist",
+  "framework": null
 }
