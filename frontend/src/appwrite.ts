@@ -28,7 +28,7 @@ export const storage = new Storage(client);
 export const realtime = new Realtime(client);
 export { ID, Permission, Role, Query };
 
-export const DB = "localy";
+export const DB = "neighbourly";
 export const COL = {
   profiles: "profiles",
   posts: "posts",
