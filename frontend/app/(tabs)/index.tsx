@@ -158,7 +158,7 @@ export default function Feed() {
             {profile?.userType === "student" ? profile?.college : profile?.locality} · {profile?.city}
           </Text>
         </View>
-        <Pressable onPress={() => router.push("/messages" as unknown as Parameters<typeof router.push>[0])} style={styles.headerBtn}>
+               <Pressable onPress={() => router.push("/messages")} style={styles.headerBtn}>
           <Feather name="send" size={22} color={colors.onSurface} />
         </Pressable>
       </View>

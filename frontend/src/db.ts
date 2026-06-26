@@ -291,33 +291,284 @@ export async function unfollow(followDocId: string, followerProfileId: string) {
   }
 }
 
-// ---------- Comments ----------
-export type CommentDoc = {
+// ---------- Chat & Messages ----------
+export type ChatDoc = {
   $id: string;
-  postId: string;
-  authorId: string;
-  authorName: string;
+  participantIds: string[]; // array of two userIds
+  participantNames?: Record<string, string>; // name lookup
+  $createdAt: string;
+  updatedAt: string;
+};
+
+export type MessageDoc = {
+  $id: string;
+  chatId: string;
+  senderId: string;
+  receiverId: string;
   content: string;
   $createdAt: string;
 };
 
-export async function listComments(postId: string): Promise<CommentDoc[]> {
-  const res = await databases.listDocuments<AppwriteDoc<CommentDoc>>({
-    databaseId: DB, collectionId: "comments",
-    queries: [Query.equal("postId", postId), Query.orderDesc("$createdAt"), Query.limit(50)],
+export async function getChatByParticipants(userId1: string, userId2: string): Promise<ChatDoc | null> {
+  const res = await databases.listDocuments<AppwriteDoc<ChatDoc>>({
+    databaseId: DB,
+    collectionId: COL.chats,
+    queries: [
+      Query.limit(100),
+    ],
+  });
+  
+  // Find chat with both participants (order doesn't matter)
+  for (const chat of res.documents) {
+    if (
+      chat.participantIds.includes(userId1) && 
+      chat.participantIds.includes(userId2) &&
+      chat.participantIds.length === 2
+    ) {
+      return chat;
+    }
+  }
+  return null;
+}
+
+export async function createChat(participantIds: string[]): Promise<ChatDoc> {
+  return await databases.createDocument<AppwriteDoc<ChatDoc>>({
+    databaseId: DB,
+    collectionId: COL.chats,
+    documentId: ID.unique(),
+    data: {
+      participantIds,
+      $createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    },
+    permissions: [Permission.read(Role.users())],
+  });
+}
+
+export async function listChatsForUser(userId: string): Promise<ChatDoc[]> {
+  const res = await databases.listDocuments<AppwriteDoc<ChatDoc>>({
+    databaseId: DB,
+    collectionId: COL.chats,
+    queries: [
+      Query.equal("participantIds", [userId]),
+      Query.orderDesc("$createdAt"),
+      Query.limit(100),
+    ],
   });
   return res.documents;
 }
 
-export async function createComment(postId: string, authorId: string, authorName: string, content: string) {
-  return await databases.createDocument<AppwriteDoc<CommentDoc>>({
-    databaseId: DB, collectionId: "comments", documentId: ID.unique(),
-    data: { postId, authorId, authorName, content },
-    permissions: [Permission.read(Role.users()), Permission.delete(Role.user(authorId))],
+export async function sendMessage(
+  chatId: string,
+  senderId: string,
+  receiverId: string,
+  content: string
+): Promise<MessageDoc> {
+  const message = await databases.createDocument<AppwriteDoc<MessageDoc>>({
+    databaseId: DB,
+    collectionId: COL.messages,
+    documentId: ID.unique(),
+    data: { chatId, senderId, receiverId, content, $createdAt: new Date().toISOString() },
+    permissions: [Permission.read(Role.users())],
+  });
+  // Update chat's lastMessage
+  await databases.updateDocument<AppwriteDoc<ChatDoc>>({
+    databaseId: DB,
+    collectionId: COL.chats,
+    documentId: chatId,
+    data: { updatedAt: new Date().toISOString() },
+  });
+  return message;
+}
+
+export async function listMessages(chatId: string): Promise<MessageDoc[]> {
+  const res = await databases.listDocuments<AppwriteDoc<MessageDoc>>({
+    databaseId: DB,
+    collectionId: COL.messages,
+    queries: [Query.equal("chatId", chatId), Query.orderAsc("$createdAt"), Query.limit(100)],
+  });
+  return res.documents;
+}
+
+export async function createConversation(userId1: string, userId2: string): Promise<ChatDoc> {
+  const chat = await createChat([userId1, userId2]);
+  return chat;
+}
+
+export async function getMessagesByChatId(chatId: string): Promise<MessageDoc[]> {
+  return await listMessages(chatId);
+}
+
+export async function getConversationMessages(chatId: string): Promise<MessageDoc[]> {
+  return await listMessages(chatId);
+}
+
+export async function markConversationAsRead(chatId: string, userId: string) {
+  // Optional: track read status
+  console.log('markConversationAsRead not yet implemented');
+}
+
+// Real-time subscriptions
+export async function subscribeToMessages(userId: string, onMessage: (message: MessageDoc) => void) {
+  const channel = `databases.${DB}.collections.${COL.messages}.documents`; // Listen for new messages
+  // Subscribe to real-time updates for messages where the user is sender or receiver
+  try {
+    // Real implementation would use Appwrite's realtime client
+    // For now, returning a placeholder that can be replaced with actual subscriptions
+    return () => {};
+  } catch (error) {
+    console.error('Failed to subscribe to messages', error);
+    return () => {};
+  }
+}
+
+export async function subscribeToChatUpdates(userId: string, onUpdate: (chat: ChatDoc) => void) {
+  const channel = `databases.${DB}.collections.${COL.chats}.documents`; // Listen for chat updates
+  try {
+    // Real implementation would use Appwrite's realtime client for chat updates
+    return () => {};
+  } catch (error) {
+    console.error('Failed to subscribe to chat updates', error);
+    return () => {};
+  }
+}
+
+// ---------- Chat & Messages ----------
+export type ChatDoc = {
+  $id: string;
+  participantIds: string[]; // array of two userIds
+  participantNames?: Record<string, string>; // name lookup
+  $createdAt: string;
+  updatedAt: string;
+};
+
+export type MessageDoc = {
+  $id: string;
+  chatId: string;
+  senderId: string;
+  receiverId: string;
+  content: string;
+  $createdAt: string;
+};
+
+export async function getChatByParticipants(userId1: string, userId2: string): Promise<ChatDoc | null> {
+  const res = await databases.listDocuments<AppwriteDoc<ChatDoc>>({
+    databaseId: DB,
+    collectionId: COL.chats,
+    queries: [
+      Query.limit(100),
+    ],
+  });
+  
+  // Find chat with both participants (order doesn't matter)
+  for (const chat of res.documents) {
+    if (
+      chat.participantIds.includes(userId1) && 
+      chat.participantIds.includes(userId2) &&
+      chat.participantIds.length === 2
+    ) {
+      return chat;
+    }
+  }
+  return null;
+}
+
+export async function createChat(participantIds: string[]): Promise<ChatDoc> {
+  return await databases.createDocument<AppwriteDoc<ChatDoc>>({
+    databaseId: DB,
+    collectionId: COL.chats,
+    documentId: ID.unique(),
+    data: {
+      participantIds,
+      $createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    },
+    permissions: [Permission.read(Role.users())],
   });
 }
 
-// ---------- Storage ----------
+export async function listChatsForUser(userId: string): Promise<ChatDoc[]> {
+  const res = await databases.listDocuments<AppwriteDoc<ChatDoc>>({
+    databaseId: DB,
+    collectionId: COL.chats,
+    queries: [
+      Query.equal("participantIds", [userId]),
+      Query.orderDesc("$createdAt"),
+      Query.limit(100),
+    ],
+  });
+  return res.documents;
+}
+
+export async function sendMessage(
+  chatId: string,
+  senderId: string,
+  receiverId: string,
+  content: string
+): Promise<MessageDoc> {
+  const message = await databases.createDocument<AppwriteDoc<MessageDoc>>({
+    databaseId: DB,
+    collectionId: COL.messages,
+    documentId: ID.unique(),
+    data: { chatId, senderId, receiverId, content, $createdAt: new Date().toISOString() },
+    permissions: [Permission.read(Role.users())],
+  });
+  // Update chat's lastMessage
+  await databases.updateDocument<AppwriteDoc<ChatDoc>>({
+    databaseId: DB,
+    collectionId: COL.chats,
+    documentId: chatId,
+    data: { updatedAt: new Date().toISOString() },
+  });
+  return message;
+}
+
+export async function listMessages(chatId: string): Promise<MessageDoc[]> {
+  const res = await databases.listDocuments<AppwriteDoc<MessageDoc>>({
+    databaseId: DB,
+    collectionId: COL.messages,
+    queries: [Query.equal("chatId", chatId), Query.orderAsc("$createdAt"), Query.limit(100)],
+  });
+  return res.documents;
+}
+
+export async function getMessagesByChatId(chatId: string): Promise<MessageDoc[]> {
+  return await listMessages(chatId);
+}
+
+export async function getConversationMessages(chatId: string): Promise<MessageDoc[]> {
+  return await listMessages(chatId);
+}
+
+export async function markConversationAsRead(chatId: string, userId: string) {
+  // Optional: track read status
+  console.log('markConversationAsRead not yet implemented');
+}
+
+// Real-time subscriptions
+export async function subscribeToMessages(userId: string, onMessage: (message: MessageDoc) => void) {
+  const channel = `databases.${DB}.collections.${COL.messages}.documents`; // Listen for new messages
+  // Subscribe to real-time updates for messages where the user is sender or receiver
+  try {
+    // Real implementation would use Appwrite's realtime client
+    // For now, returning a placeholder that can be replaced with actual subscriptions
+    return () => {};
+  } catch (error) {
+    console.error('Failed to subscribe to messages', error);
+    return () => {};
+  }
+}
+
+export async function subscribeToChatUpdates(userId: string, onUpdate: (chat: ChatDoc) => void) {
+  const channel = `databases.${DB}.collections.${COL.chats}.documents`; // Listen for chat updates
+  try {
+    // Real implementation would use Appwrite's realtime client for chat updates
+    return () => {};
+  } catch (error) {
+    console.error('Failed to subscribe to chat updates', error);
+    return () => {};
+  }
+}
 export async function uploadImage(uri: string, name: string, mime: string, size: number, userId: string) {
   const file = await storage.createFile({
     bucketId: BUCKET, fileId: ID.unique(),

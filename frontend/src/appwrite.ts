@@ -34,5 +34,7 @@ export const COL = {
   market: "market",
   likes: "likes",
   rsvps: "rsvps",
+  chats: "chats",
+  messages: "messages",
 } as const;
 export const BUCKET = "media";
