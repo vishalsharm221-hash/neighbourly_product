@@ -6,7 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter, useFocusEffect, useLocalSearchParams } from "expo-router";
 
 import { useAuth } from "@/src/auth-context";
-import { getProfileByUserId, getProfilesByUserIds, isFollowing, follow, unfollow, type Profile } from "@/src/db";
+import { getProfileByUserId, isFollowing, follow, unfollow, type Profile } from "@/src/db";
 import { listPostsByAuthor } from "@/src/db";
 import { colors, spacing, radius } from "@/src/theme";
 

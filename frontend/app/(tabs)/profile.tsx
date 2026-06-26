@@ -5,7 +5,7 @@ import { Image } from "expo-image";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter, useFocusEffect, useLocalSearchParams } from "expo-router";
 import * as Haptics from "expo-haptics";
-import * as Share from "expo-sharing";
+import { Share } from "react-native";
 
 import { useAuth } from "@/src/auth-context";
 import { imagePreviewUrl, listPostsByAuthor, listSavedItems, listComments, createComment, type PostDoc, type SavedItemDoc, type CommentDoc } from "@/src/db";
