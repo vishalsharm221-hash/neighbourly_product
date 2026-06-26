@@ -1,16 +1,25 @@
+import { useCallback, ComponentProps } from "react";
 import { View, Text, StyleSheet, Pressable, ScrollView } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useRouter } from "expo-router";
+import { useRouter, useFocusEffect } from "expo-router";
 
 import { useAuth } from "@/src/auth-context";
 import { imagePreviewUrl } from "@/src/db";
 import { colors, spacing, radius } from "@/src/theme";
 
+type FeatherName = ComponentProps<typeof Feather>["name"];
+
 export default function Profile() {
-  const { user, profile, signOut } = useAuth();
+  const { user, profile, signOut, refresh } = useAuth();
   const router = useRouter();
+
+  useFocusEffect(
+    useCallback(() => {
+      refresh();
+    }, [refresh])
+  );
 
   const handleLogout = async () => {
     await signOut();
@@ -104,7 +113,7 @@ function Stat({ value, label }: { value: number; label: string }) {
   );
 }
 
-function MenuRow({ icon, label, last }: { icon: any; label: string; last?: boolean }) {
+function MenuRow({ icon, label, last }: { icon: FeatherName; label: string; last?: boolean }) {
   return (
     <Pressable style={[styles.menuRow, last && { borderBottomWidth: 0 }]}>
       <Feather name={icon} size={18} color={colors.onSurfaceTertiary} />

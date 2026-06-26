@@ -79,7 +79,7 @@ export default function Events() {
         await unrsvpEvent(rsvpMap.mine[ev.$id]);
       } else {
         const doc = await rsvpEvent(ev.$id, profile.userId);
-        setRsvpMap((prev) => ({ ...prev, mine: { ...prev.mine, [ev.$id]: (doc as any).$id } }));
+        setRsvpMap((prev) => ({ ...prev, mine: { ...prev.mine, [ev.$id]: doc.$id } }));
       }
     } catch {
       load();

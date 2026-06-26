@@ -10,8 +10,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImagePicker from "expo-image-picker";
 
 import { useAuth } from "@/src/auth-context";
-import { uploadImage, imagePreviewUrl } from "@/src/db";
-import { colors, spacing, radius } from "@/src/theme";
+import { uploadImage, imagePreviewUrl } from "@/src/db"
+import { getErrorMessage } from "@/src/errors";;
+import { colors, spacing, radius } from "@/src/theme"
 
 export default function EditProfile() {
   const router = useRouter();
@@ -38,8 +39,8 @@ export default function EditProfile() {
     try {
       const fid = await uploadImage(a.uri, a.fileName || "avatar.jpg", a.mimeType || "image/jpeg", a.fileSize || 0, user.$id);
       setAvatarFileId(fid);
-    } catch (e: any) {
-      setErr(e?.message || "Upload failed");
+    } catch (e: unknown) {
+      setErr(getErrorMessage(e, "Upload failed"));
     } finally {
       setBusy(false);
     }
@@ -56,13 +57,13 @@ export default function EditProfile() {
     try {
       await updateMe({
         name: name.trim(),
-        bio: bio.trim() || null,
-        handle: handle.trim() || null,
+        bio: bio.trim() || undefined,
+        handle: handle.trim() || undefined,
         avatarFileId,
-      } as any);
+      });
       router.back();
-    } catch (e: any) {
-      setErr(e?.message || "Save failed");
+    } catch (e: unknown) {
+      setErr(getErrorMessage(e, "Save failed"));
     } finally {
       setBusy(false);
     }
@@ -185,3 +186,5 @@ const styles = StyleSheet.create({
   counter: { fontSize: 11, color: colors.muted, marginTop: 4, textAlign: "right" },
   err: { color: colors.error, fontSize: 13 },
 });
+
+

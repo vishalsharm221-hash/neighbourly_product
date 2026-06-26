@@ -15,11 +15,17 @@ import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImagePicker from "expo-image-picker";
+import { z } from "zod";
 
 import { useAuth } from "@/src/auth-context";
 import { createPost, uploadImage } from "@/src/db";
 import { CATEGORIES } from "@/src/data";
 import { colors, spacing, radius } from "@/src/theme";
+
+const postSchema = z.object({
+  content: z.string().min(1, "Write something first").max(2000, "Post too long (max 2000 chars)"),
+  category: z.string().min(1),
+});
 
 export default function CreatePost() {
   const router = useRouter();
@@ -47,8 +53,9 @@ export default function CreatePost() {
   };
 
   const submit = async () => {
-    if (!content.trim()) {
-      setErr("Write something first");
+    const parsed = postSchema.safeParse({ content, category });
+    if (!parsed.success) {
+      setErr(parsed.error.issues[0].message);
       return;
     }
     if (!profile || !user) {
@@ -71,6 +78,7 @@ export default function CreatePost() {
       await createPost({
         authorId: user.$id,
         authorName: profile.name,
+        authorAvatar: profile.avatarFileId || null,
         authorLocality: profile.locality || undefined,
         authorVerified: profile.verified,
         category,
@@ -80,10 +88,10 @@ export default function CreatePost() {
         audience: profile.userType === "student" ? "college" : "locality",
         college: profile.userType === "student" ? profile.college : null,
         imageFileId: fileId,
-      });
+      }, profile.$id);
       router.back();
-    } catch (e: any) {
-      setErr(e?.message || "Failed to post");
+    } catch (e: unknown) {
+      setErr(e instanceof Error ? e.message : "Failed to post");
     } finally {
       setBusy(false);
     }

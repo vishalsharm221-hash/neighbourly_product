@@ -16,7 +16,7 @@ export async function clearToken() {
 
 async function req<T = any>(
   path: string,
-  opts: { method?: string; body?: any; auth?: boolean } = {}
+  opts: { method?: string; body?: Record<string, unknown>; auth?: boolean } = {}
 ): Promise<T> {
   const headers: Record<string, string> = { "Content-Type": "application/json" };
   if (opts.auth !== false) {

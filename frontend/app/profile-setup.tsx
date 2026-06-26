@@ -8,7 +8,8 @@ import { Feather } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useAuth } from "@/src/auth-context";
-import { colors, spacing, radius } from "@/src/theme";
+import { colors, spacing, radius } from "@/src/theme"
+import { getErrorMessage } from "@/src/errors";;
 
 const GENDERS = ["Female", "Male", "Non-binary", "Prefer not to say"];
 
@@ -35,8 +36,8 @@ export default function ProfileSetup() {
     try {
       await saveProfileSetup({ name: name.trim(), gender, dob: dob.trim() });
       router.replace("/onboarding");
-    } catch (e: any) {
-      setErr(e?.message || "Failed to save");
+    } catch (e: unknown) {
+      setErr(getErrorMessage(e, "Failed to save"));
     } finally {
       setBusy(false);
     }
@@ -143,3 +144,5 @@ const styles = StyleSheet.create({
   },
   ctaText: { color: colors.onBrand, fontSize: 16, fontWeight: "700" },
 });
+
+

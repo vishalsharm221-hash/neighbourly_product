@@ -83,7 +83,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const saveLocation = async (city: string, locality: string, opts?: { userType?: "resident" | "student"; college?: string | null }) => {
     if (!profile) return;
-    const patch: any = { city, locality };
+    const patch: Record<string, string | null | undefined> = { city, locality };
     if (opts?.userType) patch.userType = opts.userType;
     if (opts && "college" in opts) patch.college = opts.college;
     const updated = await updateProfile(profile.$id, patch);

@@ -17,8 +17,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImagePicker from "expo-image-picker";
 
 import { useAuth } from "@/src/auth-context";
-import { createMarket, uploadImage } from "@/src/db";
-import { colors, spacing, radius } from "@/src/theme";
+import { createMarket, uploadImage } from "@/src/db"
+import { getErrorMessage } from "@/src/errors";;
+import { colors, spacing, radius } from "@/src/theme"
 
 export default function CreateMarket() {
   const router = useRouter();
@@ -75,8 +76,8 @@ export default function CreateMarket() {
         imageFileId: fileId,
       });
       router.back();
-    } catch (e: any) {
-      setErr(e?.message || "Failed");
+    } catch (e: unknown) {
+      setErr(getErrorMessage(e, "Failed"));
     } finally {
       setBusy(false);
     }
@@ -197,3 +198,5 @@ const styles = StyleSheet.create({
   },
   err: { color: colors.error, fontSize: 13 },
 });
+
+

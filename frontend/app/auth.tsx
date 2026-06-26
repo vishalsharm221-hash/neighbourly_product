@@ -17,6 +17,7 @@ import { Feather } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useAuth } from "@/src/auth-context";
+import { getErrorMessage } from "@/src/errors";
 import { colors, spacing, radius } from "@/src/theme";
 
 const HERO =
@@ -43,8 +44,8 @@ export default function AuthScreen() {
       const uid = await sendOtp(email.trim().toLowerCase());
       setUserId(uid);
       setStep("otp");
-    } catch (e: any) {
-      setErr(e?.message || "Could not send OTP");
+    } catch (e: unknown) {
+      setErr(getErrorMessage(e, "Could not send OTP"));
     } finally {
       setBusy(false);
     }
@@ -60,8 +61,8 @@ export default function AuthScreen() {
     try {
       await verifyOtp(userId, otp.trim());
       router.replace("/");
-    } catch (e: any) {
-      setErr(e?.message || "Wrong or expired code");
+    } catch (e: unknown) {
+      setErr(getErrorMessage(e, "Wrong or expired code"));
     } finally {
       setBusy(false);
     }

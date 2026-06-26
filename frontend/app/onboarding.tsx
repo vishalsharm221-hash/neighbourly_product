@@ -7,9 +7,10 @@ import { Feather } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useAuth } from "@/src/auth-context";
-import { CITIES, LOCALITIES, City } from "@/src/data";
+import { CITIES, LOCALITIES, City } from "@/src/data"
+import { getErrorMessage } from "@/src/errors";;
 import { COLLEGES } from "@/src/colleges";
-import { colors, spacing, radius } from "@/src/theme";
+import { colors, spacing, radius } from "@/src/theme"
 
 type Mode = "resident" | "student";
 
@@ -34,8 +35,8 @@ export default function Onboarding() {
         { userType: mode, college: mode === "student" ? pick : null }
       );
       router.replace("/(tabs)");
-    } catch (e: any) {
-      setErr(e?.message || "Failed");
+    } catch (e: unknown) {
+      setErr(getErrorMessage(e, "Failed"));
     } finally { setBusy(false); }
   };
 
@@ -139,7 +140,12 @@ export default function Onboarding() {
   );
 }
 
-function ModeCard({ active, icon, title, subtitle, onPress, testID }: any) {
+import { ComponentProps } from "react";
+type FeatherName = ComponentProps<typeof Feather>["name"];
+
+function ModeCard({ active, icon, title, subtitle, onPress, testID }: {
+  active: boolean; icon: FeatherName; title: string; subtitle: string; onPress: () => void; testID?: string;
+}) {
   return (
     <Pressable testID={testID} onPress={onPress} style={[styles.modeCard, active && styles.modeCardActive]}>
       <View style={[styles.modeIcon, active && styles.modeIconActive]}>
@@ -204,3 +210,5 @@ const styles = StyleSheet.create({
   ctaText: { color: colors.onBrand, fontSize: 16, fontWeight: "700" },
   err: { color: colors.error, fontSize: 13, textAlign: "center", marginBottom: spacing.sm },
 });
+
+
