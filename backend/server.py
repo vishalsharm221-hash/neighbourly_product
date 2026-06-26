@@ -1,14 +1,14 @@
-"""Neighbourly backend (Appwrite-powered). This FastAPI service is kept only
+"""Localy backend (Appwrite-powered). This FastAPI service is kept only
 because supervisor manages it. All real backend logic now lives in Appwrite Cloud."""
 from fastapi import FastAPI, APIRouter
 from starlette.middleware.cors import CORSMiddleware
 
-app = FastAPI(title="Neighbourly", description="Appwrite-backed app")
+app = FastAPI(title="Localy", description="Appwrite-backed app")
 api_router = APIRouter(prefix="/api")
 
 @api_router.get("/")
 async def root():
-    return {"service": "neighbourly", "backend": "appwrite", "status": "ok"}
+    return {"service": "localy", "backend": "appwrite", "status": "ok"}
 
 app.include_router(api_router)
 app.add_middleware(

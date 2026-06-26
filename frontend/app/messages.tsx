@@ -6,7 +6,7 @@ import { useRouter } from "expo-router";
 
 import { colors, spacing, radius } from "@/src/theme";
 import { useAuth } from "@/src/auth-context";
-import { listChatsForUser } from "@/src/db";
+import { listChatsForUser, subscribeToChatUpdates } from "@/src/db";
 import type { ChatDoc } from "@/src/db";
 
 export default function Messages() {
@@ -19,6 +19,20 @@ export default function Messages() {
     if (profile?.userId) {
       loadChats();
     }
+  }, [profile?.userId]);
+
+  useEffect(() => {
+    if (!profile?.userId) return;
+    const unsubscribe = subscribeToChatUpdates(profile.userId, (updatedChat) => {
+      setChats(prev => {
+        const exists = prev.find(c => c.$id === updatedChat.$id);
+        if (exists) {
+          return prev.map(c => c.$id === updatedChat.$id ? updatedChat : c);
+        }
+        return [updatedChat, ...prev];
+      });
+    });
+    return unsubscribe;
   }, [profile?.userId]);
 
   const loadChats = async () => {

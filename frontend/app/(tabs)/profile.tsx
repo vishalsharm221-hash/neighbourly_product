@@ -88,7 +88,7 @@ export default function Profile() {
           <MenuRow icon="bell" label="Notifications" />
           <MenuRow icon="shield" label="Safety & Privacy" />
           <MenuRow icon="help-circle" label="Help & Support" />
-          <MenuRow icon="info" label="About Neighbourly" last />
+          <MenuRow icon="info" label="About Localy" last />
         </View>
 
         <Pressable

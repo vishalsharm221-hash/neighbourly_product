@@ -45,7 +45,7 @@ export default function Onboarding() {
   return (
     <SafeAreaView style={styles.root} edges={["top", "bottom"]}>
       <View style={styles.header}>
-        <Text style={styles.eyebrow}>WELCOME TO NEIGHBOURLY</Text>
+        <Text style={styles.eyebrow}>WELCOME TO LOCALY</Text>
         <Text style={styles.title}>Where do you call home?</Text>
         <Text style={styles.subtitle}>Pick your city, then tell us if you live here or study at a local college.</Text>
       </View>
@@ -133,7 +133,7 @@ export default function Onboarding() {
           onPress={submit}
           style={[styles.cta, !canSubmit && { opacity: 0.4 }]}
         >
-          {busy ? <ActivityIndicator color={colors.onBrand} /> : <Text style={styles.ctaText}>Join Neighbourly</Text>}
+          {busy ? <ActivityIndicator color={colors.onBrand} /> : <Text style={styles.ctaText}>Join Localy</Text>}
         </Pressable>
       </View>
     </SafeAreaView>

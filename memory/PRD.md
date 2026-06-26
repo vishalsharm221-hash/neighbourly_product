@@ -1,4 +1,4 @@
-# Neighbourly — Delhi NCR Community App
+# Localy — Delhi NCR Community App
 
 ## Overview
 Hyperlocal community app for Delhi NCR (Delhi, Gurugram, Noida, Ghaziabad, Faridabad) — like Nextdoor. Production-ready, no seed data. Powered by Appwrite Cloud.
@@ -6,7 +6,7 @@ Hyperlocal community app for Delhi NCR (Delhi, Gurugram, Noida, Ghaziabad, Farid
 ## Stack
 - Frontend: Expo SDK 54 (React Native 0.81) + expo-router
 - Backend: Appwrite Cloud (SGP region)
-  - Database: `neighbourly`
+  - Database: `localy`
   - Collections: `profiles`, `posts`, `events`, `market`, `likes`, `rsvps`
   - Storage bucket: `media`
   - Auth: email/password sessions
@@ -23,7 +23,7 @@ Hyperlocal community app for Delhi NCR (Delhi, Gurugram, Noida, Ghaziabad, Farid
 
 ## Appwrite Configuration
 - Web platforms registered: `delhi-neighbours.preview.emergentagent.com`, `localhost`
-- For native builds, you must add the matching iOS/Android platform in Appwrite Console with bundle id `in.neighbourly.app`
+- For native builds, you must add the matching iOS/Android platform in Appwrite Console with bundle id `in.localy.app`
 
 ## Important Notes
 - **Storage / file uploads** require a real native or web build — works fine in this preview.

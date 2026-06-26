@@ -7,54 +7,48 @@ import {
   Pressable,
   RefreshControl,
   ActivityIndicator,
-  ScrollView,
-  TextInput,
   Modal,
-  Share,
+  TextInput,
+  ScrollView,
 } from "react-native";
-import { useRouter, useFocusEffect } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 import { Image } from "expo-image";
+import { useRouter, useFocusEffect } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
 
 import { useAuth } from "@/src/auth-context";
 import {
-  PostDoc,
-  listPosts,
+  RecommendationDoc,
+  listRecommendations,
   fetchLikeMap,
   likePost,
   unlikePost,
-  imagePreviewUrl,
   listComments,
   createComment,
   CommentDoc,
+  imagePreviewUrl,
 } from "@/src/db";
-import { CATEGORIES } from "@/src/data";
 import { colors, spacing, radius } from "@/src/theme";
 
-function timeAgo(iso: string) {
-  const diff = (Date.now() - new Date(iso).getTime()) / 1000;
-  if (diff < 60) return "just now";
-  if (diff < 3600) return `${Math.floor(diff / 60)}m`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)}h`;
-  if (diff < 604800) return `${Math.floor(diff / 86400)}d`;
-  return `${Math.floor(diff / 604800)}w`;
-}
+const REC_CATEGORIES = [
+  { key: "all", label: "All" },
+  { key: "food", label: "Food" },
+  { key: "parks", label: "Parks" },
+  { key: "services", label: "Services" },
+  { key: "shopping", label: "Shopping" },
+  { key: "other", label: "Other" },
+];
 
-function catLabel(key: string) {
-  return CATEGORIES.find((c) => c.key === key)?.label || key;
-}
-
-export default function Feed() {
+export default function Recommendations() {
   const router = useRouter();
   const { profile } = useAuth();
-  const [posts, setPosts] = useState<PostDoc[]>([]);
+  const [recs, setRecs] = useState<RecommendationDoc[]>([]);
   const [likeMap, setLikeMap] = useState<{ counts: Record<string, number>; mine: Record<string, string> }>({ counts: {}, mine: {} });
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [filter, setFilter] = useState<string>("all");
-  const [commentPost, setCommentPost] = useState<PostDoc | null>(null);
+  const [commentRec, setCommentRec] = useState<RecommendationDoc | null>(null);
   const [comments, setComments] = useState<CommentDoc[]>([]);
   const [commentText, setCommentText] = useState("");
   const [commentBusy, setCommentBusy] = useState(false);
@@ -63,18 +57,18 @@ export default function Feed() {
   const load = useCallback(async () => {
     if (!profile?.city) return;
     try {
-      const collegeScope = profile.userType === "student" ? profile.college : null;
-      const data = await listPosts(profile.city, filter, collegeScope);
-      setPosts(data);
+      const cat = filter === "all" ? undefined : filter;
+      const data = await listRecommendations(profile.city, cat);
+      setRecs(data);
       if (profile.userId) {
-        const ids = data.map((p) => p.$id);
+        const ids = data.map((r) => r.$id);
         const lm = await fetchLikeMap(ids, profile.userId);
         setLikeMap(lm);
       }
     } catch (e) {
       console.warn(e);
     }
-  }, [profile?.city, profile?.userId, profile?.userType, profile?.college, filter]);
+  }, [profile?.city, profile?.userId, filter]);
 
   useFocusEffect(
     useCallback(() => {
@@ -89,88 +83,74 @@ export default function Feed() {
     setRefreshing(false);
   };
 
-  const onLike = async (p: PostDoc) => {
+  const onLike = async (r: RecommendationDoc) => {
     if (!profile?.userId) return;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
-    const liked = !!likeMap.mine[p.$id];
+    const liked = !!likeMap.mine[r.$id];
     setLikeMap((prev) => {
       const counts = { ...prev.counts };
       const mine = { ...prev.mine };
       if (liked) {
-        counts[p.$id] = Math.max(0, (counts[p.$id] || 1) - 1);
-        delete mine[p.$id];
+        counts[r.$id] = Math.max(0, (counts[r.$id] || 1) - 1);
+        delete mine[r.$id];
       } else {
-        counts[p.$id] = (counts[p.$id] || 0) + 1;
-        mine[p.$id] = "pending";
+        counts[r.$id] = (counts[r.$id] || 0) + 1;
+        mine[r.$id] = "pending";
       }
       return { counts, mine };
     });
     try {
       if (liked) {
-        await unlikePost(likeMap.mine[p.$id]);
+        await unlikePost(likeMap.mine[r.$id]);
       } else {
-        const doc = await likePost(p.$id, profile.userId);
-        setLikeMap((prev) => ({ ...prev, mine: { ...prev.mine, [p.$id]: doc.$id } }));
+        const doc = await likePost(r.$id, profile.userId);
+        setLikeMap((prev) => ({ ...prev, mine: { ...prev.mine, [r.$id]: doc.$id } }));
       }
     } catch {
       load();
     }
   };
 
-  const onDoubleTap = (p: PostDoc) => {
-    if (!likeMap.mine[p.$id]) onLike(p);
+  const onDoubleTap = (r: RecommendationDoc) => {
+    if (!likeMap.mine[r.$id]) onLike(r);
   };
 
-  const openComments = async (p: PostDoc) => {
-    setCommentPost(p);
+  const openComments = async (r: RecommendationDoc) => {
+    setCommentRec(r);
     setComments([]);
     setCommentText("");
     try {
-      const data = await listComments(p.$id);
+      const data = await listComments(r.$id);
       setComments(data);
     } catch {}
   };
 
   const submitComment = async () => {
-    if (!commentText.trim() || !commentPost || !profile?.userId) return;
+    if (!commentText.trim() || !commentRec || !profile?.userId) return;
     setCommentBusy(true);
     try {
-      const doc = await createComment(commentPost.$id, profile.userId, profile.name, commentText.trim());
+      const doc = await createComment(commentRec.$id, profile.userId, profile.name, commentText.trim());
       setComments((prev) => [doc, ...prev]);
       setCommentText("");
     } catch {}
     setCommentBusy(false);
   };
 
-  const onShare = async (p: PostDoc) => {
-    try {
-      await Share.share({ message: `${p.content}\n\nShared from Localy` });
-    } catch {}
-  };
-
   return (
     <SafeAreaView style={styles.root} edges={["top"]}>
       <View style={styles.header}>
-        <View style={{ flex: 1 }}>
-          <Text style={styles.headerEyebrow}>YOUR {profile?.userType === "student" ? "COLLEGE" : "NEIGHBOURHOOD"}</Text>
-          <Text testID="feed-locality" style={styles.headerTitle}>
-            <Feather name={profile?.userType === "student" ? "book-open" : "map-pin"} size={16} color={colors.brand} />{" "}
-            {profile?.userType === "student" ? profile?.college : profile?.locality} · {profile?.city}
-          </Text>
-        </View>
-               <Pressable onPress={() => router.push("/messages")} style={styles.headerBtn}>
-          <Feather name="send" size={22} color={colors.onSurface} />
-        </Pressable>
+        <Text style={styles.eyebrow}>NEIGHBOURHOOD</Text>
+        <Text style={styles.title}>LOCAL RECOMMENDATIONS</Text>
       </View>
 
       <View style={styles.chipsWrap}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipsRow}>
-          {[{ key: "all", label: "All" }, ...CATEGORIES].map((c) => {
+          {REC_CATEGORIES.map((c) => {
             const active = filter === c.key;
             return (
               <Pressable
                 key={c.key}
-                testID={`feed-filter-${c.key}`}
+                testID={`recommendations-filter-${c.key}`}
                 onPress={() => setFilter(c.key)}
                 style={[styles.chip, active && styles.chipActive]}
               >
@@ -183,51 +163,45 @@ export default function Feed() {
 
       {loading ? (
         <View style={styles.center}>
-          <ActivityIndicator color={colors.brand} size="large" />
+          <ActivityIndicator color={colors.brand} />
         </View>
       ) : (
         <FlatList
-          testID="feed-list"
-          data={posts}
+          testID="recommendations-list"
+          data={recs}
           keyExtractor={(item) => item.$id}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.brand} />}
-          contentContainerStyle={{ paddingBottom: 120 }}
+          contentContainerStyle={{ padding: spacing.lg, paddingBottom: 120, gap: spacing.md }}
           ListEmptyComponent={
             <View style={styles.empty}>
-              <Feather name="camera" size={48} color={colors.muted} />
-              <Text style={styles.emptyTitle}>No posts yet</Text>
-              <Text style={styles.emptyText}>Be the first to share with your neighbourhood.</Text>
+              <Feather name="star" size={32} color={colors.muted} />
+              <Text style={styles.emptyTitle}>No recommendations yet</Text>
+              <Text style={styles.emptyText}>Be the first to share a local tip.</Text>
             </View>
           }
           renderItem={({ item }) => {
             const liked = !!likeMap.mine[item.$id];
             const likes = likeMap.counts[item.$id] || 0;
             return (
-              <View testID={`post-${item.$id}`} style={styles.card}>
-                {/* Author header */}
+              <Pressable
+                testID={`recommendation-${item.$id}`}
+                onPress={() => router.push(`/recommendation-detail?id=${item.$id}`)}
+                style={styles.card}
+              >
                 <View style={styles.cardHead}>
-                  <View style={styles.avatar}>
-                    {item.authorAvatar ? (
-                      <Image source={imagePreviewUrl(item.authorAvatar)} style={StyleSheet.absoluteFillObject} contentFit="cover" />
-                    ) : (
-                      <Text style={styles.avatarText}>{item.authorName?.[0]?.toUpperCase() || "?"}</Text>
-                    )}
-                  </View>
                   <View style={{ flex: 1 }}>
-                    <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+                    <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
                       <Text style={styles.author}>{item.authorName}</Text>
-                      {item.authorVerified && <Feather name="check-circle" size={13} color={colors.brand} />}
                     </View>
-                    <Text style={styles.meta}>
-                      {item.locality} · {timeAgo(item.$createdAt)}
-                    </Text>
-                  </View>
-                  <View style={styles.catPill}>
-                    <Text style={styles.catPillText}>{catLabel(item.category)}</Text>
+                    <View style={styles.metaRow}>
+                      <Feather name="map-pin" size={12} color={colors.muted} />
+                      <Text style={styles.meta}>
+                        {item.locality || "Local"} · {item.category}
+                      </Text>
+                    </View>
                   </View>
                 </View>
 
-                {/* Double-tap wrapper for image */}
                 {item.imageFileId ? (
                   <Pressable
                     onPress={() => {
@@ -246,46 +220,42 @@ export default function Feed() {
                   </Pressable>
                 ) : null}
 
-                {/* Content / caption */}
                 <View style={{ paddingHorizontal: spacing.lg, paddingTop: spacing.md }}>
-                  <Text style={styles.content}>{item.content}</Text>
+                  <Text style={styles.titleText}>{item.title}</Text>
+                  <Text style={styles.content} numberOfLines={3}>{item.content}</Text>
                 </View>
 
-                {/* Actions bar */}
                 <View style={styles.actions}>
                   <Pressable testID={`like-${item.$id}`} onPress={() => onLike(item)} style={styles.actionBtn}>
-                    <Feather name={liked ? "heart" : "heart"} size={22} color={liked ? colors.error : colors.onSurfaceTertiary} />
+                    <Feather name="heart" size={22} color={liked ? colors.error : colors.onSurfaceTertiary} />
+                    <Text style={[styles.actionCount, liked && styles.actionCountActive]}>{likes}</Text>
                   </Pressable>
                   <Pressable onPress={() => openComments(item)} style={styles.actionBtn}>
                     <Feather name="message-circle" size={22} color={colors.onSurfaceTertiary} />
-                  </Pressable>
-                  <Pressable onPress={() => onShare(item)} style={styles.actionBtn}>
-                    <Feather name="send" size={22} color={colors.onSurfaceTertiary} />
+                    <Text style={styles.actionCount}>{item.commentCount || 0}</Text>
                   </Pressable>
                 </View>
-
-                {/* Like count + comment count */}
-                <View style={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.md }}>
-                  {likes > 0 && <Text style={styles.likes}>{likes} {likes === 1 ? "like" : "likes"}</Text>}
-                </View>
-              </View>
+              </Pressable>
             );
           }}
           ItemSeparatorComponent={() => <View style={{ height: spacing.sm }} />}
         />
       )}
 
-      <Pressable testID="feed-fab-create" onPress={() => router.push("/create-post")} style={styles.fab}>
+      <Pressable
+        testID="recommendations-fab-create"
+        onPress={() => router.push("/create-recommendation")}
+        style={styles.fab}
+      >
         <Feather name="plus" size={26} color={colors.onBrand} />
       </Pressable>
 
-      {/* Comments Modal */}
-      <Modal visible={!!commentPost} animationType="slide" transparent>
+      <Modal visible={!!commentRec} animationType="slide" transparent>
         <View style={styles.commentOverlay}>
           <View style={styles.commentSheet}>
             <View style={styles.commentHeader}>
               <Text style={styles.commentTitle}>Comments</Text>
-              <Pressable onPress={() => setCommentPost(null)} hitSlop={10}>
+              <Pressable onPress={() => setCommentRec(null)} hitSlop={10}>
                 <Feather name="x" size={22} color={colors.onSurface} />
               </Pressable>
             </View>
@@ -329,15 +299,23 @@ export default function Feed() {
   );
 }
 
+function timeAgo(iso: string) {
+  const diff = (Date.now() - new Date(iso).getTime()) / 1000;
+  if (diff < 60) return "just now";
+  if (diff < 3600) return `${Math.floor(diff / 60)}m`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)}h`;
+  if (diff < 604800) return `${Math.floor(diff / 86400)}d`;
+  return `${Math.floor(diff / 604800)}w`;
+}
+
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.surface },
   header: {
-    flexDirection: "row", alignItems: "center",
     paddingHorizontal: spacing.lg, paddingTop: spacing.sm, paddingBottom: spacing.md,
+    borderBottomWidth: 1, borderBottomColor: colors.border,
   },
-  headerEyebrow: { fontSize: 10, fontWeight: "700", color: colors.brand, letterSpacing: 1.2 },
-  headerTitle: { fontSize: 20, fontWeight: "800", color: colors.onSurface, marginTop: 2 },
-  headerBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: colors.surfaceTertiary, alignItems: "center", justifyContent: "center" },
+  eyebrow: { fontSize: 10, fontWeight: "700", color: colors.brand, letterSpacing: 1.2 },
+  title: { fontSize: 22, fontWeight: "800", color: colors.onSurface, marginTop: 2 },
   chipsWrap: { height: 56, justifyContent: "center", borderBottomWidth: 1, borderBottomColor: colors.border },
   chipsRow: { paddingHorizontal: spacing.lg, gap: spacing.sm, alignItems: "center" },
   chip: {
@@ -357,20 +335,19 @@ const styles = StyleSheet.create({
     borderTopWidth: 1, borderBottomWidth: 1, borderColor: colors.border,
   },
   cardHead: { flexDirection: "row", alignItems: "center", gap: spacing.md, padding: spacing.lg },
-  avatar: { width: 36, height: 36, borderRadius: 18, backgroundColor: colors.brandTertiary, alignItems: "center", justifyContent: "center", overflow: "hidden" },
-  avatarText: { color: colors.brand, fontWeight: "700", fontSize: 14 },
   author: { fontSize: 14, fontWeight: "700", color: colors.onSurface },
-  meta: { fontSize: 11, color: colors.muted, marginTop: 2 },
-  catPill: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: radius.pill, backgroundColor: colors.brandTertiary },
-  catPillText: { fontSize: 10, fontWeight: "700", color: colors.brand },
-  postImage: { width: "100%", aspectRatio: 1, backgroundColor: colors.surfaceTertiary },
-  content: { fontSize: 14, color: colors.onSurface, lineHeight: 20 },
+  metaRow: { flexDirection: "row", alignItems: "center", gap: 4, marginTop: 4 },
+  meta: { fontSize: 11, color: colors.muted },
+  postImage: { width: "100%", aspectRatio: 16 / 9, backgroundColor: colors.surfaceTertiary },
+  titleText: { fontSize: 15, fontWeight: "700", color: colors.onSurface },
+  content: { fontSize: 14, color: colors.onSurfaceTertiary, marginTop: 4, lineHeight: 20 },
   actions: {
     flexDirection: "row", gap: spacing.lg,
     paddingHorizontal: spacing.lg, paddingTop: spacing.md,
   },
   actionBtn: { flexDirection: "row", alignItems: "center", gap: 4 },
-  likes: { fontSize: 13, fontWeight: "700", color: colors.onSurface, marginTop: 4 },
+  actionCount: { fontSize: 13, fontWeight: "600", color: colors.onSurface },
+  actionCountActive: { color: colors.error },
   fab: {
     position: "absolute", right: spacing.lg, bottom: 80,
     width: 56, height: 56, borderRadius: 28, backgroundColor: colors.brand,

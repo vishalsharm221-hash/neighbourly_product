@@ -1,5 +1,5 @@
 {
-  "name": "neighbourly-monorepo",
+  "name": "localy-monorepo",
   "private": true,
-  "workspaces": ["apps/*", "packages/*"]
+  "workspaces": ["packages/*"]
 }

@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
     justifyContent: isMyMessage ? 'flex-end' : 'flex-start',
   }),
   messageBubble: (isMyMessage: boolean) => ({
-    backgroundColor: isMyMessage ? colors.brandTertiary : colors.surfaceVariant,
+    backgroundColor: isMyMessage ? colors.brandTertiary : colors.surfaceTertiary,
     padding: spacing.sm,
     borderRadius: radius.lg,
     maxWidth: '80%',
@@ -248,6 +248,6 @@ const styles = StyleSheet.create({
   messageTime: { fontSize: 10, color: colors.onSurfaceTertiary },
   inputContainer: { borderTopWidth: 1, borderTopColor: colors.border },
   inputWrapper: { flexDirection: 'row', alignItems: 'flex-end', padding: spacing.md, gap: spacing.sm },
-  textInput: { flex: 1, backgroundColor: colors.surfaceVariant, borderRadius: radius.xl, paddingHorizontal: spacing.md, paddingVertical: spacing.sm, fontSize: 14, maxHeight: 100, textAlignVertical: 'top' },
+  textInput: { flex: 1, backgroundColor: colors.surfaceTertiary, borderRadius: radius.xl, paddingHorizontal: spacing.md, paddingVertical: spacing.sm, fontSize: 14, maxHeight: 100, textAlignVertical: 'top' },
   sendButton: { width: 40, height: 40, borderRadius: 20, backgroundColor: colors.brand, alignItems: 'center', justifyContent: 'center' },
 });

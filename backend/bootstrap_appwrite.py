@@ -1,5 +1,5 @@
 """
-Bootstrap Appwrite Cloud for Neighbourly.
+Bootstrap Appwrite Cloud for Localy.
 Creates database, collections, attributes, indexes, and storage bucket.
 Idempotent — safe to re-run.
 """
@@ -18,7 +18,7 @@ ENDPOINT = os.environ["APPWRITE_ENDPOINT"]
 PROJECT_ID = os.environ["APPWRITE_PROJECT_ID"]
 API_KEY = os.environ["APPWRITE_API_KEY"]
 
-DB_ID = "neighbourly"
+DB_ID = "localy"
 
 COLLECTIONS = {
     "profiles": "Profiles",
@@ -55,7 +55,7 @@ def safe(fn, *args, **kwargs):
 
 # ----- Database -----
 print("Creating database…")
-safe(db.create, DB_ID, "Neighbourly")
+    safe(db.create, DB_ID, "Localy")
 
 # ----- Collections -----
 print("Creating collections…")

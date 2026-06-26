@@ -5,6 +5,7 @@ import {
   Account,
   Databases,
   Storage,
+  Realtime,
   ID,
   Permission,
   Role,
@@ -24,9 +25,10 @@ if (Platform.OS !== "web" && PLATFORM) {
 export const account = new Account(client);
 export const databases = new Databases(client);
 export const storage = new Storage(client);
+export const realtime = new Realtime(client);
 export { ID, Permission, Role, Query };
 
-export const DB = "neighbourly";
+export const DB = "localy";
 export const COL = {
   profiles: "profiles",
   posts: "posts",
@@ -36,5 +38,20 @@ export const COL = {
   rsvps: "rsvps",
   chats: "chats",
   messages: "messages",
+  comments: "comments",
+  groups: "groups",
+  group_posts: "group_posts",
+  businesses: "businesses",
+  reviews: "reviews",
+  recommendations: "recommendations",
+  listings: "listings",
+  saved_items: "saved_items",
+  reports: "reports",
+  notifications: "notifications",
+  polls: "polls",
+  poll_votes: "poll_votes",
+  news: "news",
+  safety_alerts: "safety_alerts",
+  services: "services",
 } as const;
 export const BUCKET = "media";

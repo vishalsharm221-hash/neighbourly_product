@@ -8,7 +8,7 @@ from appwrite.exception import AppwriteException
 ENDPOINT = os.environ["APPWRITE_ENDPOINT"]
 PROJECT_ID = os.environ["APPWRITE_PROJECT_ID"]
 API_KEY = os.environ["APPWRITE_API_KEY"]
-DB_ID = "neighbourly"
+DB_ID = "localy"
 
 client = Client().set_endpoint(ENDPOINT).set_project(PROJECT_ID).set_key(API_KEY)
 db = Databases(client)

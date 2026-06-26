@@ -60,6 +60,43 @@ export default function RootLayout() {
                   options={{ presentation: "modal", animation: "slide_from_bottom" }}
                 />
                 <Stack.Screen name="messages" options={{ animation: "slide_from_right" }} />
+                <Stack.Screen name="groups" options={{ animation: "slide_from_right" }} />
+                <Stack.Screen name="group-detail" options={{ animation: "slide_from_right" }} />
+                <Stack.Screen name="businesses" options={{ animation: "slide_from_right" }} />
+                <Stack.Screen name="business-detail" options={{ animation: "slide_from_right" }} />
+                <Stack.Screen
+                  name="create-group"
+                  options={{ presentation: "modal", animation: "slide_from_bottom" }}
+                />
+                <Stack.Screen
+                  name="create-business"
+                  options={{ presentation: "modal", animation: "slide_from_bottom" }}
+                />
+                <Stack.Screen name="recommendations" options={{ animation: "slide_from_right" }} />
+                <Stack.Screen name="recommendation-detail" options={{ animation: "slide_from_right" }} />
+                <Stack.Screen name="listings" options={{ animation: "slide_from_right" }} />
+                <Stack.Screen name="listing-detail" options={{ animation: "slide_from_right" }} />
+                <Stack.Screen name="safety" options={{ animation: "slide_from_right" }} />
+                <Stack.Screen name="news" options={{ animation: "slide_from_right" }} />
+                <Stack.Screen name="services" options={{ animation: "slide_from_right" }} />
+                <Stack.Screen name="service-detail" options={{ animation: "slide_from_right" }} />
+                <Stack.Screen name="search" options={{ animation: "slide_from_right" }} />
+                <Stack.Screen name="saved" options={{ animation: "slide_from_right" }} />
+                <Stack.Screen name="map" options={{ animation: "slide_from_right" }} />
+                <Stack.Screen
+                  name="create-listing"
+                  options={{ presentation: "modal", animation: "slide_from_bottom" }}
+                />
+                <Stack.Screen name="polls" options={{ animation: "slide_from_right" }} />
+                <Stack.Screen name="poll-detail" options={{ animation: "slide_from_right" }} />
+                <Stack.Screen
+                  name="create-poll"
+                  options={{ presentation: "modal", animation: "slide_from_bottom" }}
+                />
+                <Stack.Screen
+                  name="create-recommendation"
+                  options={{ presentation: "modal", animation: "slide_from_bottom" }}
+                />
               </Stack>
             </AuthProvider>
           </ToastProvider>

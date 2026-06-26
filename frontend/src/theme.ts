@@ -3,6 +3,7 @@ export const colors = {
   onSurface: "#1C1C1A",
   surfaceSecondary: "#FFFFFF",
   surfaceTertiary: "#F2F2EE",
+  surfaceVariant: "#F2F2EE",
   onSurfaceTertiary: "#4A4A48",
   surfaceInverse: "#262624",
   onSurfaceInverse: "#FFFFFF",

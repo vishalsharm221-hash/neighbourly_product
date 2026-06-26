@@ -82,7 +82,7 @@ export default function AuthScreen() {
               <View style={styles.logoBadge}>
                 <Feather name="home" size={22} color={colors.onBrand} />
               </View>
-              <Text style={styles.title}>Neighbourly</Text>
+              <Text style={styles.title}>Localy</Text>
               <Text style={styles.subtitle}>The local feed for Delhi NCR neighbourhoods.</Text>
             </View>
 
