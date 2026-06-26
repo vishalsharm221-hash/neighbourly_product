@@ -66,6 +66,56 @@ export default function Marketplace() {
     }
   };
 
+  const renderItem = ({ item }: { item: MarketDoc }) => {
+    const isSelf = profile?.userId === item.sellerId;
+    return (
+      <View testID={`market-${item.$id}`} style={styles.card}>
+        <View style={styles.thumb}>
+          {item.imageFileId ? (
+            <Image
+              source={imagePreviewUrl(item.imageFileId)}
+              style={StyleSheet.absoluteFillObject}
+              contentFit="cover"
+            />
+          ) : (
+            <Feather name="shopping-bag" size={28} color={colors.brand} />
+          )}
+        </View>
+        <View style={{ padding: spacing.md, gap: 4 }}>
+          <Text style={styles.itemTitle} numberOfLines={1}>{item.title}</Text>
+          <Text style={styles.price}>₹{Math.round(item.price).toLocaleString("en-IN")}</Text>
+          <Text style={styles.desc} numberOfLines={2}>{item.description}</Text>
+          <View style={styles.metaRow}>
+            <Feather name="map-pin" size={11} color={colors.muted} />
+            <Pressable
+              onPress={() => {
+                router.push({ pathname: "/user-profile", params: { userId: item.sellerId, name: item.sellerName } });
+                ensureFollow(item.sellerId);
+              }}
+            >
+              <Text style={[styles.meta, { color: colors.brand, fontWeight: "600" }]} numberOfLines={1}>
+                {item.sellerName}
+              </Text>
+            </Pressable>
+            {!isSelf && (
+              <Pressable
+                onPress={() => toggleFollow(item.sellerId)}
+                style={[styles.miniFollow, followMap[item.sellerId] && styles.miniFollowActive]}
+              >
+                <Text style={[styles.miniFollowText, followMap[item.sellerId] && styles.miniFollowTextActive]}>
+                  {followMap[item.sellerId] ? "Following" : "Follow"}
+                </Text>
+              </Pressable>
+            )}
+            <Text style={styles.meta} numberOfLines={1}>
+              · {item.locality}
+            </Text>
+          </View>
+        </View>
+      </View>
+    );
+  };
+
   return (
     <SafeAreaView style={styles.root} edges={["top"]}>
       <View style={styles.header}>
@@ -93,55 +143,7 @@ export default function Marketplace() {
               <Text style={styles.emptyText}>Tap + to list your first item.</Text>
             </View>
           }
-          renderItem={({ item }) => {
-            const isSelf = profile?.userId === item.sellerId;
-            return (
-              <View testID={`market-${item.$id}`} style={styles.card}>
-                <View style={styles.thumb}>
-                  {item.imageFileId ? (
-                    <Image
-                      source={imagePreviewUrl(item.imageFileId)}
-                      style={StyleSheet.absoluteFillObject}
-                      contentFit="cover"
-                    />
-                  ) : (
-                    <Feather name="shopping-bag" size={28} color={colors.brand} />
-                  )}
-                </View>
-                <View style={{ padding: spacing.md, gap: 4 }}>
-                  <Text style={styles.itemTitle} numberOfLines={1}>{item.title}</Text>
-                  <Text style={styles.price}>₹{Math.round(item.price).toLocaleString("en-IN")}</Text>
-                  <Text style={styles.desc} numberOfLines={2}>{item.description}</Text>
-                  <View style={styles.metaRow}>
-                    <Feather name="map-pin" size={11} color={colors.muted} />
-                    <Pressable
-                      onPress={() => {
-                        router.push({ pathname: "/user-profile", params: { userId: item.sellerId, name: item.sellerName } });
-                        ensureFollow(item.sellerId);
-                      }}
-                    >
-                      <Text style={[styles.meta, { color: colors.brand, fontWeight: "600" }]} numberOfLines={1}>
-                        {item.sellerName}
-                      </Text>
-                    </Pressable>
-                    {!isSelf && (
-                      <Pressable
-                        onPress={() => toggleFollow(item.sellerId)}
-                        style={[styles.miniFollow, followMap[item.sellerId] && styles.miniFollowActive]}
-                      >
-                        <Text style={[styles.miniFollowText, followMap[item.sellerId] && styles.miniFollowTextActive]}>
-                          {followMap[item.sellerId] ? "Following" : "Follow"}
-                        </Text>
-                      </Pressable>
-                    )}
-                    <Text style={styles.meta} numberOfLines={1}>
-                      · {item.locality}
-                    </Text>
-                  </View>
-                </View>
-              </View>
-            );
-          )}
+          renderItem={renderItem}
         />
       )}
 

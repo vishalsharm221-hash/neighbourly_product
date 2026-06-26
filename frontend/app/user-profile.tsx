@@ -6,7 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter, useFocusEffect, useLocalSearchParams } from "expo-router";
 
 import { useAuth } from "@/src/auth-context";
-import { getProfileByUserId, getProfilesByUserIds, isFollowing, follow, unfollow } from "@/src/db";
+import { getProfileByUserId, getProfilesByUserIds, isFollowing, follow, unfollow, type Profile } from "@/src/db";
 import { listPostsByAuthor } from "@/src/db";
 import { colors, spacing, radius } from "@/src/theme";
 
@@ -17,7 +17,7 @@ export default function UserProfile() {
   const targetUserId = params.userId || "";
   const targetName = params.name || "User";
 
-  const [targetProfile, setTargetProfile] = useState<(ReturnType<typeof getProfileByUserId>> extends Promise<infer R> ? R : any>(null);
+  const [targetProfile, setTargetProfile] = useState<Profile | null>(null);
   const [posts, setPosts] = useState<any[]>([]);
   const [followId, setFollowId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
