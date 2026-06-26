@@ -172,8 +172,8 @@ export default function SearchScreen() {
   };
 
   const handleQuickCat = (key: string) => {
-    if (key === "events") router.push("/(tabs)/events");
-    else if (key === "market") router.push("/(tabs)/marketplace");
+    if (key === "events") router.push("/events");
+    else if (key === "market") router.push("/marketplace");
     else if (key === "services") router.push("/services");
     else {
       setTab(key as SearchTab);

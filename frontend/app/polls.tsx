@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from "react";
+import { React, useState, useCallback, useMemo, useEffect } from "react";
 import {
   View,
   Text,
@@ -13,7 +13,7 @@ import { Feather } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useAuth } from "@/src/auth-context";
-import { listPolls, getPollVote, type PollDoc } from "@/src/db";
+import { listPolls, getPollVote, type PollDoc, isFollowing, follow, unfollow } from "@/src/db";
 import { colors, spacing, radius } from "@/src/theme";
 
 function timeAgo(dateStr: string): string {
@@ -39,8 +39,27 @@ export default function PollsScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [votedMap, setVotedMap] = useState<Record<string, boolean>>({});
+  const [followMap, setFollowMap] = useState<Record<string, string | null>>({});
 
   const city = profile?.city || "";
+
+  const ensureFollow = async (uid: string) => {
+    if (!profile?.userId || followMap[uid] !== undefined) return;
+    const fid = await isFollowing(profile.userId, uid);
+    setFollowMap((prev) => ({ ...prev, [uid]: fid }));
+  };
+
+  const toggleFollow = async (uid: string) => {
+    if (!profile?.userId || !profile?.$id) return;
+    const current = followMap[uid];
+    if (current) {
+      await unfollow(current, profile.$id);
+      setFollowMap((prev) => ({ ...prev, [uid]: null }));
+    } else {
+      const doc = await follow(profile.userId, uid, profile.$id, "");
+      setFollowMap((prev) => ({ ...prev, [uid]: doc.$id }));
+    }
+  };
 
   const loadPolls = useCallback(async () => {
     if (!city || !user?.$id) {
@@ -66,6 +85,17 @@ export default function PollsScreen() {
       setLoading(false);
     }
   }, [city, user?.$id]);
+
+  useEffect(() => {
+    (async () => {
+      if (!profile?.userId || polls.length === 0) return;
+      const ids = Array.from(new Set(polls.map((p) => p.creatorId)));
+      const results = await Promise.all(ids.map((id) => isFollowing(profile.userId, id)));
+      const map: Record<string, string | null> = {};
+      ids.forEach((id, i) => { map[id] = results[i]; });
+      setFollowMap(map);
+    })();
+  }, [polls.length, profile?.userId]);
 
   useFocusEffect(
     useCallback(() => {
@@ -103,7 +133,19 @@ export default function PollsScreen() {
         <View style={styles.cardFooter}>
           <View style={styles.metaRow}>
             <Feather name="user" size={14} color={colors.muted} />
-            <Text style={styles.metaText}>{item.creatorName}</Text>
+            <Pressable onPress={() => router.push({ pathname: "/user-profile", params: { userId: item.creatorId, name: item.creatorName } })}>
+              <Text style={[styles.metaText, { color: colors.brand, fontWeight: "600" }]}>{item.creatorName}</Text>
+            </Pressable>
+            {profile?.userId !== item.creatorId && (
+              <Pressable
+                onPress={() => toggleFollow(item.creatorId)}
+                style={[styles.miniFollow, followMap[item.creatorId] && styles.miniFollowActive]}
+              >
+                <Text style={[styles.miniFollowText, followMap[item.creatorId] && styles.miniFollowTextActive]}>
+                  {followMap[item.creatorId] ? "Following" : "Follow"}
+                </Text>
+              </Pressable>
+            )}
             <Text style={styles.metaDot}>·</Text>
             <Text style={styles.metaText}>{timeAgo(item.$createdAt)}</Text>
           </View>
@@ -394,4 +436,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "700",
   },
+  miniFollow: {
+    paddingHorizontal: 8, paddingVertical: 2, borderRadius: radius.pill,
+    borderWidth: 1, borderColor: colors.brand, backgroundColor: colors.surfaceSecondary,
+  },
+  miniFollowActive: { backgroundColor: colors.brand },
+  miniFollowText: { fontSize: 10, fontWeight: "700", color: colors.brand },
+  miniFollowTextActive: { color: colors.onBrand },
 });

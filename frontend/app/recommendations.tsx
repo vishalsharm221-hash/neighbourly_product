@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -28,6 +28,9 @@ import {
   createComment,
   CommentDoc,
   imagePreviewUrl,
+  isFollowing,
+  follow,
+  unfollow,
 } from "@/src/db";
 import { colors, spacing, radius } from "@/src/theme";
 
@@ -45,6 +48,7 @@ export default function Recommendations() {
   const { profile } = useAuth();
   const [recs, setRecs] = useState<RecommendationDoc[]>([]);
   const [likeMap, setLikeMap] = useState<{ counts: Record<string, number>; mine: Record<string, string> }>({ counts: {}, mine: {} });
+  const [followMap, setFollowMap] = useState<Record<string, string | null>>({});
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [filter, setFilter] = useState<string>("all");
@@ -53,6 +57,35 @@ export default function Recommendations() {
   const [commentText, setCommentText] = useState("");
   const [commentBusy, setCommentBusy] = useState(false);
   const lastTapRef = useRef<{ id: string; time: number }>({ id: "", time: 0 });
+
+  const ensureFollow = async (uid: string) => {
+    if (!profile?.userId || followMap[uid] !== undefined) return;
+    const fid = await isFollowing(profile.userId, uid);
+    setFollowMap((prev) => ({ ...prev, [uid]: fid }));
+  };
+
+  const toggleFollow = async (uid: string) => {
+    if (!profile?.userId || !profile?.$id) return;
+    const current = followMap[uid];
+    if (current) {
+      await unfollow(current, profile.$id);
+      setFollowMap((prev) => ({ ...prev, [uid]: null }));
+    } else {
+      const doc = await follow(profile.userId, uid, profile.$id, "");
+      setFollowMap((prev) => ({ ...prev, [uid]: doc.$id }));
+    }
+  };
+
+  useEffect(() => {
+    (async () => {
+      if (!profile?.userId || recs.length === 0) return;
+      const ids = Array.from(new Set(recs.map((r) => r.authorId)));
+      const results = await Promise.all(ids.map((id) => isFollowing(profile.userId, id)));
+      const map: Record<string, string | null> = {};
+      ids.forEach((id, i) => { map[id] = results[i]; });
+      setFollowMap(map);
+    })();
+  }, [recs.length, profile?.userId]);
 
   const load = useCallback(async () => {
     if (!profile?.city) return;
@@ -190,8 +223,20 @@ export default function Recommendations() {
               >
                 <View style={styles.cardHead}>
                   <View style={{ flex: 1 }}>
-                    <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-                      <Text style={styles.author}>{item.authorName}</Text>
+                    <View style={{ flexDirection: "row", alignItems: "center", gap: 4, flexWrap: "wrap" }}>
+                      <Pressable onPress={() => router.push({ pathname: "/user-profile", params: { userId: item.authorId, name: item.authorName } })}>
+                        <Text style={styles.author}>{item.authorName}</Text>
+                      </Pressable>
+                      {profile?.userId !== item.authorId && (
+                        <Pressable
+                          onPress={() => toggleFollow(item.authorId)}
+                          style={[styles.miniFollow, followMap[item.authorId] && styles.miniFollowActive]}
+                        >
+                          <Text style={[styles.miniFollowText, followMap[item.authorId] && styles.miniFollowTextActive]}>
+                            {followMap[item.authorId] ? "Following" : "Follow"}
+                          </Text>
+                        </Pressable>
+                      )}
                     </View>
                     <View style={styles.metaRow}>
                       <Feather name="map-pin" size={12} color={colors.muted} />
@@ -336,6 +381,13 @@ const styles = StyleSheet.create({
   },
   cardHead: { flexDirection: "row", alignItems: "center", gap: spacing.md, padding: spacing.lg },
   author: { fontSize: 14, fontWeight: "700", color: colors.onSurface },
+  miniFollow: {
+    paddingHorizontal: 8, paddingVertical: 2, borderRadius: radius.pill,
+    borderWidth: 1, borderColor: colors.brand, backgroundColor: colors.surfaceSecondary,
+  },
+  miniFollowActive: { backgroundColor: colors.brand },
+  miniFollowText: { fontSize: 10, fontWeight: "700", color: colors.brand },
+  miniFollowTextActive: { color: colors.onBrand },
   metaRow: { flexDirection: "row", alignItems: "center", gap: 4, marginTop: 4 },
   meta: { fontSize: 11, color: colors.muted },
   postImage: { width: "100%", aspectRatio: 16 / 9, backgroundColor: colors.surfaceTertiary },

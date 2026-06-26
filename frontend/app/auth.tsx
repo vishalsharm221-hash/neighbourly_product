@@ -20,9 +20,6 @@ import { useAuth } from "@/src/auth-context";
 import { getErrorMessage } from "@/src/errors";
 import { colors, spacing, radius } from "@/src/theme";
 
-const HERO =
-  "https://images.pexels.com/photos/16960242/pexels-photo-16960242.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=900&w=940";
-
 export default function AuthScreen() {
   const router = useRouter();
   const { sendOtp, verifyOtp } = useAuth();
@@ -70,18 +67,19 @@ export default function AuthScreen() {
 
   return (
     <View style={styles.root}>
-      <Image source={HERO} style={StyleSheet.absoluteFillObject} contentFit="cover" />
       <LinearGradient
-        colors={["rgba(0,0,0,0.15)", "rgba(38,38,36,0.75)", "rgba(38,38,36,0.95)"]}
+        colors={["#1A3A28", "#2E5C3B", "#3A704C"]}
         style={StyleSheet.absoluteFillObject}
       />
       <SafeAreaView style={styles.safe} edges={["top", "bottom"]}>
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
           <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
             <View style={styles.header}>
-              <View style={styles.logoBadge}>
-                <Feather name="home" size={22} color={colors.onBrand} />
-              </View>
+              <Image
+                source={require("@/assets/images/icon.png")}
+                style={styles.logo}
+                contentFit="contain"
+              />
               <Text style={styles.title}>Localy</Text>
               <Text style={styles.subtitle}>The local feed for Delhi NCR neighbourhoods.</Text>
             </View>
@@ -152,16 +150,13 @@ export default function AuthScreen() {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: colors.surfaceInverse },
+  root: { flex: 1 },
   safe: { flex: 1 },
   scroll: { flexGrow: 1, padding: spacing.xl, justifyContent: "space-between" },
-  header: { marginTop: spacing.xxl, alignItems: "flex-start" },
-  logoBadge: {
-    width: 44, height: 44, borderRadius: radius.md, backgroundColor: colors.brand,
-    alignItems: "center", justifyContent: "center", marginBottom: spacing.md,
-  },
-  title: { fontSize: 36, fontWeight: "800", color: colors.onSurfaceInverse, letterSpacing: -0.5 },
-  subtitle: { fontSize: 16, color: "rgba(255,255,255,0.75)", marginTop: spacing.xs, lineHeight: 22 },
+  header: { marginTop: spacing.xxl, alignItems: "center" },
+  logo: { width: 96, height: 96, marginBottom: spacing.md },
+  title: { fontSize: 36, fontWeight: "800", color: "#FFFFFF", letterSpacing: -0.5 },
+  subtitle: { fontSize: 16, color: "rgba(255,255,255,0.75)", marginTop: spacing.xs, lineHeight: 22, textAlign: "center" },
   card: { backgroundColor: colors.surfaceSecondary, borderRadius: radius.lg, padding: spacing.lg, marginTop: spacing.xxl },
   cardTitle: { fontSize: 18, fontWeight: "800", color: colors.onSurface, marginBottom: 6 },
   cardHint: { fontSize: 13, color: colors.muted, marginBottom: spacing.lg, lineHeight: 19 },

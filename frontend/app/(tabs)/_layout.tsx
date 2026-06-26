@@ -1,4 +1,5 @@
 import { Tabs } from "expo-router";
+import { View } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { colors } from "@/src/theme";
 
@@ -27,24 +28,32 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="events"
+        name="explore"
         options={{
-          title: "Events",
-          tabBarIcon: ({ color, size }) => <Feather name="calendar" size={size} color={color} />,
+          title: "Explore",
+          tabBarIcon: ({ color, size }) => <Feather name="compass" size={size} color={color} />,
         }}
       />
       <Tabs.Screen
-        name="marketplace"
+        name="create-picker"
         options={{
-          title: "Market",
-          tabBarIcon: ({ color, size }) => <Feather name="shopping-bag" size={size} color={color} />,
+          title: "",
+          tabBarIcon: ({ color, size }) => (
+            <View style={{
+              width: 40, height: 40, borderRadius: 20, backgroundColor: colors.brand,
+              alignItems: "center", justifyContent: "center",
+              shadowColor: "#000", shadowOpacity: 0.25, shadowRadius: 6, shadowOffset: { width: 0, height: 2 }, elevation: 4,
+            }}>
+              <Feather name="plus" size={22} color={colors.onBrand} />
+            </View>
+          ),
         }}
       />
       <Tabs.Screen
-        name="search"
+        name="messages"
         options={{
-          title: "Search",
-          tabBarIcon: ({ color, size }) => <Feather name="search" size={size} color={color} />,
+          title: "Chat",
+          tabBarIcon: ({ color, size }) => <Feather name="message-square" size={size} color={color} />,
         }}
       />
       <Tabs.Screen

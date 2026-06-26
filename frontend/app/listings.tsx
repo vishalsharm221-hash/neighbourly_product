@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -14,7 +14,7 @@ import { useRouter, useFocusEffect } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useAuth } from "@/src/auth-context";
-import { ListingDoc, listListings, imagePreviewUrl } from "@/src/db";
+import { ListingDoc, listListings, imagePreviewUrl, isFollowing, follow, unfollow } from "@/src/db";
 import { colors, spacing, radius } from "@/src/theme";
 
 const LISTING_TYPES = [
@@ -28,9 +28,39 @@ export default function Listings() {
   const router = useRouter();
   const { profile } = useAuth();
   const [listings, setListings] = useState<ListingDoc[]>([]);
+  const [followMap, setFollowMap] = useState<Record<string, string | null>>({});
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [filter, setFilter] = useState<string>("all");
+
+  const ensureFollow = async (uid: string) => {
+    if (!profile?.userId || followMap[uid] !== undefined) return;
+    const fid = await isFollowing(profile.userId, uid);
+    setFollowMap((prev) => ({ ...prev, [uid]: fid }));
+  };
+
+  const toggleFollow = async (uid: string) => {
+    if (!profile?.userId || !profile?.$id) return;
+    const current = followMap[uid];
+    if (current) {
+      await unfollow(current, profile.$id);
+      setFollowMap((prev) => ({ ...prev, [uid]: null }));
+    } else {
+      const doc = await follow(profile.userId, uid, profile.$id, "");
+      setFollowMap((prev) => ({ ...prev, [uid]: doc.$id }));
+    }
+  };
+
+  useEffect(() => {
+    (async () => {
+      if (!profile?.userId || listings.length === 0) return;
+      const ids = Array.from(new Set(listings.map((l) => l.hostId)));
+      const results = await Promise.all(ids.map((id) => isFollowing(profile.userId, id)));
+      const map: Record<string, string | null> = {};
+      ids.forEach((id, i) => { map[id] = results[i]; });
+      setFollowMap(map);
+    })();
+  }, [listings.length, profile?.userId]);
 
   const load = useCallback(async () => {
     if (!profile?.city) return;
@@ -105,9 +135,26 @@ export default function Listings() {
                 <Text style={styles.price}>₹{Math.round(item.price).toLocaleString("en-IN")}</Text>
                 <View style={styles.metaRow}>
                   <Feather name="map-pin" size={11} color={colors.muted} />
-                  <Text style={styles.meta} numberOfLines={1}>
-                    {item.locality || item.hostName}
-                  </Text>
+                  <Pressable
+                    onPress={() => {
+                      router.push({ pathname: "/user-profile", params: { userId: item.hostId, name: item.hostName } });
+                      ensureFollow(item.hostId);
+                    }}
+                  >
+                    <Text style={[styles.meta, { color: colors.brand, fontWeight: "600" }]} numberOfLines={1}>
+                      {item.hostName}
+                    </Text>
+                  </Pressable>
+                  {profile?.userId !== item.hostId && (
+                    <Pressable
+                      onPress={() => toggleFollow(item.hostId)}
+                      style={[styles.miniFollow, followMap[item.hostId] && styles.miniFollowActive]}
+                    >
+                      <Text style={[styles.miniFollowText, followMap[item.hostId] && styles.miniFollowTextActive]}>
+                        {followMap[item.hostId] ? "Following" : "Follow"}
+                      </Text>
+                    </Pressable>
+                  )}
                 </View>
                 {item.bedrooms != null || item.bathrooms != null || item.area_sqft != null ? (
                   <Text style={styles.detailsLine} numberOfLines={1}>
@@ -155,6 +202,13 @@ const styles = StyleSheet.create({
   price: { fontSize: 15, fontWeight: "800", color: colors.brand },
   metaRow: { flexDirection: "row", alignItems: "center", gap: 4 },
   meta: { fontSize: 11, color: colors.muted, flex: 1 },
+  miniFollow: {
+    paddingHorizontal: 6, paddingVertical: 2, borderRadius: radius.pill,
+    borderWidth: 1, borderColor: colors.brand, backgroundColor: colors.surfaceSecondary,
+  },
+  miniFollowActive: { backgroundColor: colors.brand },
+  miniFollowText: { fontSize: 9, fontWeight: "700", color: colors.brand },
+  miniFollowTextActive: { color: colors.onBrand },
   detailsLine: { fontSize: 11, color: colors.onSurfaceTertiary, marginTop: 2 },
   fab: {
     position: "absolute", right: spacing.lg, bottom: 80,

@@ -1110,6 +1110,32 @@ export async function createSafetyAlert(data: Omit<SafetyAlertDoc, "$id" | "$cre
   });
 }
 
+export async function listFollowers(userId: string): Promise<FollowDoc[]> {
+  const res = await databases.listDocuments<AppwriteDoc<FollowDoc>>({
+    databaseId: DB, collectionId: FOLLOWS,
+    queries: [Query.equal("followedId", userId), Query.orderDesc("$createdAt"), Query.limit(100)],
+  });
+  return res.documents;
+}
+
+export async function listFollowing(userId: string): Promise<FollowDoc[]> {
+  const res = await databases.listDocuments<AppwriteDoc<FollowDoc>>({
+    databaseId: DB, collectionId: FOLLOWS,
+    queries: [Query.equal("followerId", userId), Query.orderDesc("$createdAt"), Query.limit(100)],
+  });
+  return res.documents;
+}
+
+export async function getProfilesByUserIds(userIds: string[]): Promise<Profile[]> {
+  if (userIds.length === 0) return [];
+  const results: Profile[] = [];
+  for (const id of userIds) {
+    const p = await getProfileByUserId(id);
+    if (p) results.push(p);
+  }
+  return results;
+}
+
 // ---------- Services ----------
 export type ServiceDoc = {
   $id: string;

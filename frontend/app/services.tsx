@@ -14,7 +14,7 @@ import { Feather } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useAuth } from "@/src/auth-context";
-import { listServices, ServiceDoc } from "@/src/db";
+import { listServices, ServiceDoc, isFollowing, follow, unfollow } from "@/src/db";
 import { colors, spacing, radius } from "@/src/theme";
 
 type ServiceTab = "all" | "Plumber" | "Electrician" | "Cleaner" | "Tutor" | "Other";
@@ -40,9 +40,39 @@ export default function ServicesScreen() {
   const router = useRouter();
   const { profile } = useAuth();
   const [services, setServices] = useState<ServiceDoc[]>([]);
+  const [followMap, setFollowMap] = useState<Record<string, string | null>>({});
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [tab, setTab] = useState<ServiceTab>("all");
+
+  const ensureFollow = async (uid: string) => {
+    if (!profile?.userId || followMap[uid] !== undefined) return;
+    const fid = await isFollowing(profile.userId, uid);
+    setFollowMap((prev) => ({ ...prev, [uid]: fid }));
+  };
+
+  const toggleFollow = async (uid: string) => {
+    if (!profile?.userId || !profile?.$id) return;
+    const current = followMap[uid];
+    if (current) {
+      await unfollow(current, profile.$id);
+      setFollowMap((prev) => ({ ...prev, [uid]: null }));
+    } else {
+      const doc = await follow(profile.userId, uid, profile.$id, "");
+      setFollowMap((prev) => ({ ...prev, [uid]: doc.$id }));
+    }
+  };
+
+  useEffect(() => {
+    (async () => {
+      if (!profile?.userId || services.length === 0) return;
+      const ids = Array.from(new Set(services.map((s) => s.providerId)));
+      const results = await Promise.all(ids.map((id) => isFollowing(profile.userId, id)));
+      const map: Record<string, string | null> = {};
+      ids.forEach((id, i) => { map[id] = results[i]; });
+      setFollowMap(map);
+    })();
+  }, [services.length, profile?.userId]);
 
   const load = useCallback(async () => {
     if (!profile?.city) return;
@@ -93,9 +123,21 @@ export default function ServicesScreen() {
           </View>
           <View style={{ flex: 1 }}>
             <View style={styles.nameRow}>
-              <Text style={styles.providerName}>{item.providerName}</Text>
+              <Pressable onPress={() => router.push({ pathname: "/user-profile", params: { userId: item.providerId, name: item.providerName } })}>
+                <Text style={styles.providerName}>{item.providerName}</Text>
+              </Pressable>
               {item.verified && (
                 <Feather name="check-circle" size={14} color={colors.brand} />
+              )}
+              {profile?.userId !== item.providerId && (
+                <Pressable
+                  onPress={() => toggleFollow(item.providerId)}
+                  style={[styles.miniFollow, followMap[item.providerId] && styles.miniFollowActive]}
+                >
+                  <Text style={[styles.miniFollowText, followMap[item.providerId] && styles.miniFollowTextActive]}>
+                    {followMap[item.providerId] ? "Following" : "Follow"}
+                  </Text>
+                </Pressable>
               )}
             </View>
             <Text style={styles.serviceType}>{item.serviceType}</Text>
@@ -228,9 +270,16 @@ const styles = StyleSheet.create({
     width: 44, height: 44, borderRadius: 22, backgroundColor: colors.brandTertiary,
     alignItems: "center", justifyContent: "center",
   },
-  nameRow: { flexDirection: "row", alignItems: "center", gap: 6 },
+  nameRow: { flexDirection: "row", alignItems: "center", gap: 4, flexWrap: "wrap" },
   providerName: { fontSize: 15, fontWeight: "700", color: colors.onSurface },
   serviceType: { fontSize: 13, color: colors.onSurfaceTertiary, marginTop: 2 },
+  miniFollow: {
+    paddingHorizontal: 8, paddingVertical: 2, borderRadius: radius.pill,
+    borderWidth: 1, borderColor: colors.brand, backgroundColor: colors.surfaceSecondary,
+  },
+  miniFollowActive: { backgroundColor: colors.brand },
+  miniFollowText: { fontSize: 10, fontWeight: "700", color: colors.brand },
+  miniFollowTextActive: { color: colors.onBrand },
   priceWrap: { alignItems: "flex-end" },
   priceText: { fontSize: 14, fontWeight: "700", color: colors.brand },
   cardDesc: { fontSize: 13, color: colors.onSurfaceTertiary, lineHeight: 18 },

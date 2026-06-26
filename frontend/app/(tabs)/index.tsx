@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -29,6 +29,9 @@ import {
   listComments,
   createComment,
   CommentDoc,
+  isFollowing,
+  follow,
+  unfollow,
 } from "@/src/db";
 import { CATEGORIES } from "@/src/data";
 import { colors, spacing, radius } from "@/src/theme";
@@ -51,6 +54,7 @@ export default function Feed() {
   const { profile } = useAuth();
   const [posts, setPosts] = useState<PostDoc[]>([]);
   const [likeMap, setLikeMap] = useState<{ counts: Record<string, number>; mine: Record<string, string> }>({ counts: {}, mine: {} });
+  const [followMap, setFollowMap] = useState<Record<string, string | null>>({});
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [filter, setFilter] = useState<string>("all");
@@ -59,6 +63,35 @@ export default function Feed() {
   const [commentText, setCommentText] = useState("");
   const [commentBusy, setCommentBusy] = useState(false);
   const lastTapRef = useRef<{ id: string; time: number }>({ id: "", time: 0 });
+
+  const ensureFollow = async (uid: string) => {
+    if (!profile?.userId || followMap[uid] !== undefined) return;
+    const fid = await isFollowing(profile.userId, uid);
+    setFollowMap((prev) => ({ ...prev, [uid]: fid }));
+  };
+
+  const toggleFollow = async (uid: string) => {
+    if (!profile?.userId || !profile?.$id) return;
+    const current = followMap[uid];
+    if (current) {
+      await unfollow(current, profile.$id);
+      setFollowMap((prev) => ({ ...prev, [uid]: null }));
+    } else {
+      const doc = await follow(profile.userId, uid, profile.$id, "");
+      setFollowMap((prev) => ({ ...prev, [uid]: doc.$id }));
+    }
+  };
+
+  useEffect(() => {
+    (async () => {
+      if (!profile?.userId || posts.length === 0) return;
+      const uniqueAuthors = Array.from(new Set(posts.map((p) => p.authorId)));
+      const results = await Promise.all(uniqueAuthors.map((uid) => isFollowing(profile.userId, uid)));
+      const map: Record<string, string | null> = {};
+      uniqueAuthors.forEach((uid, i) => { map[uid] = results[i]; });
+      setFollowMap(map);
+    })();
+  }, [posts.length, profile?.userId]);
 
   const load = useCallback(async () => {
     if (!profile?.city) return;
@@ -206,17 +239,31 @@ export default function Feed() {
               <View testID={`post-${item.$id}`} style={styles.card}>
                 {/* Author header */}
                 <View style={styles.cardHead}>
-                  <View style={styles.avatar}>
-                    {item.authorAvatar ? (
-                      <Image source={imagePreviewUrl(item.authorAvatar)} style={StyleSheet.absoluteFillObject} contentFit="cover" />
-                    ) : (
-                      <Text style={styles.avatarText}>{item.authorName?.[0]?.toUpperCase() || "?"}</Text>
-                    )}
-                  </View>
+                  <Pressable onPress={() => router.push({ pathname: "/user-profile", params: { userId: item.authorId, name: item.authorName } })}>
+                    <View style={styles.avatar}>
+                      {item.authorAvatar ? (
+                        <Image source={imagePreviewUrl(item.authorAvatar)} style={StyleSheet.absoluteFillObject} contentFit="cover" />
+                      ) : (
+                        <Text style={styles.avatarText}>{item.authorName?.[0]?.toUpperCase() || "?"}</Text>
+                      )}
+                    </View>
+                  </Pressable>
                   <View style={{ flex: 1 }}>
-                    <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
-                      <Text style={styles.author}>{item.authorName}</Text>
+                    <View style={{ flexDirection: "row", alignItems: "center", gap: 4, flexWrap: "wrap" }}>
+                      <Pressable onPress={() => router.push({ pathname: "/user-profile", params: { userId: item.authorId, name: item.authorName } })}>
+                        <Text style={styles.author}>{item.authorName}</Text>
+                      </Pressable>
                       {item.authorVerified && <Feather name="check-circle" size={13} color={colors.brand} />}
+                      {profile?.userId !== item.authorId && (
+                        <Pressable
+                          onPress={() => toggleFollow(item.authorId)}
+                          style={[styles.miniFollow, followMap[item.authorId] && styles.miniFollowActive]}
+                        >
+                          <Text style={[styles.miniFollowText, followMap[item.authorId] && styles.miniFollowTextActive]}>
+                            {followMap[item.authorId] ? "Following" : "Follow"}
+                          </Text>
+                        </Pressable>
+                      )}
                     </View>
                     <Text style={styles.meta}>
                       {item.locality} · {timeAgo(item.$createdAt)}
@@ -395,4 +442,11 @@ const styles = StyleSheet.create({
     flex: 1, backgroundColor: colors.surfaceTertiary, borderRadius: radius.pill,
     paddingHorizontal: spacing.lg, paddingVertical: 10, fontSize: 14, color: colors.onSurface,
   },
+  miniFollow: {
+    paddingHorizontal: 8, paddingVertical: 2, borderRadius: radius.pill,
+    borderWidth: 1, borderColor: colors.brand, backgroundColor: colors.surfaceSecondary,
+  },
+  miniFollowActive: { backgroundColor: colors.brand },
+  miniFollowText: { fontSize: 10, fontWeight: "700", color: colors.brand },
+  miniFollowTextActive: { color: colors.onBrand },
 });

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import { React, useState, useCallback, useEffect } from "react";
 import {
   View,
   Text,
@@ -13,7 +13,7 @@ import { Feather } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useAuth } from "@/src/auth-context";
-import { listGroups } from "@/src/db";
+import { listGroups, isFollowing, follow, unfollow } from "@/src/db";
 import { colors, spacing, radius } from "@/src/theme";
 import type { GroupDoc } from "@/src/db";
 
@@ -23,10 +23,40 @@ export default function GroupsScreen() {
   const router = useRouter();
   const { profile } = useAuth();
   const [groups, setGroups] = useState<GroupDoc[]>([]);
+  const [followMap, setFollowMap] = useState<Record<string, string | null>>({});
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<Filter>("all");
+
+  const ensureFollow = async (uid: string) => {
+    if (!profile?.userId || followMap[uid] !== undefined) return;
+    const fid = await isFollowing(profile.userId, uid);
+    setFollowMap((prev) => ({ ...prev, [uid]: fid }));
+  };
+
+  const toggleFollow = async (uid: string) => {
+    if (!profile?.userId || !profile?.$id) return;
+    const current = followMap[uid];
+    if (current) {
+      await unfollow(current, profile.$id);
+      setFollowMap((prev) => ({ ...prev, [uid]: null }));
+    } else {
+      const doc = await follow(profile.userId, uid, profile.$id, "");
+      setFollowMap((prev) => ({ ...prev, [uid]: doc.$id }));
+    }
+  };
+
+  useEffect(() => {
+    (async () => {
+      if (!profile?.userId || groups.length === 0) return;
+      const ids = Array.from(new Set(groups.map((g) => g.creatorId)));
+      const results = await Promise.all(ids.map((id) => isFollowing(profile.userId, id)));
+      const map: Record<string, string | null> = {};
+      ids.forEach((id, i) => { map[id] = results[i]; });
+      setFollowMap(map);
+    })();
+  }, [groups.length, profile?.userId]);
 
   const city = profile?.city || "";
 
@@ -106,7 +136,22 @@ export default function GroupsScreen() {
           </Text>
         </View>
       </View>
-      <Text style={styles.cardCreator}>by {item.creatorName}</Text>
+      <View style={{ flexDirection: "row", alignItems: "center", gap: 4, flexWrap: "wrap" }}>
+        <Text style={styles.cardCreator}>by </Text>
+        <Pressable onPress={() => router.push({ pathname: "/user-profile", params: { userId: item.creatorId, name: item.creatorName } })}>
+          <Text style={[styles.cardCreator, { color: colors.brand, fontWeight: "600" }]}>{item.creatorName}</Text>
+        </Pressable>
+        {profile?.userId !== item.creatorId && (
+          <Pressable
+            onPress={() => toggleFollow(item.creatorId)}
+            style={[styles.miniFollow, followMap[item.creatorId] && styles.miniFollowActive]}
+          >
+            <Text style={[styles.miniFollowText, followMap[item.creatorId] && styles.miniFollowTextActive]}>
+              {followMap[item.creatorId] ? "Following" : "Follow"}
+            </Text>
+          </Pressable>
+        )}
+      </View>
     </Pressable>
   );
 
@@ -300,6 +345,13 @@ const styles = StyleSheet.create({
     gap: spacing.lg,
     marginTop: spacing.xs,
   },
+  miniFollow: {
+    paddingHorizontal: 8, paddingVertical: 2, borderRadius: radius.pill,
+    borderWidth: 1, borderColor: colors.brand, backgroundColor: colors.surfaceSecondary,
+  },
+  miniFollowActive: { backgroundColor: colors.brand },
+  miniFollowText: { fontSize: 10, fontWeight: "700", color: colors.brand },
+  miniFollowTextActive: { color: colors.onBrand },
   metaItem: {
     flexDirection: "row",
     alignItems: "center",

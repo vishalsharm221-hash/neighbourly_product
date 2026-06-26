@@ -59,6 +59,8 @@ export default function RootLayout() {
                   name="create-market"
                   options={{ presentation: "modal", animation: "slide_from_bottom" }}
                 />
+                <Stack.Screen name="events" options={{ animation: "slide_from_right" }} />
+                <Stack.Screen name="marketplace" options={{ animation: "slide_from_right" }} />
                 <Stack.Screen name="messages" options={{ animation: "slide_from_right" }} />
                 <Stack.Screen name="groups" options={{ animation: "slide_from_right" }} />
                 <Stack.Screen name="group-detail" options={{ animation: "slide_from_right" }} />
@@ -97,6 +99,13 @@ export default function RootLayout() {
                   name="create-recommendation"
                   options={{ presentation: "modal", animation: "slide_from_bottom" }}
                 />
+                <Stack.Screen
+                  name="create-service"
+                  options={{ presentation: "modal", animation: "slide_from_bottom" }}
+                />
+                <Stack.Screen name="user-profile" options={{ animation: "slide_from_right" }} />
+                <Stack.Screen name="followers" options={{ animation: "slide_from_right" }} />
+                <Stack.Screen name="following" options={{ animation: "slide_from_right" }} />
               </Stack>
             </AuthProvider>
           </ToastProvider>

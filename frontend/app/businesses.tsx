@@ -13,7 +13,7 @@ import { Feather } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useAuth } from "@/src/auth-context";
-import { listBusinesses } from "@/src/db";
+import { listBusinesses, isFollowing, follow, unfollow } from "@/src/db";
 import { colors, spacing, radius } from "@/src/theme";
 import type { BusinessDoc } from "@/src/db";
 
@@ -34,10 +34,40 @@ export default function BusinessesScreen() {
   const router = useRouter();
   const { profile } = useAuth();
   const [businesses, setBusinesses] = useState<BusinessDoc[]>([]);
+  const [followMap, setFollowMap] = useState<Record<string, string | null>>({});
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [category, setCategory] = useState<CategoryFilter>("all");
+
+  const ensureFollow = async (uid: string) => {
+    if (!profile?.userId || followMap[uid] !== undefined) return;
+    const fid = await isFollowing(profile.userId, uid);
+    setFollowMap((prev) => ({ ...prev, [uid]: fid }));
+  };
+
+  const toggleFollow = async (uid: string) => {
+    if (!profile?.userId || !profile?.$id) return;
+    const current = followMap[uid];
+    if (current) {
+      await unfollow(current, profile.$id);
+      setFollowMap((prev) => ({ ...prev, [uid]: null }));
+    } else {
+      const doc = await follow(profile.userId, uid, profile.$id, "");
+      setFollowMap((prev) => ({ ...prev, [uid]: doc.$id }));
+    }
+  };
+
+  useEffect(() => {
+    (async () => {
+      if (!profile?.userId || businesses.length === 0) return;
+      const ids = Array.from(new Set(businesses.map((b) => b.ownerId)));
+      const results = await Promise.all(ids.map((id) => isFollowing(profile.userId, id)));
+      const map: Record<string, string | null> = {};
+      ids.forEach((id, i) => { map[id] = results[i]; });
+      setFollowMap(map);
+    })();
+  }, [businesses.length, profile?.userId]);
 
   const city = profile?.city || "";
 
