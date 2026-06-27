@@ -1,2 +1,2 @@
-import Search from "../search";
-export default Search;
+import Events from "../events";
+export default Events;

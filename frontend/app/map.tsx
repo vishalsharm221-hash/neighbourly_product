@@ -19,7 +19,7 @@ const { width: SCREEN_W } = Dimensions.get("window");
 
 type FilterKey = "all" | "post" | "event" | "market" | "business";
 
-const FILTERS: { key: FilterKey; label: string; icon: keyof typeof Feather }[] = [
+const FILTERS: { key: FilterKey; label: string; icon: string }[] = [
   { key: "all", label: "All", icon: "grid" },
   { key: "post", label: "Posts", icon: "file-text" },
   { key: "event", label: "Events", icon: "calendar" },
@@ -38,7 +38,7 @@ const FAKE_ITEMS = [
   { id: "8", type: "business" as FilterKey, title: "QuickFix Plumbing", locality: "Northside", distance: "0.4 km" },
 ];
 
-const TYPE_ICON: Record<FilterKey, keyof typeof Feather> = {
+const TYPE_ICON: Record<FilterKey, string> = {
   all: "map-pin",
   post: "file-text",
   event: "calendar",
@@ -80,7 +80,7 @@ export default function MapView() {
           active && { backgroundColor: colors.brand, borderColor: colors.brand },
         ]}
       >
-        <Feather name={f.icon} size={14} color={active ? colors.onBrand : colors.onSurfaceTertiary} />
+        <Feather name={f.icon as any} size={14} color={active ? colors.onBrand : colors.onSurfaceTertiary} />
         <Text style={[styles.chipText, active && { color: colors.onBrand }]}>{f.label}</Text>
       </Pressable>
     );
@@ -91,7 +91,7 @@ export default function MapView() {
     return (
       <View style={styles.card}>
         <View style={styles.cardIconWrap}>
-          <Feather name={iconName} size={16} color={colors.brand} />
+          <Feather name={iconName as any} size={16} color={colors.brand} />
         </View>
         <View style={{ flex: 1 }}>
           <Text style={styles.cardTitle} numberOfLines={1}>{item.title}</Text>

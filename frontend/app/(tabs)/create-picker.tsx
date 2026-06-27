@@ -36,7 +36,7 @@ export default function CreatePicker() {
           <Pressable
             testID={`create-${item.key}`}
             style={styles.actionCard}
-            onPress={() => router.push(item.route)}
+            onPress={() => router.push(item.route as any)}
           >
             <View style={[styles.iconWrap, { backgroundColor: item.tileBg }]}>
               <Feather name={item.icon as any} size={28} color={item.tileColor} />

@@ -1,7 +1,8 @@
 import { useCallback, useState, useEffect } from "react";
-import { View, Text, StyleSheet, Pressable, ScrollView, FlatList, Modal, TextInput, Image } from "react-native";
+import { View, Text, StyleSheet, Pressable, ScrollView, FlatList, Modal, TextInput } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import { Image } from "expo-image";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter, useFocusEffect, useLocalSearchParams } from "expo-router";
 import * as Haptics from "expo-haptics";
@@ -116,11 +117,11 @@ export default function Profile() {
           </View>
 
           <View style={styles.statsWrap}>
-            <Pressable style={styles.statBox} onPress={() => router.push("/following")}>
+            <Pressable style={styles.statBox} onPress={() => router.push("/following" as any)}>
               <Text style={styles.statVal}>{profile?.followingCount ?? 0}</Text>
               <Text style={styles.statLbl}>Following</Text>
             </Pressable>
-            <Pressable style={styles.statBox} onPress={() => router.push("/followers")}>
+            <Pressable style={styles.statBox} onPress={() => router.push("/followers" as any)}>
               <Text style={styles.statVal}>{profile?.followerCount ?? 0}</Text>
               <Text style={styles.statLbl}>Followers</Text>
             </Pressable>
@@ -170,7 +171,7 @@ export default function Profile() {
               myPosts.map((p, i) => (
                 <Pressable key={p.$id} style={styles.postTile}>
                   {p.imageFileId ? (
-                    <Image source={imagePreviewUrl(p.imageFileId)} style={styles.postTileImg} contentFit="cover" />
+                    <Image source={{ uri: imagePreviewUrl(p.imageFileId) }} style={styles.postTileImg} contentFit="cover" />
                   ) : (
                     <View style={[styles.postTileImg, { backgroundColor: colors.surfaceTertiary, alignItems: "center", justifyContent: "center" }]}>
                       <Feather name="file-text" size={24} color={colors.muted} />
@@ -183,7 +184,7 @@ export default function Profile() {
         ) : (
           <FlatList
             data={tab === "saved" ? savedItems : comments}
-            keyExtractor={(item) => item.$id}
+            keyExtractor={(item: any) => item.$id}
             scrollEnabled={false}
             contentContainerStyle={{ padding: spacing.lg, gap: spacing.md }}
             ListEmptyComponent={

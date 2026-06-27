@@ -1,8 +1,9 @@
 import { useCallback, useState, useEffect } from "react";
-import { View, Text, StyleSheet, FlatList, Pressable, ActivityIndicator, Image } from "react-native";
+import { View, Text, StyleSheet, FlatList, Pressable, ActivityIndicator } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter, useFocusEffect } from "expo-router";
+import { Image } from "expo-image";
 
 import { useAuth } from "@/src/auth-context";
 import { listFollowing, getProfilesByUserIds, imagePreviewUrl } from "@/src/db";
@@ -62,11 +63,11 @@ export default function FollowingScreen() {
           renderItem={({ item }) => (
             <Pressable
               style={styles.row}
-              onPress={() => router.push({ pathname: "/user-profile", params: { userId: item.userId, name: item.name } })}
+              onPress={() => router.push({ pathname: "/user-profile" as any, params: { userId: item.userId, name: item.name } })}
             >
               <View style={styles.avatar}>
                 {item.avatarFileId ? (
-                  <Image source={imagePreviewUrl(item.avatarFileId)} style={StyleSheet.absoluteFillObject} contentFit="cover" />
+                  <Image source={{ uri: imagePreviewUrl(item.avatarFileId) }} style={StyleSheet.absoluteFillObject} contentFit="cover" />
                 ) : (
                   <Text style={styles.avatarText}>{item.name?.[0]?.toUpperCase()}</Text>
                 )}

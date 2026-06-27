@@ -49,7 +49,7 @@ export default function Onboarding() {
       await saveLocation(
         city,
         pick,
-        { userType: mode, college: mode === "student" ? pick : null, name: name || undefined }
+        { userType: mode, college: mode === "student" ? pick : null }
       );
       router.replace("/(tabs)");
     } catch (e: unknown) {
@@ -68,7 +68,7 @@ export default function Onboarding() {
 
       <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: spacing.lg, paddingBottom: 200 }} keyboardShouldPersistTaps="handled">
         {step === 1 && (
-          <Animated.View entering={Animated.spring({ toValue: 1, friction: 8, useNativeDriver: true })}>
+          <Animated.View>
             <Text style={styles.stepLabel}>Who are you? 🤔</Text>
             <Text style={styles.stepSub}>Choose your vibe to get the right feed.</Text>
             <View style={{ gap: spacing.md, marginTop: spacing.lg }}>
@@ -105,7 +105,7 @@ export default function Onboarding() {
         )}
 
         {step === 2 && (
-          <Animated.View entering={Animated.spring({ toValue: 1, friction: 8, useNativeDriver: true })}>
+          <Animated.View>
             <Text style={styles.stepLabel}>Where you at? 📍</Text>
             <Text style={styles.stepSub}>Delhi NCR is huge.</Text>
             <View style={{ gap: spacing.md, marginTop: spacing.lg }}>
@@ -162,7 +162,7 @@ export default function Onboarding() {
         )}
 
         {step === 3 && (
-          <Animated.View entering={Animated.spring({ toValue: 1, friction: 8, useNativeDriver: true })}>
+          <Animated.View>
             <Text style={styles.stepLabel}>Profile drip 💧</Text>
             <Text style={styles.stepSub}>Make it look good.</Text>
             <View style={{ alignItems: "center", marginTop: spacing.lg }}>

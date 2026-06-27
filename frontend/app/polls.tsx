@@ -115,7 +115,7 @@ export default function PollsScreen() {
     return (
       <Pressable
         style={styles.card}
-        onPress={() => router.push({ pathname: "/poll-detail", params: { id: item.$id } })}
+        onPress={() => router.push({ pathname: "/poll-detail" as any, params: { id: item.$id } })}
       >
         <Text style={styles.question} numberOfLines={3}>{item.question}</Text>
         <View style={styles.optionsRow}>
@@ -133,7 +133,7 @@ export default function PollsScreen() {
         <View style={styles.cardFooter}>
           <View style={styles.metaRow}>
             <Feather name="user" size={14} color={colors.muted} />
-            <Pressable onPress={() => router.push({ pathname: "/user-profile", params: { userId: item.creatorId, name: item.creatorName } })}>
+            <Pressable onPress={() => router.push({ pathname: "/user-profile" as any, params: { userId: item.creatorId, name: item.creatorName } })}>
               <Text style={[styles.metaText, { color: colors.brand, fontWeight: "600" }]}>{item.creatorName}</Text>
             </Pressable>
             {profile?.userId !== item.creatorId && (
@@ -170,7 +170,7 @@ export default function PollsScreen() {
               style={styles.voteBtn}
               onPress={(e) => {
                 e.stopPropagation();
-                router.push({ pathname: "/poll-detail", params: { id: item.$id } });
+                router.push({ pathname: "/poll-detail" as any, params: { id: item.$id } });
               }}
             >
               <Text style={styles.voteBtnText}>Vote</Text>
@@ -237,7 +237,7 @@ export default function PollsScreen() {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.brand} />
         }
       />
-      <Pressable style={styles.fab} onPress={() => router.push("/create-poll")}>
+      <Pressable style={styles.fab} onPress={() => router.push("/create-poll" as any)}>
         <Feather name="plus" size={28} color={colors.onBrand} />
       </Pressable>
     </SafeAreaView>

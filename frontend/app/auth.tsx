@@ -16,6 +16,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 
+import { useRouter } from "expo-router";
 import { useAuth } from "@/src/auth-context";
 import { getErrorMessage } from "@/src/errors";
 import { colors, spacing, radius, shadows } from "@/src/theme";
@@ -343,5 +344,5 @@ const styles = StyleSheet.create({
   },
   ctaOutlineText: { color: "#000", fontSize: 16, fontWeight: "900", letterSpacing: -0.3 },
   link: { alignItems: "center", marginTop: spacing.md },
-  linkText: { color: "#3366FF", fontSize: 13, fontWeight: "800", textDecorationLine: "underline", textDecorationStyle: "solid", textDecorationThickness: 2 },
+  linkText: { color: "#3366FF", fontSize: 13, fontWeight: "800", textDecorationLine: "underline", textDecorationStyle: "solid" },
 });

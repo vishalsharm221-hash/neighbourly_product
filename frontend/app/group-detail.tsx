@@ -268,7 +268,7 @@ export default function GroupDetailScreen() {
           {isCreator && (
             <Pressable
               style={styles.editBtn}
-              onPress={() => router.push({ pathname: "/create-group", params: { editId: group.$id } })}
+              onPress={() => router.push({ pathname: "/create-group" as any, params: { editId: group.$id } })}
             >
               <Feather name="edit-2" size={16} color={colors.brand} />
               <Text style={styles.editBtnText}>Edit</Text>
@@ -318,7 +318,7 @@ export default function GroupDetailScreen() {
         </View>
       </ScrollView>
 
-      <Pressable style={styles.fab} onPress={() => router.push({ pathname: "/create-group", params: { postForGroupId: group.$id } })}>
+      <Pressable style={styles.fab} onPress={() => router.push({ pathname: "/create-group" as any, params: { postForGroupId: group.$id } })}>
         <Feather name="plus" size={28} color={colors.onBrand} />
       </Pressable>
     </SafeAreaView>

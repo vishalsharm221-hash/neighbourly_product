@@ -7,13 +7,12 @@ import { useRouter, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 
 import { useAuth } from "@/src/auth-context";
-import { getProfileByUserId, isFollowing, follow, unfollow, type Profile } from "@/src/db";
-import { listPostsByAuthor } from "@/src/db";
+import { getProfileByUserId, isFollowing, follow, unfollow, imagePreviewUrl, listPostsByAuthor, type Profile } from "@/src/db";
 import { colors, spacing, radius } from "@/src/theme";
 
 export default function UserProfile() {
   const router = useRouter();
-  const { profile, user } = useAuth();
+  const { profile } = useAuth();
   const params = useLocalSearchParams<{ userId: string; name: string }>();
   const targetUserId = params.userId || "";
   const targetName = params.name || "User";
@@ -63,7 +62,7 @@ export default function UserProfile() {
   if (loading) {
     return (
       <SafeAreaView style={styles.root} edges={["top"]}>
-        <View style={styles.center}><Text style={styles.loadingTxt}>Loading... 🫠</Text></View>
+        <View style={styles.center}><Text style={styles.loadingTxt}>Loading...</Text></View>
       </SafeAreaView>
     );
   }

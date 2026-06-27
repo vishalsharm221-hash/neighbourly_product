@@ -49,7 +49,7 @@ export default function Explore() {
         <View style={styles.headerRow}>
           <View>
             <Text style={styles.eyebrow}>DISCOVER</Text>
-            <Text style={styles.headerTitle}>Explore 👀</Text>
+            <Text style={styles.headerTitle}>Explore</Text>
           </View>
           <View style={styles.locBadge}>
             <Feather name="map-pin" size={14} color="#FF3366" />
@@ -59,7 +59,7 @@ export default function Explore() {
 
         {/* Category chips */}
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipsRow}>
-          {["All", "Food 🍕", "Events 🎟️", "News 📰", "Market 🛍️"].map((label) => (
+          {["All", "Food", "Events", "News", "Market"].map((label) => (
             <Pressable key={label} style={styles.chip}>
               <Text style={styles.chipText}>{label}</Text>
             </Pressable>
@@ -78,7 +78,7 @@ export default function Explore() {
               key={s.key}
               testID={`explore-${s.key}`}
               style={styles.gridItem}
-              onPress={() => router.push(s.route)}
+              onPress={() => router.push(s.route as any)}
             >
               <View style={[styles.gridIcon, { backgroundColor: s.tileBg }]}>
                 <Feather name={s.icon as any} size={26} color={s.tileColor} />
@@ -92,7 +92,7 @@ export default function Explore() {
         <View>
           <View style={styles.trendingHead}>
             <Feather name="send" size={20} color="#FF3366" />
-            <Text style={styles.trendingTitle}>Trending Now 🔥</Text>
+            <Text style={styles.trendingTitle}>Trending Now</Text>
           </View>
           {TRENDING.map((item) => (
             <Pressable
@@ -105,7 +105,7 @@ export default function Explore() {
                   <Image source={{ uri: item.img }} style={StyleSheet.absoluteFillObject} contentFit="cover" />
                 </View>
               ) : (
-                <View style={[styles.trendIcon, { backgroundColor: item.tileBg }]}>
+                <View style={[styles.trendIcon, { backgroundColor: item.color }]}>
                   <Feather name="alert-triangle" size={24} color={item.color} />
                 </View>
               )}
@@ -120,7 +120,7 @@ export default function Explore() {
         </View>
 
         <View style={styles.center}>
-          <Text style={styles.emptyText}>More sections coming soon bestie ✨</Text>
+          <Text style={styles.emptyText}>More sections coming soon</Text>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
     borderWidth: 2, borderColor: "#000",
     shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 2, height: 2 }, elevation: 2,
   },
-  chipText: { fontSize: 12, fontWeight: "800", color: "#000", whiteSpace: "nowrap" },
+  chipText: { fontSize: 12, fontWeight: "800", color: "#000", flexShrink: 0 },
   grid: { flexDirection: "row", flexWrap: "wrap", gap: spacing.md },
   gridItem: {
     width: "30%",

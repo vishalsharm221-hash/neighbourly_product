@@ -142,7 +142,6 @@ export default function CreatePost() {
         </View>
 
         <Text style={[styles.label, { marginTop: spacing.lg }]}>Message</Text>
-        <View style={styles.textAreaWrap}>
           <TextInput
             testID="create-content-input"
             value={content}
@@ -153,7 +152,6 @@ export default function CreatePost() {
             style={styles.input}
             autoFocus
           />
-          </View>
 
           <Text style={[styles.label, { marginTop: spacing.lg }]}>Photo (optional)</Text>
           {image ? (

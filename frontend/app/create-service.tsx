@@ -102,7 +102,7 @@ export default function CreateService() {
         reviewCount: 0,
         verified: false,
       });
-      router.replace("/services");
+      router.replace("/services" as any);
     } catch (e: unknown) {
       setErr(getErrorMessage(e, "Failed to offer service"));
     } finally {
@@ -406,6 +406,7 @@ const styles = StyleSheet.create({
     borderWidth: 2, borderColor: "#000", paddingHorizontal: spacing.md, paddingVertical: 14,
   },
   pickerText: { flex: 1, fontSize: 15, color: colors.onSurface },
+  charCount: { fontSize: 12, color: colors.muted, marginTop: spacing.xs, textAlign: "right" },
   imgPicker: {
     flexDirection: "row", alignItems: "center", gap: spacing.sm,
     paddingVertical: 14, paddingHorizontal: spacing.lg,

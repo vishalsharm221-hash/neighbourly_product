@@ -162,7 +162,7 @@ export default function NewsScreen() {
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.brand} />}
           ListEmptyComponent={
             <View style={styles.empty}>
-              <Feather name="newspaper" size={48} color={colors.muted} />
+              <Feather name="file-text" size={48} color={colors.muted} />
               <Text style={styles.emptyTitle}>No news rn 📰</Text>
               <Text style={styles.emptyText}>{tab === "all" ? "Check back later bestie" : `No ${tab} news rn.`}</Text>
             </View>

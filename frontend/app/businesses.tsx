@@ -126,7 +126,7 @@ export default function BusinessesScreen() {
   const renderBusiness = ({ item }: { item: BusinessDoc }) => (
     <Pressable
       style={styles.card}
-      onPress={() => router.push({ pathname: "/business-detail", params: { id: item.$id } })}
+      onPress={() => router.push({ pathname: "/business-detail" as any, params: { id: item.$id } })}
     >
       <View style={styles.cardTopRow}>
         <View style={styles.businessIcon}>
@@ -262,7 +262,7 @@ export default function BusinessesScreen() {
         }
       />
 
-      <Pressable style={styles.fab} onPress={() => router.push("/create-business")}>
+      <Pressable style={styles.fab} onPress={() => router.push("/create-business" as any)}>
         <Feather name="plus" size={28} color={colors.onBrand} />
       </Pressable>
     </SafeAreaView>

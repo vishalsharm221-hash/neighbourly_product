@@ -113,13 +113,13 @@ export default function Events() {
       <View style={styles.header}>
         <View>
           <Text style={styles.eyebrow}>WHAT'S HAPPENING</Text>
-          <Text style={styles.title}>Local Events 🎟️</Text>
+          <Text style={styles.title}>Local Events</Text>
         </View>
       </View>
 
       {loading ? (
         <View style={styles.center}>
-          <Text style={styles.loadingTxt}>Loading events... 🫠</Text>
+          <Text style={styles.loadingTxt}>Loading events...</Text>
         </View>
       ) : (
         <FlatList
@@ -131,7 +131,7 @@ export default function Events() {
           ListEmptyComponent={
             <View style={styles.center}>
               <Feather name="calendar" size={44} color={colors.muted} />
-              <Text style={styles.emptyTitle}>No events near {profile?.locality} 🎪</Text>
+              <Text style={styles.emptyTitle}>No events near {profile?.locality}</Text>
               <Text style={styles.emptyText}>Your hood is quiet — host something!</Text>
             </View>
           }
@@ -157,7 +157,7 @@ export default function Events() {
                   <View style={styles.evMetaRow}>
                     <Pressable
                       onPress={() => {
-                        router.push({ pathname: "/user-profile", params: { userId: item.hostId, name: item.hostName } });
+                        router.push({ pathname: "/user-profile" as any, params: { userId: item.hostId, name: item.hostName } });
                         ensureFollow(item.hostId);
                       }}
                       style={{ flexDirection: "row", alignItems: "center", gap: 4, flex: 1 }}
@@ -186,7 +186,7 @@ export default function Events() {
                   >
                     <Feather name={going ? "check" : "plus"} size={14} color={going ? "#FFFFFF" : colors.brand} />
                     <Text style={[styles.rsvpText, going && styles.rsvpTextActive]}>
-                      {going ? "Going ✅" : "RSVP"}
+                      {going ? "Going" : "RSVP"}
                     </Text>
                   </Pressable>
                 </View>

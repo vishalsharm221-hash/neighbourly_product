@@ -89,7 +89,7 @@ export default function Marketplace() {
             <Feather name="map-pin" size={11} color={colors.muted} />
             <Pressable
               onPress={() => {
-                router.push({ pathname: "/user-profile", params: { userId: item.sellerId, name: item.sellerName } });
+                router.push({ pathname: "/user-profile" as any, params: { userId: item.sellerId, name: item.sellerName } });
                 ensureFollow(item.sellerId);
               }}
             >
@@ -121,13 +121,13 @@ export default function Marketplace() {
       <View style={styles.header}>
         <View>
           <Text style={styles.eyebrow}>BAZAAR</Text>
-          <Text style={styles.title}>Bazaar 🛒</Text>
+          <Text style={styles.title}>Bazaar</Text>
         </View>
       </View>
 
       {loading ? (
         <View style={styles.center}>
-          <Text style={styles.loadingTxt}>Loading... 🛒</Text>
+          <Text style={styles.loadingTxt}>Loading...</Text>
         </View>
       ) : (
         <FlatList
@@ -142,7 +142,7 @@ export default function Marketplace() {
             <View style={styles.center}>
               <Feather name="shopping-bag" size={44} color={colors.muted} />
               <Text style={styles.emptyTitle}>Nothing for sale in {profile?.city} yet</Text>
-              <Text style={styles.emptyText}>Tap + to list your first item ✨</Text>
+              <Text style={styles.emptyText}>Tap + to list your first item</Text>
             </View>
           }
           renderItem={renderItem}

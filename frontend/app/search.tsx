@@ -174,7 +174,7 @@ export default function SearchScreen() {
   const handleQuickCat = (key: string) => {
     if (key === "events") router.push("/events");
     else if (key === "market") router.push("/marketplace");
-    else if (key === "services") router.push("/services");
+    else if (key === "services") router.push("/services" as any);
     else {
       setTab(key as SearchTab);
     }
@@ -184,7 +184,7 @@ export default function SearchScreen() {
     switch (item.kind) {
       case "post":
         return (
-          <Pressable style={styles.card} onPress={() => router.push("/chat-room")}>
+          <Pressable style={styles.card} onPress={() => router.push("/chat-room" as any)}>
             <View style={styles.cardHeader}>
               <View style={styles.typeDot} />
               <Text style={styles.cardTypeLabel}>Post</Text>
@@ -274,7 +274,7 @@ export default function SearchScreen() {
 
   const displayResults = tab === "all"
     ? results
-    : results.filter((r) => r.kind === tab);
+    : results.filter((r) => r.kind === (tab as any));
 
   return (
     <SafeAreaView style={styles.root} edges={["top"]}>

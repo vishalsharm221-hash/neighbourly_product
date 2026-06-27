@@ -218,13 +218,13 @@ export default function Recommendations() {
             return (
               <Pressable
                 testID={`recommendation-${item.$id}`}
-                onPress={() => router.push(`/recommendation-detail?id=${item.$id}`)}
+                onPress={() => router.push(`/recommendation-detail?id=${item.$id}` as any)}
                 style={styles.card}
               >
                 <View style={styles.cardHead}>
                   <View style={{ flex: 1 }}>
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 4, flexWrap: "wrap" }}>
-                      <Pressable onPress={() => router.push({ pathname: "/user-profile", params: { userId: item.authorId, name: item.authorName } })}>
+                      <Pressable onPress={() => router.push({ pathname: "/user-profile" as any, params: { userId: item.authorId, name: item.authorName } })}>
                         <Text style={styles.author}>{item.authorName}</Text>
                       </Pressable>
                       {profile?.userId !== item.authorId && (
@@ -289,7 +289,7 @@ export default function Recommendations() {
 
       <Pressable
         testID="recommendations-fab-create"
-        onPress={() => router.push("/create-recommendation")}
+        onPress={() => router.push("/create-recommendation" as any)}
         style={styles.fab}
       >
         <Feather name="plus" size={26} color={colors.onBrand} />

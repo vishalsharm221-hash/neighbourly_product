@@ -91,7 +91,7 @@ export default function GroupsScreen() {
   }, [loadGroups]);
 
   const filteredGroups = React.useMemo(() => {
-    if (!profile?.user) return groups;
+    if (!profile?.userId) return groups;
     const userId = profile.userId;
     switch (filter) {
       case "mine":
@@ -106,7 +106,7 @@ export default function GroupsScreen() {
   const renderGroup = ({ item }: { item: GroupDoc }) => (
     <Pressable
       style={styles.card}
-      onPress={() => router.push({ pathname: "/group-detail", params: { id: item.$id } })}
+      onPress={() => router.push({ pathname: "/group-detail" as any, params: { id: item.$id } })}
     >
       <View style={styles.cardHeader}>
         <View style={styles.cardIcon}>
@@ -138,7 +138,7 @@ export default function GroupsScreen() {
       </View>
       <View style={{ flexDirection: "row", alignItems: "center", gap: 4, flexWrap: "wrap" }}>
         <Text style={styles.cardCreator}>by </Text>
-        <Pressable onPress={() => router.push({ pathname: "/user-profile", params: { userId: item.creatorId, name: item.creatorName } })}>
+        <Pressable onPress={() => router.push({ pathname: "/user-profile" as any, params: { userId: item.creatorId, name: item.creatorName } })}>
           <Text style={[styles.cardCreator, { color: colors.brand, fontWeight: "600" }]}>{item.creatorName}</Text>
         </Pressable>
         {profile?.userId !== item.creatorId && (
@@ -232,7 +232,7 @@ export default function GroupsScreen() {
         }
       />
 
-      <Pressable style={styles.fab} onPress={() => router.push("/create-group")}>
+      <Pressable style={styles.fab} onPress={() => router.push("/create-group" as any)}>
         <Feather name="plus" size={28} color={colors.onBrand} />
       </Pressable>
     </SafeAreaView>

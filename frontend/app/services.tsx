@@ -115,7 +115,7 @@ export default function ServicesScreen() {
     return (
       <Pressable
         style={styles.card}
-        onPress={() => router.push({ pathname: "/service-detail", params: { id: item.$id } })}
+        onPress={() => router.push({ pathname: "/service-detail" as any, params: { id: item.$id } })}
       >
         <View style={styles.cardTop}>
           <View style={styles.iconCircle}>
@@ -123,7 +123,7 @@ export default function ServicesScreen() {
           </View>
           <View style={{ flex: 1 }}>
             <View style={styles.nameRow}>
-              <Pressable onPress={() => router.push({ pathname: "/user-profile", params: { userId: item.providerId, name: item.providerName } })}>
+              <Pressable onPress={() => router.push({ pathname: "/user-profile" as any, params: { userId: item.providerId, name: item.providerName } })}>
                 <Text style={styles.providerName}>{item.providerName}</Text>
               </Pressable>
               {item.verified && (
@@ -230,7 +230,7 @@ export default function ServicesScreen() {
 
       <Pressable
         style={styles.fab}
-        onPress={() => router.push("/create-service")}
+        onPress={() => router.push("/create-service" as any)}
       >
         <Feather name="plus" size={24} color={colors.onBrand} />
         <Text style={styles.fabText}>Offer Service</Text>

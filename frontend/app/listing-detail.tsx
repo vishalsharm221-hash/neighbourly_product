@@ -92,6 +92,7 @@ export default function ListingDetail() {
       <FlatList
         testID="listing-detail"
         data={[]}
+        renderItem={() => null}
         ListEmptyComponent={
           <View>
             {listing.imageFileId ? (
@@ -123,7 +124,7 @@ export default function ListingDetail() {
               <View style={styles.detailsGrid}>
                 {listing.bedrooms != null && (
                   <View style={styles.detailItem}>
-                    <Feather name="bed" size={18} color={colors.brand} />
+                    <Feather name="home" size={18} color={colors.brand} />
                     <Text style={styles.detailValue}>{listing.bedrooms}</Text>
                     <Text style={styles.detailLabel}>Bedrooms</Text>
                   </View>

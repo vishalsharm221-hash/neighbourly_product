@@ -171,7 +171,7 @@ export default function Feed() {
             {" "}{profile?.userType === "student" ? profile?.college : profile?.locality}
           </Text>
         </View>
-        <Pressable onPress={() => router.push("/messages")} style={styles.headerBtn}>
+        <Pressable onPress={() => router.push("/messages" as any)} style={styles.headerBtn}>
           <Feather name="send" size={20} color={colors.onSurface} />
           <View style={styles.headerBtnDot} />
         </Pressable>
@@ -210,7 +210,7 @@ export default function Feed() {
             <View style={styles.empty}>
               <Feather name="camera" size={48} color={colors.muted} />
               <Text style={styles.emptyTitle}>No posts yet</Text>
-              <Text style={styles.emptyText}>This hood is quiet... be the first, bestie 🫶</Text>
+              <Text style={styles.emptyText}>This hood is quiet... be the first to post!</Text>
             </View>
           }
           renderItem={({ item }) => {
@@ -220,7 +220,7 @@ export default function Feed() {
               <View testID={`post-${item.$id}`} style={styles.card}>
                 {/* Author header */}
                 <View style={styles.cardHead}>
-                  <Pressable onPress={() => router.push({ pathname: "/user-profile", params: { userId: item.authorId, name: item.authorName } })}>
+                  <Pressable onPress={() => router.push({ pathname: "/user-profile" as any, params: { userId: item.authorId, name: item.authorName } })}>
                     <View style={styles.avatar}>
                       {item.authorAvatar ? (
                         <Image source={imagePreviewUrl(item.authorAvatar)} style={StyleSheet.absoluteFillObject} contentFit="cover" />
@@ -231,7 +231,7 @@ export default function Feed() {
                   </Pressable>
                   <View style={{ flex: 1 }}>
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 4, flexWrap: "wrap" }}>
-                      <Pressable onPress={() => router.push({ pathname: "/user-profile", params: { userId: item.authorId, name: item.authorName } })}>
+                      <Pressable onPress={() => router.push({ pathname: "/user-profile" as any, params: { userId: item.authorId, name: item.authorName } })}>
                         <Text style={styles.author}>{item.authorName}</Text>
                       </Pressable>
                       {item.authorVerified && <Feather name="check-circle" size={13} color={colors.brand} />}

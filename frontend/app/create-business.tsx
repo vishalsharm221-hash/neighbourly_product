@@ -107,7 +107,7 @@ export default function CreateBusiness() {
         rating: 0,
         reviewCount: 0,
       });
-      router.replace({ pathname: "/business-detail", params: { id: doc.$id } });
+      router.replace({ pathname: "/business-detail" as any, params: { id: doc.$id } });
     } catch (e: unknown) {
       setErr(getErrorMessage(e, "Failed to add business"));
     } finally {

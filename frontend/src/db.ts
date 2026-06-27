@@ -12,7 +12,7 @@ import {
   BUCKET,
 } from "@/src/appwrite";
 
-type AppwriteDoc<T> = Models.Document & T;
+export type AppwriteDoc<T> = Models.Document & T;
 
 // ---------- Profile ----------
 export type Profile = {
@@ -423,8 +423,8 @@ export function subscribeToMessages(userId: string, onMessage: (message: Message
         }
       }
     );
-    return () => {
-      try { channel.unsubscribe(); } catch {}
+    return async () => {
+      try { (await channel).unsubscribe(); } catch {}
     };
   } catch (error) {
     console.error('Failed to subscribe to messages', error);
@@ -445,8 +445,8 @@ export function subscribeToChatUpdates(userId: string, onUpdate: (chat: ChatDoc)
         }
       }
     );
-    return () => {
-      try { channel.unsubscribe(); } catch {}
+    return async () => {
+      try { (await channel).unsubscribe(); } catch {}
     };
   } catch (error) {
     console.error('Failed to subscribe to chat updates', error);

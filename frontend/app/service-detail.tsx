@@ -50,7 +50,7 @@ export default function ServiceDetail() {
         collectionId: COL.services,
         documentId: id,
       });
-      setService(doc as ServiceDoc);
+      setService(doc as unknown as ServiceDoc);
     } catch (e) {
       console.warn("Failed to load service detail:", e);
     }
@@ -204,9 +204,6 @@ export default function ServiceDetail() {
         keyExtractor={(r) => r.$id}
         contentContainerStyle={{ paddingBottom: 120 }}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.brand} />}
-        ListEmptyComponent={
-          reviews.length === 0 ? null : undefined
-        }
         ListHeaderComponent={
           <View>
             {hasImage && previewUrl ? (
@@ -396,6 +393,7 @@ const styles = StyleSheet.create({
   reviewAvatarText: { fontSize: 16, fontWeight: "700", color: colors.brand },
   reviewName: { fontSize: 14, fontWeight: "600", color: colors.onSurface },
   reviewTime: { fontSize: 12, color: colors.muted },
+  writeReview: { fontSize: 14, fontWeight: "600", color: colors.brand },
   starsText: { fontSize: 12, color: colors.warning, letterSpacing: -1 },
   reviewComment: { fontSize: 14, color: colors.onSurfaceTertiary, lineHeight: 20, marginTop: 4 },
   emptyRow: { alignItems: "center", padding: spacing.xxxl, gap: spacing.md },

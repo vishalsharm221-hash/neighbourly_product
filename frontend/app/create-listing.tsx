@@ -66,7 +66,6 @@ export default function CreateListing() {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       quality: 0.7,
       allowsEditing: false,
-      allowsMultiple: false,
     });
     if (!res.canceled && res.assets.length > 0) setImage(res.assets[0]);
   };
@@ -113,7 +112,7 @@ export default function CreateListing() {
         hostName: profile.name,
         type: typeValue,
         title: title.trim(),
-        description: description.trim() || undefined,
+        description: description.trim() || "",
         price: parseFloat(price),
         address: address.trim() || undefined,
         city: city!,
@@ -125,7 +124,7 @@ export default function CreateListing() {
         contactEmail: email.trim() || undefined,
         imageFileId: fileId,
       });
-      router.replace("/listings");
+      router.replace("/listings" as any);
     } catch (e: unknown) {
       setErr(getErrorMessage(e, "Failed to create listing"));
     } finally {
@@ -386,7 +385,7 @@ function CityModal({ visible, cities, selected, onSelect, onClose }: {
             <Pressable
               key={c}
               testID={`modal-city-${c}`}
-              onPress={() => { onSelect(c); onClose(); }}
+              onPress={() => { onSelect(c as any); onClose(); }}
               style={[styles.modalRow, selected === c && styles.modalRowActive]}
             >
               <Text style={[styles.modalRowText, selected === c && styles.modalRowTextActive]}>{c}</Text>

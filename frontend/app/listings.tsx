@@ -116,7 +116,7 @@ export default function Listings() {
           renderItem={({ item }) => (
             <Pressable
               testID={`listing-${item.$id}`}
-              onPress={() => router.push(`/listing-detail?id=${item.$id}`)}
+              onPress={() => router.push(`/listing-detail?id=${item.$id}` as any)}
               style={styles.card}
             >
               <View style={styles.thumb}>
@@ -137,7 +137,7 @@ export default function Listings() {
                   <Feather name="map-pin" size={11} color={colors.muted} />
                   <Pressable
                     onPress={() => {
-                      router.push({ pathname: "/user-profile", params: { userId: item.hostId, name: item.hostName } });
+                      router.push({ pathname: "/user-profile" as any, params: { userId: item.hostId, name: item.hostName } });
                       ensureFollow(item.hostId);
                     }}
                   >
@@ -169,7 +169,7 @@ export default function Listings() {
 
       <Pressable
         testID="listings-fab-create"
-        onPress={() => router.push("/create-listing")}
+        onPress={() => router.push("/create-listing" as any)}
         style={styles.fab}
       >
         <Feather name="plus" size={26} color={colors.onBrand} />

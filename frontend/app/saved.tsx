@@ -18,7 +18,7 @@ import { useAuth } from "@/src/auth-context";
 import { listSavedItems, unsaveItem, SavedItemDoc } from "@/src/db";
 import { colors, spacing, radius } from "@/src/theme";
 
-const TYPE_ICON: Record<string, keyof typeof Feather> = {
+const TYPE_ICON: Record<string, string> = {
   post: "file-text",
   event: "calendar",
   market: "shopping-bag",
@@ -71,7 +71,7 @@ export default function Saved() {
     }
   }, [user]);
 
-  useFocusEffect(load);
+  useFocusEffect(useCallback(() => { load(); }, [load]));
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -103,7 +103,7 @@ export default function Saved() {
     return (
       <View style={styles.row}>
         <View style={styles.iconWrap}>
-          <Feather name={iconName} size={18} color={colors.brand} />
+          <Feather name={iconName as any} size={18} color={colors.brand} />
         </View>
         <View style={styles.textWrap}>
           <Text style={styles.typeLabel}>{label}</Text>

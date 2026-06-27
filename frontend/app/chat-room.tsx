@@ -9,7 +9,7 @@ import { colors, spacing, radius } from "@/src/theme";
 import { databases, ID, Permission, Role, Query, DB, COL } from "@/src/appwrite";
 import type { Models } from "react-native-appwrite";
 import { getChatByParticipants, createChat, sendMessage, listMessages, createConversation, getMessagesByChatId } from "@/src/db";
-import type { ChatDoc, MessageDoc } from "@/src/db";
+import type { AppwriteDoc, ChatDoc, MessageDoc } from "@/src/db";
 
 interface Message extends MessageDoc {
   localId?: string; // For optimistic UI

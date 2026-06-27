@@ -51,7 +51,7 @@ export default function Messages() {
   const handleChatPress = (chat: ChatDoc) => {
     const otherParticipantId = chat.participantIds.find(id => id !== profile?.userId);
     router.push({
-      pathname: '/chat-room',
+      pathname: '/chat-room' as any,
       params: { id: chat.$id }
     });
   };
