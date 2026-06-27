@@ -25,16 +25,7 @@ jobs:
           npm install --legacy-peer-deps
           npx expo export --platform web
       - working-directory: frontend
-        run: |
-          # Patch index.html - add base tag and make paths relative
-          sed -i 's|<title>Localy</title>|<base href="/neighbourly_product/" />\n    <title>Localy</title>|' dist/index.html
-          sed -i 's|href="/favicon.ico"|href="favicon.ico"|' dist/index.html
-          sed -i 's|src="/_expo/|src="_expo/|' dist/index.html
-          # Patch JS bundle - inject base URL into router functions
-          JS_FILE=$(ls dist/_expo/static/js/web/entry-*.js)
-          sed -i 's|getUrlWithReactNavigationConcessions=function(t,n="")|getUrlWithReactNavigationConcessions=function(t,n="/neighbourly_product/")|' "$JS_FILE"
-          sed -i 's|function i(t,a=""){return a?|function i(t,a="/neighbourly_product/"){return a?|' "$JS_FILE"
-          sed -i 's|"/assets/|"assets/|g' "$JS_FILE"
+        run: node scripts/patch-dist.js
       - uses: actions/configure-pages@v4
       - uses: actions/upload-pages-artifact@v3
         with:

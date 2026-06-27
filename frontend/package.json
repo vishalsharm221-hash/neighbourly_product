@@ -10,7 +10,7 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "build:web": "expo export --platform web",
-    "postbuild": "powershell -File scripts/patch-gh-pages.ps1"
+    "postbuild": "node scripts/patch-dist.js"
   },
   "dependencies": {
     "@expo/metro-runtime": "6.1.2",
