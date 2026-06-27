@@ -177,8 +177,8 @@ export default function ServicesScreen() {
           <Feather name="arrow-left" size={24} color={colors.onSurface} />
         </Pressable>
         <View style={{ flex: 1, marginLeft: spacing.md }}>
-          <Text style={styles.headerEyebrow}>DIRECTORY</Text>
-          <Text style={styles.headerTitle}>SERVICE PROVIDERS</Text>
+          <Text style={styles.headerEyebrow}>LOCAL PROS</Text>
+          <Text style={styles.headerTitle}>Services 🔧</Text>
         </View>
         <View style={{ width: 24 }} />
       </View>
@@ -219,7 +219,7 @@ export default function ServicesScreen() {
               <Text style={styles.emptyTitle}>No service providers</Text>
               <Text style={styles.emptyText}>
                 {tab === "all"
-                  ? "Check back soon for verified professionals in your area."
+                  ? "No pros in your hood yet — be the first bestie 🔧"
                   : `No ${tab.toLowerCase()}s listed yet.`}
               </Text>
             </View>
@@ -240,63 +240,66 @@ export default function ServicesScreen() {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: colors.surface },
+  root: { flex: 1, backgroundColor: "#FBFBF9" },
   center: { flex: 1, alignItems: "center", justifyContent: "center" },
   header: {
     flexDirection: "row", alignItems: "center",
     paddingHorizontal: spacing.lg, paddingVertical: spacing.md,
-    borderBottomWidth: 1, borderBottomColor: colors.border, gap: spacing.md,
+    borderBottomWidth: 3, borderBottomColor: "#000", gap: spacing.md, backgroundColor: "rgba(255,255,255,0.92)",
+    shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 0, height: 4 }, elevation: 6,
   },
-  headerEyebrow: { fontSize: 11, fontWeight: "700", color: colors.muted, letterSpacing: 1 },
-  headerTitle: { fontSize: 18, fontWeight: "800", color: colors.onSurface },
+  headerEyebrow: { fontSize: 11, fontWeight: "800", color: "#3366FF", letterSpacing: 1 },
+  headerTitle: { fontSize: 18, fontWeight: "900", color: "#000" },
   tabsRow: { paddingHorizontal: spacing.lg, gap: spacing.sm, paddingVertical: spacing.md },
   tab: {
     paddingHorizontal: spacing.lg, paddingVertical: spacing.sm,
-    borderRadius: radius.pill, backgroundColor: colors.surfaceTertiary,
-    borderWidth: 1, borderColor: colors.border,
+    borderRadius: 12, backgroundColor: "#F3F3F5",
+    borderWidth: 2, borderColor: "#000",
   },
-  tabActive: { backgroundColor: colors.brand, borderColor: colors.brand },
-  tabText: { fontSize: 13, fontWeight: "600", color: colors.onSurfaceTertiary },
-  tabTextActive: { color: colors.onBrand },
+  tabActive: { backgroundColor: "#3366FF", borderColor: "#000" },
+  tabText: { fontSize: 13, fontWeight: "800", color: "#000" },
+  tabTextActive: { color: "#FFFFFF", fontWeight: "900" },
   empty: { alignItems: "center", padding: spacing.xxxl, gap: spacing.md, marginTop: 60 },
-  emptyTitle: { fontSize: 16, fontWeight: "700", color: colors.onSurface },
-  emptyText: { fontSize: 13, color: colors.muted, textAlign: "center" },
+  emptyTitle: { fontSize: 16, fontWeight: "900", color: "#000" },
+  emptyText: { fontSize: 13, color: "#000", textAlign: "center", fontWeight: "500" },
   card: {
-    backgroundColor: colors.surfaceSecondary, borderRadius: radius.lg,
-    borderWidth: 1, borderColor: colors.border, padding: spacing.lg, gap: spacing.sm,
+    backgroundColor: "#FFFFFF", borderRadius: 20,
+    borderWidth: 3, borderColor: "#000", padding: spacing.lg, gap: spacing.sm,
+    shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 4, height: 4 }, elevation: 4,
   },
   cardTop: { flexDirection: "row", alignItems: "flex-start", gap: spacing.md },
   iconCircle: {
-    width: 44, height: 44, borderRadius: 22, backgroundColor: colors.brandTertiary,
-    alignItems: "center", justifyContent: "center",
+    width: 44, height: 44, borderRadius: 12, backgroundColor: "#F3F3F5",
+    alignItems: "center", justifyContent: "center", borderWidth: 2, borderColor: "#000",
   },
   nameRow: { flexDirection: "row", alignItems: "center", gap: 4, flexWrap: "wrap" },
-  providerName: { fontSize: 15, fontWeight: "700", color: colors.onSurface },
-  serviceType: { fontSize: 13, color: colors.onSurfaceTertiary, marginTop: 2 },
+  providerName: { fontSize: 15, fontWeight: "900", color: "#000" },
+  serviceType: { fontSize: 13, color: "#000", marginTop: 2, fontWeight: "600" },
   miniFollow: {
-    paddingHorizontal: 8, paddingVertical: 2, borderRadius: radius.pill,
-    borderWidth: 1, borderColor: colors.brand, backgroundColor: colors.surfaceSecondary,
+    paddingHorizontal: 8, paddingVertical: 2, borderRadius: 12,
+    borderWidth: 2, borderColor: "#3366FF", backgroundColor: "#F3F3F5",
   },
-  miniFollowActive: { backgroundColor: colors.brand },
-  miniFollowText: { fontSize: 10, fontWeight: "700", color: colors.brand },
-  miniFollowTextActive: { color: colors.onBrand },
+  miniFollowActive: { backgroundColor: "#3366FF" },
+  miniFollowText: { fontSize: 10, fontWeight: "800", color: "#3366FF" },
+  miniFollowTextActive: { color: "#FFFFFF" },
   priceWrap: { alignItems: "flex-end" },
-  priceText: { fontSize: 14, fontWeight: "700", color: colors.brand },
-  cardDesc: { fontSize: 13, color: colors.onSurfaceTertiary, lineHeight: 18 },
+  priceText: { fontSize: 14, fontWeight: "900", color: "#3366FF" },
+  cardDesc: { fontSize: 13, color: "#000", lineHeight: 18, fontWeight: "500" },
   ratingRow: { flexDirection: "row", alignItems: "center", gap: 4 },
-  starsText: { fontSize: 14, color: colors.warning, letterSpacing: -1 },
-  ratingNum: { fontSize: 14, fontWeight: "700", color: colors.onSurface },
-  reviewCount: { fontSize: 12, color: colors.muted },
+  starsText: { fontSize: 14, color: "#B58500", letterSpacing: -1 },
+  ratingNum: { fontSize: 14, fontWeight: "800", color: "#000" },
+  reviewCount: { fontSize: 12, color: "#000", fontWeight: "600" },
   cardMeta: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: spacing.xs },
   metaItem: { flexDirection: "row", alignItems: "center", gap: 4 },
-  cardMetaText: { fontSize: 12, color: colors.muted },
+  cardMetaText: { fontSize: 12, color: "#000", fontWeight: "600" },
   fab: {
     position: "absolute", bottom: 24, right: spacing.lg,
     flexDirection: "row", alignItems: "center", gap: 6,
-    backgroundColor: colors.brand, paddingVertical: 14, paddingHorizontal: 20,
-    borderRadius: radius.pill,
-    shadowColor: "#000", shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2, shadowRadius: 8, elevation: 6,
+    backgroundColor: "#3366FF", paddingVertical: 14, paddingHorizontal: 20,
+    borderRadius: 12,
+    shadowColor: "#000", shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 1, shadowRadius: 0, elevation: 4,
+    borderWidth: 3, borderColor: "#000",
   },
-  fabText: { color: colors.onBrand, fontSize: 14, fontWeight: "700" },
+  fabText: { color: "#FFFFFF", fontSize: 14, fontWeight: "900" },
 });

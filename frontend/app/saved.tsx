@@ -128,7 +128,7 @@ export default function Saved() {
         <Pressable testID="saved-back" onPress={() => router.back()} hitSlop={10}>
           <Feather name="arrow-left" size={24} color={colors.onSurface} />
         </Pressable>
-        <Text style={styles.title}>SAVED ITEMS</Text>
+        <Text style={styles.title}>Saved 🔖</Text>
         <View style={{ width: 24 }} />
       </View>
 
@@ -139,8 +139,8 @@ export default function Saved() {
       ) : items.length === 0 ? (
         <View style={styles.center}>
           <Feather name="bookmark" size={40} color={colors.muted} />
-          <Text style={styles.emptyText}>No saved items yet</Text>
-          <Text style={styles.emptySub}>Items you save will appear here</Text>
+          <Text style={styles.emptyText}>Nothing saved yet?</Text>
+          <Text style={styles.emptySub}>Tap the 🔖 on things you love bestie</Text>
         </View>
       ) : (
         <FlatList
@@ -163,38 +163,42 @@ export default function Saved() {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: colors.surface },
+  root: { flex: 1, backgroundColor: "#FBFBF9" },
   header: {
     flexDirection: "row", alignItems: "center",
     paddingHorizontal: spacing.lg, paddingVertical: spacing.md,
-    borderBottomWidth: 1, borderBottomColor: colors.border, gap: spacing.md,
+    borderBottomWidth: 3, borderBottomColor: "#000", gap: spacing.md, backgroundColor: "rgba(255,255,255,0.92)",
+    shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 0, height: 4 }, elevation: 6,
   },
-  title: { flex: 1, fontSize: 16, fontWeight: "700", color: colors.onSurface, textAlign: "center" },
+  title: { flex: 1, fontSize: 16, fontWeight: "900", color: "#000", textAlign: "center", letterSpacing: 0.5 },
   center: { flex: 1, alignItems: "center", justifyContent: "center", gap: spacing.md },
-  emptyText: { fontSize: 16, fontWeight: "600", color: colors.onSurfaceTertiary, marginTop: spacing.md },
-  emptySub: { fontSize: 14, color: colors.muted },
+  emptyText: { fontSize: 16, fontWeight: "800", color: "#000", marginTop: spacing.md },
+  emptySub: { fontSize: 14, color: "#000", fontWeight: "500" },
   row: {
     flexDirection: "row", alignItems: "center",
-    backgroundColor: colors.surfaceSecondary,
-    borderRadius: radius.lg,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 20,
     padding: spacing.md,
-    borderWidth: 1, borderColor: colors.border,
+    borderWidth: 3,
+    borderColor: "#000",
     gap: spacing.md,
+    shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 4, height: 4 }, elevation: 4,
   },
   iconWrap: {
-    width: 36, height: 36, borderRadius: radius.sm,
-    backgroundColor: colors.brandTertiary,
+    width: 36, height: 36, borderRadius: 12,
+    backgroundColor: "#F3F3F5",
     alignItems: "center", justifyContent: "center",
+    borderWidth: 2, borderColor: "#000",
   },
   textWrap: { flex: 1 },
-  typeLabel: { fontSize: 14, fontWeight: "600", color: colors.onSurface },
-  itemId: { fontSize: 12, color: colors.muted, marginTop: 2 },
-  date: { fontSize: 11, color: colors.muted, marginTop: 2 },
+  typeLabel: { fontSize: 14, fontWeight: "800", color: "#000" },
+  itemId: { fontSize: 12, color: "#000", marginTop: 2, fontWeight: "600" },
+  date: { fontSize: 11, color: "#000", marginTop: 2, fontWeight: "600" },
   deleteBtn: { padding: spacing.sm },
   footer: {
     paddingVertical: spacing.md, paddingHorizontal: spacing.lg,
-    borderTopWidth: 1, borderTopColor: colors.border,
-    backgroundColor: colors.surfaceTertiary,
+    borderTopWidth: 3, borderTopColor: "#000",
+    backgroundColor: "#F3F3F5",
   },
-  footerText: { fontSize: 12, color: colors.muted, textAlign: "center", fontStyle: "italic" },
+  footerText: { fontSize: 12, color: "#000", textAlign: "center", fontWeight: "600" },
 });

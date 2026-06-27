@@ -100,10 +100,10 @@ export default function CreatePost() {
   return (
     <SafeAreaView style={styles.root} edges={["top", "bottom"]}>
       <View style={styles.header}>
-        <Pressable testID="create-cancel" onPress={() => router.back()} hitSlop={10}>
-          <Feather name="x" size={24} color={colors.onSurface} />
+        <Pressable testID="create-cancel" onPress={() => router.back()} hitSlop={10} style={styles.closeBtn}>
+          <Feather name="x" size={22} color={colors.onSurface} />
         </Pressable>
-        <Text style={styles.title}>New Post</Text>
+        <Text style={styles.headerTitle}>New Post ✍️</Text>
         <Pressable
           testID="create-submit"
           onPress={submit}
@@ -111,38 +111,38 @@ export default function CreatePost() {
           style={[styles.postBtn, (busy || !content.trim()) && { opacity: 0.4 }]}
         >
           {busy ? (
-            <ActivityIndicator size="small" color={colors.onBrand} />
+            <ActivityIndicator size="small" color="#FFFFFF" />
           ) : (
             <Text style={styles.postBtnText}>Post</Text>
           )}
         </Pressable>
       </View>
 
-      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
-        <ScrollView contentContainerStyle={{ padding: spacing.lg }} keyboardShouldPersistTaps="handled">
-          <Text style={styles.label}>Category</Text>
-          <View style={styles.cats}>
-            {CATEGORIES.map((c) => {
-              const active = category === c.key;
-              return (
-                <Pressable
-                  key={c.key}
-                  testID={`create-cat-${c.key}`}
-                  onPress={() => setCategory(c.key)}
-                  style={[
-                    styles.catChip,
-                    active && { backgroundColor: c.color, borderColor: c.color },
-                  ]}
-                >
-                  <Text style={[styles.catChipText, active && { color: colors.onBrand }]}>
-                    {c.label}
-                  </Text>
-                </Pressable>
-              );
-            })}
-          </View>
+      <ScrollView contentContainerStyle={{ padding: spacing.lg }} keyboardShouldPersistTaps="handled">
+        <Text style={styles.label}>Category</Text>
+        <View style={styles.cats}>
+          {CATEGORIES.map((c) => {
+            const active = category === c.key;
+            return (
+              <Pressable
+                key={c.key}
+                testID={`create-cat-${c.key}`}
+                onPress={() => setCategory(c.key)}
+                style={[
+                  styles.catChip,
+                  active && { backgroundColor: c.color, borderColor: "#000" },
+                ]}
+              >
+                <Text style={[styles.catChipText, active && { color: "#FFFFFF" }]}>
+                  {c.label}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
 
-          <Text style={[styles.label, { marginTop: spacing.lg }]}>Message</Text>
+        <Text style={[styles.label, { marginTop: spacing.lg }]}>Message</Text>
+        <View style={styles.textAreaWrap}>
           <TextInput
             testID="create-content-input"
             value={content}
@@ -153,6 +153,7 @@ export default function CreatePost() {
             style={styles.input}
             autoFocus
           />
+          </View>
 
           <Text style={[styles.label, { marginTop: spacing.lg }]}>Photo (optional)</Text>
           {image ? (
@@ -175,7 +176,6 @@ export default function CreatePost() {
 
           {err ? <Text style={styles.err}>{err}</Text> : null}
         </ScrollView>
-      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -185,35 +185,53 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row", alignItems: "center",
     paddingHorizontal: spacing.lg, paddingVertical: spacing.md,
-    borderBottomWidth: 1, borderBottomColor: colors.border, gap: spacing.md,
+    borderBottomWidth: 3, borderBottomColor: "#000",
+    backgroundColor: "rgba(255,255,255,0.92)",
+    shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 0, height: 4 }, elevation: 6,
+    gap: spacing.sm,
   },
-  title: { flex: 1, fontSize: 16, fontWeight: "700", color: colors.onSurface, textAlign: "center" },
-  postBtn: { backgroundColor: colors.brand, paddingHorizontal: 16, paddingVertical: 8, borderRadius: radius.pill },
-  postBtnText: { color: colors.onBrand, fontSize: 14, fontWeight: "700" },
-  label: { fontSize: 12, fontWeight: "700", color: colors.muted, letterSpacing: 1, marginBottom: spacing.sm },
+  closeBtn: {
+    width: 36, height: 36, borderRadius: 18,
+    backgroundColor: colors.surfaceTertiary, alignItems: "center", justifyContent: "center",
+    borderWidth: 2, borderColor: "#000",
+    shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 2, height: 2 }, elevation: 2,
+  },
+  headerTitle: { flex: 1, fontSize: 18, fontWeight: "900", color: colors.onSurface, textAlign: "center", letterSpacing: -0.3 },
+  postBtn: {
+    backgroundColor: "#3366FF",
+    paddingHorizontal: 16, paddingVertical: 10, borderRadius: radius.pill,
+    borderWidth: 2, borderColor: "#000",
+    shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 2, height: 2 }, elevation: 2,
+  },
+  postBtnText: { color: "#FFFFFF", fontSize: 13, fontWeight: "900" },
+  label: { fontSize: 12, fontWeight: "800", color: colors.onSurfaceTertiary, letterSpacing: 0.5, marginBottom: spacing.sm },
   cats: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },
   catChip: {
     paddingHorizontal: 14, paddingVertical: 8, borderRadius: radius.pill,
-    borderWidth: 1, borderColor: colors.border, backgroundColor: colors.surfaceTertiary,
+    borderWidth: 2, borderColor: "#000", backgroundColor: colors.surfaceTertiary,
+    shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 2, height: 2 }, elevation: 2,
   },
-  catChipText: { fontSize: 13, fontWeight: "600", color: colors.onSurfaceTertiary },
+  catChipText: { fontSize: 13, fontWeight: "800", color: colors.onSurfaceTertiary },
   input: {
-    minHeight: 140, backgroundColor: colors.surfaceSecondary, borderRadius: radius.lg,
-    borderWidth: 1, borderColor: colors.border, padding: spacing.lg, fontSize: 16,
-    color: colors.onSurface, textAlignVertical: "top", lineHeight: 22,
+    minHeight: 140, backgroundColor: "#F3F3F5", borderRadius: radius.md,
+    borderWidth: 2, borderColor: "#000",
+    shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 4, height: 4 }, elevation: 4,
+    padding: spacing.lg, fontSize: 16, color: colors.onSurface, textAlignVertical: "top", lineHeight: 22,
   },
   imgPicker: {
     flexDirection: "row", alignItems: "center", gap: spacing.sm,
     paddingVertical: 14, paddingHorizontal: spacing.lg,
-    borderWidth: 1, borderStyle: "dashed", borderColor: colors.brand,
+    borderWidth: 2, borderColor: "#000", borderStyle: "dashed",
     borderRadius: radius.lg, backgroundColor: colors.brandTertiary,
+    shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 2, height: 2 }, elevation: 2,
   },
-  imgPickerText: { color: colors.brand, fontSize: 14, fontWeight: "600" },
-  preview: { width: "100%", aspectRatio: 4 / 3, borderRadius: radius.lg },
+  imgPickerText: { color: colors.brand, fontSize: 14, fontWeight: "700" },
+  preview: { width: "100%", aspectRatio: 4 / 3, borderRadius: radius.lg, borderWidth: 2, borderColor: "#000" },
   removeImg: {
     position: "absolute", top: 8, right: 8,
     width: 28, height: 28, borderRadius: 14,
-    backgroundColor: "rgba(0,0,0,0.6)", alignItems: "center", justifyContent: "center",
+    backgroundColor: "rgba(0,0,0,0.8)", borderWidth: 2, borderColor: "#000",
+    alignItems: "center", justifyContent: "center",
   },
-  err: { color: colors.error, marginTop: spacing.md, fontSize: 13 },
+  err: { color: "#FF3366", marginTop: spacing.md, fontSize: 13, fontWeight: "700" },
 });

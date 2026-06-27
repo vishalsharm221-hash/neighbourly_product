@@ -89,8 +89,8 @@ export default function Listings() {
   return (
     <SafeAreaView style={styles.root} edges={["top"]}>
       <View style={styles.header}>
-        <Text style={styles.eyebrow}>PROPERTY</Text>
-        <Text style={styles.title}>Real Estate & Rentals</Text>
+        <Text style={styles.eyebrow}>PROPERTIES</Text>
+        <Text style={styles.title}>Properties 🏠</Text>
       </View>
 
       {loading ? (
@@ -109,8 +109,8 @@ export default function Listings() {
           ListEmptyComponent={
             <View style={styles.empty}>
               <Feather name="home" size={32} color={colors.muted} />
-              <Text style={styles.emptyTitle}>No listings in {profile?.city} yet</Text>
-              <Text style={styles.emptyText}>Tap + to post your property.</Text>
+              <Text style={styles.emptyTitle}>No properties in your hood 🏠</Text>
+              <Text style={styles.emptyText}>List yours — tap +</Text>
             </View>
           }
           renderItem={({ item }) => (
@@ -179,41 +179,44 @@ export default function Listings() {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: colors.surface },
+  root: { flex: 1, backgroundColor: "#FBFBF9" },
   header: {
     paddingHorizontal: spacing.lg, paddingTop: spacing.sm, paddingBottom: spacing.md,
-    borderBottomWidth: 1, borderBottomColor: colors.border,
+    borderBottomWidth: 3, borderBottomColor: "#000", backgroundColor: "rgba(255,255,255,0.92)",
+    shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 0, height: 4 }, elevation: 6,
   },
-  eyebrow: { fontSize: 10, fontWeight: "700", color: colors.brand, letterSpacing: 1.2 },
-  title: { fontSize: 22, fontWeight: "800", color: colors.onSurface, marginTop: 2 },
+  eyebrow: { fontSize: 10, fontWeight: "800", color: "#3366FF", letterSpacing: 1.2 },
+  title: { fontSize: 22, fontWeight: "900", color: "#000", marginTop: 2 },
   center: { flex: 1, alignItems: "center", justifyContent: "center" },
   empty: { alignItems: "center", padding: spacing.xxxl, gap: spacing.md },
-  emptyTitle: { color: colors.onSurface, fontSize: 16, fontWeight: "700", textAlign: "center", marginTop: 0 },
-  emptyText: { color: colors.muted, fontSize: 13, textAlign: "center", lineHeight: 19 },
+  emptyTitle: { color: "#000", fontSize: 16, fontWeight: "900", textAlign: "center", marginTop: 0 },
+  emptyText: { color: "#000", fontSize: 13, textAlign: "center", lineHeight: 19, fontWeight: "500" },
   card: {
-    flex: 1, backgroundColor: colors.surfaceSecondary, borderRadius: radius.lg,
-    borderWidth: 1, borderColor: colors.border, overflow: "hidden",
+    flex: 1, backgroundColor: "#FFFFFF", borderRadius: 20,
+    borderWidth: 3, borderColor: "#000", overflow: "hidden",
+    shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 4, height: 4 }, elevation: 4,
   },
   thumb: {
-    height: 110, backgroundColor: colors.brandTertiary,
-    alignItems: "center", justifyContent: "center",
+    height: 110, backgroundColor: "#F3F3F5",
+    alignItems: "center", justifyContent: "center", borderBottomWidth: 3, borderBottomColor: "#000",
   },
-  listingTitle: { fontSize: 14, fontWeight: "700", color: colors.onSurface },
-  price: { fontSize: 15, fontWeight: "800", color: colors.brand },
+  listingTitle: { fontSize: 14, fontWeight: "800", color: "#000" },
+  price: { fontSize: 15, fontWeight: "900", color: "#3366FF" },
   metaRow: { flexDirection: "row", alignItems: "center", gap: 4 },
-  meta: { fontSize: 11, color: colors.muted, flex: 1 },
+  meta: { fontSize: 11, color: "#000", flex: 1, fontWeight: "600" },
   miniFollow: {
-    paddingHorizontal: 6, paddingVertical: 2, borderRadius: radius.pill,
-    borderWidth: 1, borderColor: colors.brand, backgroundColor: colors.surfaceSecondary,
+    paddingHorizontal: 6, paddingVertical: 2, borderRadius: 12,
+    borderWidth: 2, borderColor: "#3366FF", backgroundColor: "#F3F3F5",
   },
-  miniFollowActive: { backgroundColor: colors.brand },
-  miniFollowText: { fontSize: 9, fontWeight: "700", color: colors.brand },
-  miniFollowTextActive: { color: colors.onBrand },
-  detailsLine: { fontSize: 11, color: colors.onSurfaceTertiary, marginTop: 2 },
+  miniFollowActive: { backgroundColor: "#3366FF" },
+  miniFollowText: { fontSize: 9, fontWeight: "800", color: "#3366FF" },
+  miniFollowTextActive: { color: "#FFFFFF" },
+  detailsLine: { fontSize: 11, color: "#000", marginTop: 2, fontWeight: "600" },
   fab: {
     position: "absolute", right: spacing.lg, bottom: 80,
     width: 56, height: 56, borderRadius: 28, backgroundColor: colors.brand,
     alignItems: "center", justifyContent: "center",
-    shadowColor: "#000", shadowOpacity: 0.2, shadowRadius: 8, shadowOffset: { width: 0, height: 4 }, elevation: 6,
+    shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 4, height: 4 }, elevation: 4,
+    borderWidth: 3, borderColor: "#000",
   },
 });

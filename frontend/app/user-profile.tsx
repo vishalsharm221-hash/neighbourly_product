@@ -4,6 +4,7 @@ import { Feather } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter, useFocusEffect, useLocalSearchParams } from "expo-router";
+import { LinearGradient } from "expo-linear-gradient";
 
 import { useAuth } from "@/src/auth-context";
 import { getProfileByUserId, isFollowing, follow, unfollow, type Profile } from "@/src/db";
@@ -62,7 +63,7 @@ export default function UserProfile() {
   if (loading) {
     return (
       <SafeAreaView style={styles.root} edges={["top"]}>
-        <View style={styles.center}><ActivityIndicator color={colors.brand} /></View>
+        <View style={styles.center}><Text style={styles.loadingTxt}>Loading... 🫠</Text></View>
       </SafeAreaView>
     );
   }
@@ -70,15 +71,16 @@ export default function UserProfile() {
   if (!targetProfile) {
     return (
       <SafeAreaView style={styles.root} edges={["top"]}>
+        <LinearGradient colors={["#FF3366", "#3366FF"]} style={StyleSheet.absoluteFillObject} />
         <View style={styles.header}>
           <Pressable onPress={() => router.back()} hitSlop={10} style={styles.backBtn}>
-            <Feather name="arrow-left" size={22} color={colors.onSurface} />
+            <Feather name="arrow-left" size={22} color="#FFFFFF" />
           </Pressable>
-          <Text style={styles.headerTitle}>{targetName}</Text>
+          <Text style={styles.headerTitleWhite}>{targetName}</Text>
           <View style={{ width: 36 }} />
         </View>
         <View style={styles.center}>
-          <Feather name="user-x" size={40} color={colors.muted} />
+          <Feather name="user-x" size={44} color={colors.muted} />
           <Text style={styles.emptyTitle}>User not found</Text>
         </View>
       </SafeAreaView>
@@ -87,11 +89,12 @@ export default function UserProfile() {
 
   return (
     <SafeAreaView style={styles.root} edges={["top"]}>
+      <LinearGradient colors={["#FF3366", "#3366FF"]} style={StyleSheet.absoluteFillObject} />
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} hitSlop={10} style={styles.backBtn}>
-          <Feather name="arrow-left" size={22} color={colors.onSurface} />
+          <Feather name="arrow-left" size={22} color="#FFFFFF" />
         </Pressable>
-        <Text style={styles.headerTitle}>{targetName}</Text>
+        <Text style={styles.headerTitleWhite}>{targetName}</Text>
         <View style={{ width: 36 }} />
       </View>
 
@@ -109,29 +112,27 @@ export default function UserProfile() {
 
           <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginTop: spacing.md }}>
             <Text style={styles.name}>{targetProfile.name}</Text>
-            {targetProfile.verified && <Feather name="check-circle" size={18} color={colors.brand} />}
+            {targetProfile.verified && <Feather name="check-circle" size={18} color="#FFFFFF" />}
           </View>
           {targetProfile.handle && <Text style={styles.handle}>@{targetProfile.handle}</Text>}
           <View style={styles.locRow}>
-            <Feather name="map-pin" size={13} color={colors.muted} />
+            <Feather name="map-pin" size={13} color="#FFFFFF" />
             <Text style={styles.locText}>{targetProfile.locality} · {targetProfile.city}</Text>
           </View>
           {targetProfile.bio && <Text style={styles.bio}>{targetProfile.bio}</Text>}
 
-          <View style={styles.statsRow}>
-            <View style={styles.stat}>
-              <Text style={styles.statValue}>{targetProfile.postCount ?? 0}</Text>
-              <Text style={styles.statLabel}>Posts</Text>
+          <View style={styles.statsWrap}>
+            <View style={styles.statBox}>
+              <Text style={styles.statVal}>{targetProfile.postCount ?? 0}</Text>
+              <Text style={styles.statLbl}>Posts</Text>
             </View>
-            <View style={styles.statDivider} />
-            <View style={styles.stat}>
-              <Text style={styles.statValue}>{targetProfile.followerCount ?? 0}</Text>
-              <Text style={styles.statLabel}>Followers</Text>
+            <View style={styles.statBox}>
+              <Text style={styles.statVal}>{targetProfile.followerCount ?? 0}</Text>
+              <Text style={styles.statLbl}>Followers</Text>
             </View>
-            <View style={styles.statDivider} />
-            <View style={styles.stat}>
-              <Text style={styles.statValue}>{targetProfile.followingCount ?? 0}</Text>
-              <Text style={styles.statLabel}>Following</Text>
+            <View style={styles.statBox}>
+              <Text style={styles.statVal}>{targetProfile.followingCount ?? 0}</Text>
+              <Text style={styles.statLbl}>Following</Text>
             </View>
           </View>
 
@@ -140,36 +141,31 @@ export default function UserProfile() {
               onPress={toggleFollow}
               style={[styles.followBtn, followId && styles.followBtnActive]}
             >
-              <Feather name={followId ? "check" : "user-plus"} size={16} color={followId ? colors.onBrand : colors.brand} />
+              <Feather name={followId ? "check" : "user-plus"} size={16} color={followId ? "#FFFFFF" : "#000"} />
               <Text style={[styles.followBtnText, followId && styles.followBtnTextActive]}>
-                {followId ? "Following" : "Follow"}
+                {followId ? "Following ✓" : "Follow +"}
               </Text>
             </Pressable>
           )}
         </View>
 
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Posts by {targetProfile.name}</Text>
+          <Feather name="file-text" size={16} color={colors.onSurface} />
+          <Text style={styles.sectionTitle}>Posts</Text>
         </View>
 
         {posts.length === 0 ? (
           <View style={styles.center}>
             <Feather name="file-text" size={32} color={colors.muted} />
-            <Text style={styles.emptyTitle}>No posts yet</Text>
+            <Text style={styles.emptyTitle}>No posts yet 📝</Text>
           </View>
         ) : (
-          <FlatList
-            data={posts}
-            keyExtractor={(p) => p.$id}
-            scrollEnabled={false}
-            contentContainerStyle={{ paddingHorizontal: spacing.lg, gap: spacing.md }}
-            renderItem={({ item }) => (
-              <View style={styles.card}>
-                <Text style={styles.cardContent} numberOfLines={4}>{item.content}</Text>
-                <Text style={styles.cardMeta}>{item.$createdAt?.slice(0, 10)} · {item.category}</Text>
-              </View>
-            )}
-          />
+          posts.map((p) => (
+            <View key={p.$id} style={styles.postCard}>
+              <Text style={styles.postContent} numberOfLines={4}>{p.content}</Text>
+              <Text style={styles.postMeta}>{new Date(p.$createdAt).toLocaleDateString("en-IN")}</Text>
+            </View>
+          ))
         )}
       </ScrollView>
     </SafeAreaView>
@@ -179,45 +175,67 @@ export default function UserProfile() {
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.surface },
   center: { flex: 1, alignItems: "center", justifyContent: "center", padding: spacing.xxxl, gap: spacing.md },
-  emptyTitle: { fontSize: 16, fontWeight: "700", color: colors.onSurface },
+  loadingTxt: { fontSize: 14, color: colors.muted, fontWeight: "600" },
+  emptyTitle: { fontSize: 16, fontWeight: "800", color: colors.onSurface, textAlign: "center" },
   header: {
     flexDirection: "row", alignItems: "center", paddingHorizontal: spacing.lg, paddingVertical: spacing.md,
-    borderBottomWidth: 1, borderBottomColor: colors.border, gap: spacing.md,
+    borderBottomWidth: 3, borderBottomColor: "#000",
+    backgroundColor: "rgba(255,51,102,0.9)",
+    shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 0, height: 4 }, elevation: 6,
+    gap: spacing.md,
   },
   backBtn: { width: 36, height: 36, alignItems: "center", justifyContent: "center" },
-  headerTitle: { flex: 1, fontSize: 18, fontWeight: "800", color: colors.onSurface },
-  profileSection: { alignItems: "center", paddingTop: spacing.lg, paddingHorizontal: spacing.lg, gap: 4 },
+  headerTitleWhite: { flex: 1, fontSize: 18, fontWeight: "900", color: "#FFFFFF", letterSpacing: -0.3 },
+  profileSection: { alignItems: "center", paddingTop: 48, paddingHorizontal: spacing.lg, gap: 6 },
   avatarWrap: { marginTop: 0 },
   avatar: {
-    width: 88, height: 88, borderRadius: 44, backgroundColor: colors.brandTertiary,
+    width: 88, height: 88, borderRadius: 44,
     alignItems: "center", justifyContent: "center", overflow: "hidden",
-    borderWidth: 3, borderColor: colors.brand,
+    borderWidth: 4, borderColor: "#000",
+    shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 4, height: 4 }, elevation: 8,
+    backgroundColor: colors.brandTertiary,
   },
-  avatarText: { color: colors.brand, fontWeight: "800", fontSize: 36 },
-  name: { fontSize: 20, fontWeight: "800", color: colors.onSurface },
-  handle: { fontSize: 13, color: colors.muted, marginTop: 2 },
+  avatarText: { color: colors.brand, fontWeight: "900", fontSize: 36 },
+  name: { fontSize: 24, fontWeight: "900", color: "#FFFFFF", letterSpacing: -0.5 },
+  handle: { fontSize: 14, fontWeight: "700", color: "rgba(255,255,255,0.85)", marginTop: 2 },
   locRow: { flexDirection: "row", alignItems: "center", gap: 4, marginTop: 4 },
-  locText: { fontSize: 13, color: colors.onSurfaceTertiary },
-  bio: { fontSize: 14, color: colors.onSurface, marginTop: spacing.md, textAlign: "center", lineHeight: 20 },
-  statsRow: { flexDirection: "row", alignItems: "center", marginTop: spacing.lg, alignSelf: "stretch" },
-  stat: { flex: 1, alignItems: "center" },
-  statDivider: { width: 1, height: 28, backgroundColor: colors.border },
-  statValue: { fontSize: 18, fontWeight: "800", color: colors.onSurface },
-  statLabel: { fontSize: 11, color: colors.muted, marginTop: 2 },
+  locText: { fontSize: 13, fontWeight: "700", color: "#FFFFFF" },
+  bio: { fontSize: 14, fontWeight: "600", color: "rgba(255,255,255,0.9)", marginTop: spacing.md, textAlign: "center", lineHeight: 20 },
+  statsWrap: {
+    flexDirection: "row", marginTop: spacing.lg, alignSelf: "stretch", gap: 0,
+    backgroundColor: "rgba(255,255,255,0.95)",
+    borderRadius: radius.lg,
+    borderWidth: 2, borderColor: "#000",
+    shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 4, height: 4 }, elevation: 4,
+    overflow: "hidden",
+  },
+  statBox: { flex: 1, alignItems: "center", paddingVertical: spacing.lg },
+  statVal: { fontSize: 22, fontWeight: "900", color: colors.onSurface },
+  statLbl: { fontSize: 11, fontWeight: "700", color: colors.muted, marginTop: 2 },
   followBtn: {
     flexDirection: "row", alignItems: "center", gap: 6, marginTop: spacing.lg,
-    paddingHorizontal: 20, paddingVertical: 10, borderRadius: radius.pill,
-    borderWidth: 1, borderColor: colors.brand, backgroundColor: colors.surfaceSecondary,
+    paddingHorizontal: 20, paddingVertical: 12, borderRadius: radius.pill,
+    borderWidth: 2, borderColor: "#000",
+    backgroundColor: "#FFFFFF",
+    shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 4, height: 4 }, elevation: 4,
   },
-  followBtnActive: { backgroundColor: colors.brand },
-  followBtnText: { color: colors.brand, fontWeight: "700", fontSize: 14 },
-  followBtnTextActive: { color: colors.onBrand },
-  sectionHeader: { paddingHorizontal: spacing.lg, paddingVertical: spacing.md },
-  sectionTitle: { fontSize: 16, fontWeight: "800", color: colors.onSurface },
-  card: {
+  followBtnActive: { backgroundColor: "#3366FF", borderColor: "#000" },
+  followBtnText: { color: "#000", fontWeight: "900", fontSize: 14 },
+  followBtnTextActive: { color: "#FFFFFF" },
+  sectionHeader: {
+    flexDirection: "row", alignItems: "center", gap: 8,
+    paddingHorizontal: spacing.lg, paddingVertical: spacing.md,
+    borderBottomWidth: 2, borderBottomColor: "#000",
+  },
+  sectionTitle: { fontSize: 16, fontWeight: "900", color: colors.onSurface, letterSpacing: -0.3 },
+  postCard: {
     backgroundColor: colors.surfaceSecondary, borderRadius: radius.lg,
-    borderWidth: 1, borderColor: colors.border, padding: spacing.lg, gap: 4,
+    borderWidth: 2, borderColor: "#000",
+    shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 4, height: 4 }, elevation: 4,
+    padding: spacing.lg, gap: 4,
+    marginHorizontal: spacing.lg,
+    marginTop: spacing.md,
   },
-  cardContent: { fontSize: 14, color: colors.onSurface, lineHeight: 20 },
-  cardMeta: { fontSize: 11, color: colors.muted, marginTop: 4 },
+  postContent: { fontSize: 14, fontWeight: "600", color: colors.onSurface, lineHeight: 20 },
+  postMeta: { fontSize: 11, fontWeight: "700", color: colors.muted, marginTop: 4 },
 });

@@ -1,16 +1,6 @@
 import { useCallback, useRef, useState, useEffect } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
-  FlatList,
-  Pressable,
-  RefreshControl,
-  ActivityIndicator,
-  ScrollView,
-  TextInput,
-  Modal,
-  Share,
+  View, Text, StyleSheet, FlatList, Pressable, RefreshControl, ActivityIndicator, ScrollView, TextInput, Modal, Share,
 } from "react-native";
 import { useRouter, useFocusEffect } from "expo-router";
 import { Feather } from "@expo/vector-icons";
@@ -20,21 +10,11 @@ import * as Haptics from "expo-haptics";
 
 import { useAuth } from "@/src/auth-context";
 import {
-  PostDoc,
-  listPosts,
-  fetchLikeMap,
-  likePost,
-  unlikePost,
-  imagePreviewUrl,
-  listComments,
-  createComment,
-  CommentDoc,
-  isFollowing,
-  follow,
-  unfollow,
+  PostDoc, listPosts, fetchLikeMap, likePost, unlikePost, imagePreviewUrl,
+  listComments, createComment, CommentDoc, isFollowing, follow, unfollow,
 } from "@/src/db";
 import { CATEGORIES } from "@/src/data";
-import { colors, spacing, radius } from "@/src/theme";
+import { colors, spacing, radius, shadows } from "@/src/theme";
 
 function timeAgo(iso: string) {
   const diff = (Date.now() - new Date(iso).getTime()) / 1000;
@@ -185,14 +165,15 @@ export default function Feed() {
     <SafeAreaView style={styles.root} edges={["top"]}>
       <View style={styles.header}>
         <View style={{ flex: 1 }}>
-          <Text style={styles.headerEyebrow}>YOUR {profile?.userType === "student" ? "COLLEGE" : "NEIGHBOURHOOD"}</Text>
+          <Text style={styles.headerEyebrow}>YOUR HOOD</Text>
           <Text testID="feed-locality" style={styles.headerTitle}>
-            <Feather name={profile?.userType === "student" ? "book-open" : "map-pin"} size={16} color={colors.brand} />{" "}
-            {profile?.userType === "student" ? profile?.college : profile?.locality} · {profile?.city}
+            <Feather name={profile?.userType === "student" ? "book-open" : "map-pin"} size={14} color={colors.brand} />
+            {" "}{profile?.userType === "student" ? profile?.college : profile?.locality}
           </Text>
         </View>
-               <Pressable onPress={() => router.push("/messages")} style={styles.headerBtn}>
-          <Feather name="send" size={22} color={colors.onSurface} />
+        <Pressable onPress={() => router.push("/messages")} style={styles.headerBtn}>
+          <Feather name="send" size={20} color={colors.onSurface} />
+          <View style={styles.headerBtnDot} />
         </Pressable>
       </View>
 
@@ -229,7 +210,7 @@ export default function Feed() {
             <View style={styles.empty}>
               <Feather name="camera" size={48} color={colors.muted} />
               <Text style={styles.emptyTitle}>No posts yet</Text>
-              <Text style={styles.emptyText}>Be the first to share with your neighbourhood.</Text>
+              <Text style={styles.emptyText}>This hood is quiet... be the first, bestie 🫶</Text>
             </View>
           }
           renderItem={({ item }) => {
@@ -381,20 +362,36 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row", alignItems: "center",
     paddingHorizontal: spacing.lg, paddingTop: spacing.sm, paddingBottom: spacing.md,
+    backgroundColor: "rgba(255,255,255,0.92)",
+    borderBottomWidth: 3, borderBottomColor: "#000",
+    shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 0, height: 4 }, elevation: 6,
   },
-  headerEyebrow: { fontSize: 10, fontWeight: "700", color: colors.brand, letterSpacing: 1.2 },
-  headerTitle: { fontSize: 20, fontWeight: "800", color: colors.onSurface, marginTop: 2 },
-  headerBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: colors.surfaceTertiary, alignItems: "center", justifyContent: "center" },
+  headerEyebrow: { fontSize: 10, fontWeight: "800", color: colors.brand, letterSpacing: 1.2 },
+  headerTitle: { fontSize: 16, fontWeight: "800", color: colors.onSurface, marginTop: 2, lineHeight: 20 },
+  headerBtn: {
+    width: 38, height: 38, borderRadius: 19,
+    backgroundColor: colors.surfaceTertiary,
+    borderWidth: 2, borderColor: "#000",
+    alignItems: "center", justifyContent: "center",
+    shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 2, height: 2 }, elevation: 2,
+  },
+  headerBtnDot: {
+    position: "absolute", top: -2, right: -2,
+    width: 10, height: 10, borderRadius: 5,
+    backgroundColor: "#FF3366",
+    borderWidth: 2, borderColor: colors.surfaceSecondary,
+  },
   chipsWrap: { height: 56, justifyContent: "center", borderBottomWidth: 1, borderBottomColor: colors.border },
   chipsRow: { paddingHorizontal: spacing.lg, gap: spacing.sm, alignItems: "center" },
   chip: {
-    flexShrink: 0, height: 36, paddingHorizontal: 14, borderRadius: radius.pill,
-    backgroundColor: colors.surfaceTertiary, alignItems: "center", justifyContent: "center",
-    borderWidth: 1, borderColor: colors.border,
+    paddingHorizontal: 14, paddingVertical: 8,
+    backgroundColor: colors.surfaceTertiary, borderRadius: radius.pill,
+    borderWidth: 2, borderColor: "#000",
+    shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 2, height: 2 }, elevation: 2,
   },
-  chipActive: { backgroundColor: colors.brand, borderColor: colors.brand },
-  chipText: { fontSize: 13, fontWeight: "600", color: colors.onSurfaceTertiary },
-  chipTextActive: { color: colors.onBrand },
+  chipActive: { backgroundColor: "#3366FF", borderColor: "#000" },
+  chipText: { fontSize: 12, fontWeight: "800", color: colors.onSurfaceTertiary },
+  chipTextActive: { color: "#FFFFFF" },
   center: { flex: 1, alignItems: "center", justifyContent: "center" },
   empty: { alignItems: "center", padding: spacing.xxxl, gap: spacing.md, marginTop: 60 },
   emptyTitle: { color: colors.onSurface, fontSize: 16, fontWeight: "700", textAlign: "center" },
@@ -402,11 +399,12 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.surfaceSecondary,
     borderTopWidth: 1, borderBottomWidth: 1, borderColor: colors.border,
+    borderLeftWidth: 4, borderLeftColor: colors.brand,
   },
   cardHead: { flexDirection: "row", alignItems: "center", gap: spacing.md, padding: spacing.lg },
   avatar: { width: 36, height: 36, borderRadius: 18, backgroundColor: colors.brandTertiary, alignItems: "center", justifyContent: "center", overflow: "hidden" },
   avatarText: { color: colors.brand, fontWeight: "700", fontSize: 14 },
-  author: { fontSize: 14, fontWeight: "700", color: colors.onSurface },
+  author: { fontSize: 14, fontWeight: "800", color: colors.onSurface },
   meta: { fontSize: 11, color: colors.muted, marginTop: 2 },
   catPill: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: radius.pill, backgroundColor: colors.brandTertiary },
   catPillText: { fontSize: 10, fontWeight: "700", color: colors.brand },
@@ -422,7 +420,8 @@ const styles = StyleSheet.create({
     position: "absolute", right: spacing.lg, bottom: 80,
     width: 56, height: 56, borderRadius: 28, backgroundColor: colors.brand,
     alignItems: "center", justifyContent: "center",
-    shadowColor: "#000", shadowOpacity: 0.2, shadowRadius: 8, shadowOffset: { width: 0, height: 4 }, elevation: 6,
+    shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 4, height: 4 }, elevation: 6,
+    borderWidth: 2, borderColor: "#000",
   },
   commentOverlay: { flex: 1, justifyContent: "flex-end", backgroundColor: "rgba(0,0,0,0.4)" },
   commentSheet: { backgroundColor: colors.surface, borderTopLeftRadius: 20, borderTopRightRadius: 20, maxHeight: "70%", minHeight: "50%" },

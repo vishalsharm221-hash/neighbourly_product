@@ -188,11 +188,11 @@ export default function BusinessesScreen() {
       <View style={styles.emptyIcon}>
         <Feather name="briefcase" size={48} color={colors.muted} />
       </View>
-      <Text style={styles.emptyTitle}>No businesses found</Text>
+      <Text style={styles.emptyTitle}>No biz here yet 🏪</Text>
       <Text style={styles.emptySubtitle}>
         {category === "all"
-          ? "No businesses listed yet. Be the first to add one!"
-          : `No ${category.toLowerCase()} businesses found in your area.`}
+          ? "Add yours — support local!"
+          : `No ${category.toLowerCase()} businesses in your area.`}
       </Text>
     </View>
   );
@@ -214,7 +214,7 @@ export default function BusinessesScreen() {
     return (
       <SafeAreaView style={styles.root} edges={["top", "bottom"]}>
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>LOCAL BUSINESSES</Text>
+          <Text style={styles.headerTitle}>Local Biz 🏪</Text>
         </View>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.brand} />
@@ -227,7 +227,7 @@ export default function BusinessesScreen() {
     return (
       <SafeAreaView style={styles.root} edges={["top", "bottom"]}>
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>LOCAL BUSINESSES</Text>
+          <Text style={styles.headerTitle}>Local Biz 🏪</Text>
         </View>
         <View style={styles.errorContainer}>
           <Feather name="alert-circle" size={48} color={colors.error} />
@@ -244,7 +244,7 @@ export default function BusinessesScreen() {
   return (
     <SafeAreaView style={styles.root} edges={["top", "bottom"]}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>LOCAL BUSINESSES</Text>
+        <Text style={styles.headerTitle}>Local Biz 🏪</Text>
       </View>
 
       <View style={styles.filterRow}>
@@ -270,20 +270,25 @@ export default function BusinessesScreen() {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: colors.surface },
+  root: { flex: 1, backgroundColor: "#FBFBF9" },
   header: {
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.sm,
     paddingBottom: spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-    backgroundColor: colors.surface,
+    borderBottomWidth: 3,
+    borderBottomColor: "#000",
+    backgroundColor: "rgba(255,255,255,0.92)",
+    shadowColor: "#000",
+    shadowOpacity: 1,
+    shadowRadius: 0,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 6,
   },
   headerTitle: {
     fontSize: 13,
-    fontWeight: "800",
+    fontWeight: "900",
     letterSpacing: 1.5,
-    color: colors.onSurface,
+    color: "#000",
     textAlign: "center",
   },
   filterRow: {
@@ -296,22 +301,23 @@ const styles = StyleSheet.create({
   chip: {
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
-    borderRadius: radius.pill,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.surfaceSecondary,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: "#000",
+    backgroundColor: "#F3F3F5",
   },
   chipActive: {
-    backgroundColor: colors.brand,
-    borderColor: colors.brand,
+    backgroundColor: "#3366FF",
+    borderColor: "#000",
   },
   chipText: {
     fontSize: 13,
-    fontWeight: "600",
-    color: colors.onSurfaceTertiary,
+    fontWeight: "800",
+    color: "#000",
   },
   chipTextActive: {
-    color: colors.onBrand,
+    color: "#FFFFFF",
+    fontWeight: "900",
   },
   listContent: {
     paddingHorizontal: spacing.lg,
@@ -322,12 +328,17 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   card: {
-    backgroundColor: colors.surfaceSecondary,
-    borderRadius: radius.lg,
-    borderWidth: 1,
-    borderColor: colors.border,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 20,
+    borderWidth: 3,
+    borderColor: "#000",
     padding: spacing.lg,
     gap: spacing.sm,
+    shadowColor: "#000",
+    shadowOpacity: 1,
+    shadowRadius: 0,
+    shadowOffset: { width: 4, height: 4 },
+    elevation: 4,
   },
   cardTopRow: {
     flexDirection: "row",
@@ -337,10 +348,12 @@ const styles = StyleSheet.create({
   businessIcon: {
     width: 44,
     height: 44,
-    borderRadius: radius.md,
-    backgroundColor: colors.brandTertiary,
+    borderRadius: 12,
+    backgroundColor: "#F3F3F5",
     alignItems: "center",
     justifyContent: "center",
+    borderWidth: 2,
+    borderColor: "#000",
   },
   businessInfo: { flex: 1 },
   businessNameRow: {
@@ -351,8 +364,8 @@ const styles = StyleSheet.create({
   businessName: {
     flex: 1,
     fontSize: 16,
-    fontWeight: "700",
-    color: colors.onSurface,
+    fontWeight: "900",
+    color: "#000",
   },
   verifiedBadge: {
     marginLeft: spacing.xs,
@@ -361,14 +374,16 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     paddingHorizontal: spacing.sm,
     paddingVertical: 2,
-    borderRadius: radius.pill,
-    backgroundColor: colors.brandTertiary,
+    borderRadius: 12,
+    backgroundColor: "#F3F3F5",
     marginTop: spacing.xs,
+    borderWidth: 2,
+    borderColor: "#000",
   },
   categoryChipText: {
     fontSize: 11,
-    fontWeight: "700",
-    color: colors.brand,
+    fontWeight: "800",
+    color: "#3366FF",
     letterSpacing: 0.3,
     textTransform: "capitalize",
   },
@@ -379,7 +394,7 @@ const styles = StyleSheet.create({
     marginTop: spacing.xs,
   },
   starsRow: { flexDirection: "row", gap: 2 },
-  ratingText: { fontSize: 13, fontWeight: "600", color: colors.onSurfaceTertiary },
+  ratingText: { fontSize: 13, fontWeight: "700", color: "#000" },
   cardMeta: {
     flexDirection: "row",
     gap: spacing.lg,
@@ -392,8 +407,8 @@ const styles = StyleSheet.create({
   },
   metaText: {
     fontSize: 12,
-    color: colors.muted,
-    fontWeight: "500",
+    color: "#000",
+    fontWeight: "600",
   },
   fab: {
     position: "absolute",
@@ -402,14 +417,16 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: colors.brand,
+    backgroundColor: "#3366FF",
     alignItems: "center",
     justifyContent: "center",
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 6,
+    shadowOpacity: 1,
+    shadowRadius: 0,
+    shadowOffset: { width: 4, height: 4 },
+    elevation: 4,
+    borderWidth: 3,
+    borderColor: "#000",
   },
   emptyContainer: {
     flex: 1,
@@ -421,22 +438,25 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: colors.surfaceTertiary,
+    backgroundColor: "#F3F3F5",
     alignItems: "center",
     justifyContent: "center",
     marginBottom: spacing.lg,
+    borderWidth: 3,
+    borderColor: "#000",
   },
   emptyTitle: {
     fontSize: 18,
-    fontWeight: "700",
-    color: colors.onSurface,
+    fontWeight: "900",
+    color: "#000",
     marginBottom: spacing.sm,
   },
   emptySubtitle: {
     fontSize: 14,
-    color: colors.muted,
+    color: "#000",
     textAlign: "center",
     paddingHorizontal: spacing.xxl,
+    fontWeight: "500",
   },
   loadingContainer: {
     flex: 1,
@@ -451,26 +471,34 @@ const styles = StyleSheet.create({
   },
   errorTitle: {
     fontSize: 18,
-    fontWeight: "700",
-    color: colors.onSurface,
+    fontWeight: "900",
+    color: "#000",
     marginTop: spacing.md,
   },
   errorMessage: {
     fontSize: 14,
-    color: colors.muted,
+    color: "#000",
     textAlign: "center",
     marginTop: spacing.sm,
+    fontWeight: "500",
   },
   retryBtn: {
-    backgroundColor: colors.brand,
+    backgroundColor: "#3366FF",
     paddingHorizontal: spacing.xl,
     paddingVertical: spacing.sm,
-    borderRadius: radius.pill,
+    borderRadius: 12,
     marginTop: spacing.lg,
+    borderWidth: 3,
+    borderColor: "#000",
+    shadowColor: "#000",
+    shadowOpacity: 1,
+    shadowRadius: 0,
+    shadowOffset: { width: 4, height: 4 },
+    elevation: 4,
   },
   retryBtnText: {
-    color: colors.onBrand,
+    color: "#FFFFFF",
     fontSize: 14,
-    fontWeight: "700",
+    fontWeight: "900",
   },
 });

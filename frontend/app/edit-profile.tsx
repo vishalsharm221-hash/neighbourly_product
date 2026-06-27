@@ -77,7 +77,7 @@ export default function EditProfile() {
         <Pressable onPress={() => router.back()} hitSlop={10} testID="edit-cancel">
           <Feather name="x" size={24} color={colors.onSurface} />
         </Pressable>
-        <Text style={styles.title}>Edit profile</Text>
+        <Text style={styles.title}>Edit Profile ✨</Text>
         <Pressable
           testID="edit-save"
           onPress={submit}

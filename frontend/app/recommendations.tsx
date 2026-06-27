@@ -172,8 +172,8 @@ export default function Recommendations() {
   return (
     <SafeAreaView style={styles.root} edges={["top"]}>
       <View style={styles.header}>
-        <Text style={styles.eyebrow}>NEIGHBOURHOOD</Text>
-        <Text style={styles.title}>LOCAL RECOMMENDATIONS</Text>
+        <Text style={styles.eyebrow}>COMMUNITY</Text>
+        <Text style={styles.title}>Recs ⭐</Text>
       </View>
 
       <View style={styles.chipsWrap}>
@@ -208,8 +208,8 @@ export default function Recommendations() {
           ListEmptyComponent={
             <View style={styles.empty}>
               <Feather name="star" size={32} color={colors.muted} />
-              <Text style={styles.emptyTitle}>No recommendations yet</Text>
-              <Text style={styles.emptyText}>Be the first to share a local tip.</Text>
+              <Text style={styles.emptyTitle}>No recs yet ⭐</Text>
+              <Text style={styles.emptyText}>The hood is quiet — share your faves!</Text>
             </View>
           }
           renderItem={({ item }) => {
@@ -354,74 +354,80 @@ function timeAgo(iso: string) {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: colors.surface },
+  root: { flex: 1, backgroundColor: "#FBFBF9" },
   header: {
     paddingHorizontal: spacing.lg, paddingTop: spacing.sm, paddingBottom: spacing.md,
-    borderBottomWidth: 1, borderBottomColor: colors.border,
+    borderBottomWidth: 3, borderBottomColor: "#000", backgroundColor: "rgba(255,255,255,0.92)",
+    shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 0, height: 4 }, elevation: 6,
   },
-  eyebrow: { fontSize: 10, fontWeight: "700", color: colors.brand, letterSpacing: 1.2 },
-  title: { fontSize: 22, fontWeight: "800", color: colors.onSurface, marginTop: 2 },
-  chipsWrap: { height: 56, justifyContent: "center", borderBottomWidth: 1, borderBottomColor: colors.border },
+  eyebrow: { fontSize: 10, fontWeight: "800", color: "#3366FF", letterSpacing: 1.2 },
+  title: { fontSize: 22, fontWeight: "900", color: "#000", marginTop: 2 },
+  chipsWrap: { height: 56, justifyContent: "center", borderBottomWidth: 3, borderBottomColor: "#000", backgroundColor: "#FFFFFF" },
   chipsRow: { paddingHorizontal: spacing.lg, gap: spacing.sm, alignItems: "center" },
   chip: {
-    flexShrink: 0, height: 36, paddingHorizontal: 14, borderRadius: radius.pill,
-    backgroundColor: colors.surfaceTertiary, alignItems: "center", justifyContent: "center",
-    borderWidth: 1, borderColor: colors.border,
+    flexShrink: 0, height: 36, paddingHorizontal: 14, borderRadius: 12,
+    backgroundColor: "#F3F3F5", alignItems: "center", justifyContent: "center",
+    borderWidth: 2, borderColor: "#000",
   },
-  chipActive: { backgroundColor: colors.brand, borderColor: colors.brand },
-  chipText: { fontSize: 13, fontWeight: "600", color: colors.onSurfaceTertiary },
-  chipTextActive: { color: colors.onBrand },
+  chipActive: { backgroundColor: "#3366FF", borderColor: "#000" },
+  chipText: { fontSize: 13, fontWeight: "800", color: "#000" },
+  chipTextActive: { color: "#FFFFFF", fontWeight: "900" },
   center: { flex: 1, alignItems: "center", justifyContent: "center" },
   empty: { alignItems: "center", padding: spacing.xxxl, gap: spacing.md, marginTop: 60 },
-  emptyTitle: { color: colors.onSurface, fontSize: 16, fontWeight: "700", textAlign: "center" },
-  emptyText: { color: colors.muted, fontSize: 13, textAlign: "center", lineHeight: 19 },
+  emptyTitle: { color: "#000", fontSize: 16, fontWeight: "900", textAlign: "center" },
+  emptyText: { color: "#000", fontSize: 13, textAlign: "center", lineHeight: 19, fontWeight: "500" },
   card: {
-    backgroundColor: colors.surfaceSecondary,
-    borderTopWidth: 1, borderBottomWidth: 1, borderColor: colors.border,
+    backgroundColor: "#FFFFFF",
+    borderTopWidth: 3, borderBottomWidth: 3, borderColor: "#000",
+    borderLeftWidth: 6, borderLeftColor: "#FF3366",
+    shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 4, height: 4 }, elevation: 4,
   },
   cardHead: { flexDirection: "row", alignItems: "center", gap: spacing.md, padding: spacing.lg },
-  author: { fontSize: 14, fontWeight: "700", color: colors.onSurface },
+  author: { fontSize: 14, fontWeight: "800", color: "#000" },
   miniFollow: {
-    paddingHorizontal: 8, paddingVertical: 2, borderRadius: radius.pill,
-    borderWidth: 1, borderColor: colors.brand, backgroundColor: colors.surfaceSecondary,
+    paddingHorizontal: 8, paddingVertical: 2, borderRadius: 12,
+    borderWidth: 2, borderColor: "#3366FF", backgroundColor: "#F3F3F5",
   },
-  miniFollowActive: { backgroundColor: colors.brand },
-  miniFollowText: { fontSize: 10, fontWeight: "700", color: colors.brand },
-  miniFollowTextActive: { color: colors.onBrand },
+  miniFollowActive: { backgroundColor: "#3366FF" },
+  miniFollowText: { fontSize: 10, fontWeight: "800", color: "#3366FF" },
+  miniFollowTextActive: { color: "#FFFFFF" },
   metaRow: { flexDirection: "row", alignItems: "center", gap: 4, marginTop: 4 },
-  meta: { fontSize: 11, color: colors.muted },
-  postImage: { width: "100%", aspectRatio: 16 / 9, backgroundColor: colors.surfaceTertiary },
-  titleText: { fontSize: 15, fontWeight: "700", color: colors.onSurface },
-  content: { fontSize: 14, color: colors.onSurfaceTertiary, marginTop: 4, lineHeight: 20 },
+  meta: { fontSize: 11, color: "#000", fontWeight: "600" },
+  postImage: { width: "100%", aspectRatio: 16 / 9, backgroundColor: "#F3F3F5", borderWidth: 3, borderTopColor: "#000", borderBottomColor: "#000" },
+  titleText: { fontSize: 15, fontWeight: "900", color: "#000" },
+  content: { fontSize: 14, color: "#000", marginTop: 4, lineHeight: 20, fontWeight: "500" },
   actions: {
     flexDirection: "row", gap: spacing.lg,
     paddingHorizontal: spacing.lg, paddingTop: spacing.md,
+    borderTopWidth: 2, borderTopColor: "#000",
   },
   actionBtn: { flexDirection: "row", alignItems: "center", gap: 4 },
-  actionCount: { fontSize: 13, fontWeight: "600", color: colors.onSurface },
-  actionCountActive: { color: colors.error },
+  actionCount: { fontSize: 13, fontWeight: "700", color: "#000" },
+  actionCountActive: { color: "#FF3366" },
   fab: {
     position: "absolute", right: spacing.lg, bottom: 80,
     width: 56, height: 56, borderRadius: 28, backgroundColor: colors.brand,
     alignItems: "center", justifyContent: "center",
-    shadowColor: "#000", shadowOpacity: 0.2, shadowRadius: 8, shadowOffset: { width: 0, height: 4 }, elevation: 6,
+    shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 4, height: 4 }, elevation: 4,
+    borderWidth: 3, borderColor: "#000",
   },
   commentOverlay: { flex: 1, justifyContent: "flex-end", backgroundColor: "rgba(0,0,0,0.4)" },
-  commentSheet: { backgroundColor: colors.surface, borderTopLeftRadius: 20, borderTopRightRadius: 20, maxHeight: "70%", minHeight: "50%" },
-  commentHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", padding: spacing.lg, borderBottomWidth: 1, borderBottomColor: colors.border },
-  commentTitle: { fontSize: 16, fontWeight: "700", color: colors.onSurface },
+  commentSheet: { backgroundColor: "#FFFFFF", borderTopLeftRadius: 20, borderTopRightRadius: 20, maxHeight: "70%", minHeight: "50%", borderTopWidth: 3, borderTopColor: "#000" },
+  commentHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", padding: spacing.lg, borderBottomWidth: 3, borderBottomColor: "#000" },
+  commentTitle: { fontSize: 16, fontWeight: "900", color: "#000" },
   commentItem: { flexDirection: "row", gap: spacing.md },
-  commentAvatar: { width: 32, height: 32, borderRadius: 16, backgroundColor: colors.brandTertiary, alignItems: "center", justifyContent: "center" },
-  commentAvatarText: { color: colors.brand, fontWeight: "700", fontSize: 12 },
-  commentAuthor: { fontSize: 13, fontWeight: "700", color: colors.onSurface },
-  commentTime: { fontSize: 11, color: colors.muted },
-  commentContent: { fontSize: 13, color: colors.onSurface, marginTop: 2, lineHeight: 18 },
+  commentAvatar: { width: 32, height: 32, borderRadius: 16, backgroundColor: "#F3F3F5", alignItems: "center", justifyContent: "center", borderWidth: 2, borderColor: "#000" },
+  commentAvatarText: { color: "#3366FF", fontWeight: "800", fontSize: 12 },
+  commentAuthor: { fontSize: 13, fontWeight: "800", color: "#000" },
+  commentTime: { fontSize: 11, color: "#000", fontWeight: "600" },
+  commentContent: { fontSize: 13, color: "#000", marginTop: 2, lineHeight: 18, fontWeight: "500" },
   commentInputRow: {
     flexDirection: "row", alignItems: "center", gap: spacing.md,
-    padding: spacing.lg, borderTopWidth: 1, borderTopColor: colors.border,
+    padding: spacing.lg, borderTopWidth: 3, borderTopColor: "#000",
   },
   commentInput: {
-    flex: 1, backgroundColor: colors.surfaceTertiary, borderRadius: radius.pill,
-    paddingHorizontal: spacing.lg, paddingVertical: 10, fontSize: 14, color: colors.onSurface,
+    flex: 1, backgroundColor: "#F3F3F5", borderRadius: 12,
+    paddingHorizontal: spacing.lg, paddingVertical: 10, fontSize: 14, color: "#000",
+    borderWidth: 2, borderColor: "#000",
   },
 });

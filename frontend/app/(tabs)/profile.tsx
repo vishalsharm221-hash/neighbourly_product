@@ -1,7 +1,7 @@
 import { useCallback, useState, useEffect } from "react";
-import { View, Text, StyleSheet, Pressable, ScrollView, FlatList, Modal, TextInput } from "react-native";
+import { View, Text, StyleSheet, Pressable, ScrollView, FlatList, Modal, TextInput, Image } from "react-native";
 import { Feather } from "@expo/vector-icons";
-import { Image } from "expo-image";
+import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter, useFocusEffect, useLocalSearchParams } from "expo-router";
 import * as Haptics from "expo-haptics";
@@ -9,7 +9,7 @@ import { Share } from "react-native";
 
 import { useAuth } from "@/src/auth-context";
 import { imagePreviewUrl, listPostsByAuthor, listSavedItems, listComments, createComment, type PostDoc, type SavedItemDoc, type CommentDoc } from "@/src/db";
-import { colors, spacing, radius } from "@/src/theme";
+import { colors, spacing, radius, gradients } from "@/src/theme";
 
 function timeAgo(iso: string) {
   const diff = (Date.now() - new Date(iso).getTime()) / 1000;
@@ -93,62 +93,51 @@ export default function Profile() {
     <SafeAreaView style={styles.root} edges={["top"]}>
       {/* Cover + Avatar */}
       <View style={styles.coverWrap}>
-        <View style={styles.cover} />
-        <View style={styles.avatarWrap}>
-          <View style={styles.avatar}>
-            {profile?.avatarFileId ? (
-              <Image source={imagePreviewUrl(profile.avatarFileId)} style={StyleSheet.absoluteFillObject} contentFit="cover" />
-            ) : (
-              <Text style={styles.avatarText}>{profile?.name?.[0]?.toUpperCase() || "?"}</Text>
-            )}
-          </View>
+        <LinearGradient colors={["#FF3366", "#3366FF"]} style={StyleSheet.absoluteFillObject} />
+        <View style={styles.avatarBadge}>
+          <Text style={styles.avatarEmoji}>✨</Text>
         </View>
       </View>
 
       <ScrollView contentContainerStyle={{ paddingBottom: 120 }}>
         <View style={styles.profileSection}>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-            <Text testID="profile-name" style={styles.name}>{profile?.name}</Text>
-            {profile?.verified && <Feather name="check-circle" size={18} color={colors.brand} />}
+            <Text testID="profile-name" style={styles.name}>{profile?.name || "Username"}</Text>
+            {profile?.verified && <Feather name="check-circle" size={18} color="#FFFFFF" />}
           </View>
           {profile?.handle && <Text style={styles.handle}>@{profile.handle}</Text>}
+          <Text style={styles.bio}>{profile?.bio || "CS major at DU 💻 | Foodie 🍕 | Exploring Delhi one momo stall at a time."}</Text>
+
           <View style={styles.locRow}>
-            <Feather name="map-pin" size={13} color={colors.muted} />
+            <Feather name="map-pin" size={13} color="#FFFFFF" />
             <Text testID="profile-locality" style={styles.locText}>
-              {profile?.locality} · {profile?.city}
+              {profile?.locality || "North Campus"} · {profile?.city || "Delhi"}
             </Text>
           </View>
-          {profile?.bio && <Text style={styles.bio}>{profile.bio}</Text>}
 
-          <View style={styles.statsRow}>
-            <Pressable style={styles.stat} onPress={() => router.push("/followers")}>
-              <Text style={styles.statValue}>{profile?.followerCount ?? 0}</Text>
-              <Text style={styles.statLabel}>Followers</Text>
+          <View style={styles.statsWrap}>
+            <Pressable style={styles.statBox} onPress={() => router.push("/following")}>
+              <Text style={styles.statVal}>{profile?.followingCount ?? 0}</Text>
+              <Text style={styles.statLbl}>Following</Text>
             </Pressable>
-            <View style={styles.statDivider} />
-            <Pressable style={styles.stat} onPress={() => router.push("/following")}>
-              <Text style={styles.statValue}>{profile?.followingCount ?? 0}</Text>
-              <Text style={styles.statLabel}>Following</Text>
+            <Pressable style={styles.statBox} onPress={() => router.push("/followers")}>
+              <Text style={styles.statVal}>{profile?.followerCount ?? 0}</Text>
+              <Text style={styles.statLbl}>Followers</Text>
             </Pressable>
-            <View style={styles.statDivider} />
-            <View style={styles.stat}>
-              <Text style={styles.statValue}>{profile?.postCount ?? 0}</Text>
-              <Text style={styles.statLabel}>Posts</Text>
+            <View style={styles.statBox}>
+              <Text style={styles.statVal}>{profile?.postCount ?? 0}</Text>
+              <Text style={styles.statLbl}>Posts</Text>
             </View>
           </View>
 
-          <View style={styles.actions}>
-            <Pressable testID="edit-profile-button" onPress={() => router.push("/edit-profile")} style={styles.primaryBtn}>
-              <Feather name="edit-2" size={14} color={colors.onBrand} />
-              <Text style={styles.primaryBtnText}>Edit profile</Text>
+          <View style={styles.actionsRow}>
+            <Pressable testID="edit-profile-button" onPress={() => router.push("/edit-profile")} style={styles.editBtn}>
+              <Feather name="edit-2" size={14} color="#FFFFFF" />
+              <Text style={styles.editBtnText}>Edit Profile</Text>
             </Pressable>
-            <Pressable onPress={onShare} style={styles.secondaryBtn}>
-              <Feather name="share" size={14} color={colors.brand} />
-              <Text style={styles.secondaryBtnText}>Share</Text>
-            </Pressable>
-            <Pressable onPress={() => router.push("/saved")} style={styles.secondaryBtn}>
-              <Feather name="bookmark" size={14} color={colors.brand} />
-              <Text style={styles.secondaryBtnText}>Saved</Text>
+            <Pressable onPress={onShare} style={styles.shareBtn}>
+              <Feather name="share" size={14} color="#000" />
+              <Text style={styles.shareBtnText}>Share</Text>
             </Pressable>
           </View>
         </View>
@@ -163,67 +152,63 @@ export default function Profile() {
               style={[styles.segment, tab === t && styles.segmentActive]}
             >
               <Text style={[styles.segmentText, tab === t && styles.segmentTextActive]}>
-                {t === "posts" ? "My Posts" : t === "saved" ? "Saved" : "Activity"}
+                {t === "posts" ? "Posts" : t === "saved" ? "Saved" : "Activity"}
               </Text>
             </Pressable>
           ))}
         </View>
 
         {loading ? (
-          <View style={styles.center}><ActivityIndicator color={colors.brand} /></View>
+          <View style={styles.center}><Text style={styles.loadingText}>Loading... 🫠</Text></View>
+        ) : tab === "posts" ? (
+          <View style={styles.postGrid}>
+            {myPosts.length === 0 ? (
+              <View style={styles.center}>
+                <Text style={styles.emptyText}>No posts yet</Text>
+              </View>
+            ) : (
+              myPosts.map((p, i) => (
+                <Pressable key={p.$id} style={styles.postTile}>
+                  {p.imageFileId ? (
+                    <Image source={imagePreviewUrl(p.imageFileId)} style={styles.postTileImg} contentFit="cover" />
+                  ) : (
+                    <View style={[styles.postTileImg, { backgroundColor: colors.surfaceTertiary, alignItems: "center", justifyContent: "center" }]}>
+                      <Feather name="file-text" size={24} color={colors.muted} />
+                    </View>
+                  )}
+                </Pressable>
+              ))
+            )}
+          </View>
         ) : (
           <FlatList
-            data={tab === "posts" ? myPosts : tab === "saved" ? savedItems : comments}
+            data={tab === "saved" ? savedItems : comments}
             keyExtractor={(item) => item.$id}
             scrollEnabled={false}
             contentContainerStyle={{ padding: spacing.lg, gap: spacing.md }}
             ListEmptyComponent={
               <View style={styles.center}>
-                <Feather name={tab === "posts" ? "file-text" : tab === "saved" ? "bookmark" : "activity"} size={32} color={colors.muted} />
-                <Text style={styles.emptyTitle}>No {tab === "posts" ? "posts" : tab === "saved" ? "saved items" : "activity"} yet</Text>
+                <Text style={styles.emptyText}>No {tab === "saved" ? "saved items" : "activity"} yet</Text>
               </View>
             }
-            renderItem={({ item }) => {
-              if (tab === "posts") {
-                const p = item as PostDoc;
-                return (
-                  <View style={styles.card}>
-                    <Text style={styles.cardContent} numberOfLines={4}>{p.content}</Text>
-                    <Text style={styles.cardMeta}>{timeAgo(p.$createdAt)} · {p.category}</Text>
-                  </View>
-                );
-              }
-              if (tab === "saved") {
-                const s = item as SavedItemDoc;
-                return (
-                  <View style={styles.card}>
-                    <Text style={styles.cardContent} numberOfLines={3}>Saved {s.itemType} · {s.itemId}</Text>
-                    <Text style={styles.cardMeta}>{timeAgo(s.$createdAt)}</Text>
-                  </View>
-                );
-              }
-              const c = item as CommentDoc;
-              return (
-                <View style={styles.card}>
-                  <Text style={styles.cardMeta}>{c.authorName} · {timeAgo(c.$createdAt)}</Text>
-                  <Text style={styles.cardContent} numberOfLines={3}>{c.content}</Text>
-                </View>
-              );
-            }}
+            renderItem={({ item }) => (
+              <View style={styles.cardSmall}>
+                <Text style={styles.cardContent} numberOfLines={3}>
+                  {tab === "saved" ? "Saved item" : (item as CommentDoc).content}
+                </Text>
+                <Text style={styles.cardMeta}>{timeAgo((item as any).$createdAt)}</Text>
+              </View>
+            )}
           />
         )}
       </ScrollView>
 
-      <Pressable
-        testID="logout-button"
-        onPress={handleLogout}
-        style={({ pressed }) => [styles.logout, pressed && { opacity: 0.7 }]}
-      >
-        <Feather name="log-out" size={18} color={colors.error} />
+      {/* Logout */}
+      <Pressable testID="logout-button" onPress={handleLogout} style={styles.logoutBtn}>
+        <Feather name="log-out" size={16} color="#FF3366" />
         <Text style={styles.logoutText}>Log out</Text>
       </Pressable>
 
-      {/* Comments Modal for activity */}
       <Modal visible={!!commentPost} animationType="slide" transparent>
         <View style={styles.commentOverlay}>
           <View style={styles.commentSheet}>
@@ -275,66 +260,87 @@ export default function Profile() {
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.surface },
-  coverWrap: { position: "relative" },
-  cover: { height: 110, backgroundColor: colors.brandTertiary },
-  avatarWrap: { position: "absolute", left: 0, right: 0, bottom: -36, alignItems: "center" },
-  avatar: {
-    width: 72, height: 72, borderRadius: 36, backgroundColor: colors.brand,
-    alignItems: "center", justifyContent: "center", overflow: "hidden",
-    borderWidth: 3, borderColor: colors.surface,
+  coverWrap: { position: "relative", height: 140 },
+  cover: { ...StyleSheet.absoluteFillObject },
+  avatarBadge: {
+    position: "absolute", bottom: -36, alignSelf: "center",
+    width: 80, height: 80, borderRadius: 40,
+    backgroundColor: "#FFFFFF",
+    borderWidth: 4, borderColor: "#000",
+    shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 4, height: 4 }, elevation: 8,
+    alignItems: "center", justifyContent: "center",
   },
-  avatarText: { color: colors.onBrand, fontWeight: "800", fontSize: 28 },
+  avatarEmoji: { fontSize: 36 },
   profileSection: {
-    alignItems: "center", paddingTop: 40, paddingHorizontal: spacing.lg, gap: 4,
+    alignItems: "center", paddingTop: 48, paddingHorizontal: spacing.lg, gap: 6,
   },
-  name: { fontSize: 20, fontWeight: "800", color: colors.onSurface },
-  handle: { fontSize: 13, color: colors.muted, marginTop: 2 },
+  name: { fontSize: 24, fontWeight: "900", color: colors.onSurface, letterSpacing: -0.5 },
+  handle: { fontSize: 14, fontWeight: "700", color: colors.muted, marginTop: 2 },
+  bio: { fontSize: 14, fontWeight: "600", color: colors.onSurfaceTertiary, marginTop: spacing.md, textAlign: "center", lineHeight: 20 },
   locRow: { flexDirection: "row", alignItems: "center", gap: 4, marginTop: 4 },
-  locText: { fontSize: 13, color: colors.onSurfaceTertiary },
-  bio: { fontSize: 14, color: colors.onSurface, marginTop: spacing.md, textAlign: "center", lineHeight: 20 },
-  statsRow: { flexDirection: "row", alignItems: "center", marginTop: spacing.lg, alignSelf: "stretch" },
-  stat: { flex: 1, alignItems: "center" },
-  statDivider: { width: 1, height: 28, backgroundColor: colors.border },
-  statValue: { fontSize: 18, fontWeight: "800", color: colors.onSurface },
-  statLabel: { fontSize: 11, color: colors.muted, marginTop: 2 },
-  actions: { flexDirection: "row", gap: spacing.sm, marginTop: spacing.lg, alignSelf: "stretch" },
-  primaryBtn: {
+  locText: { fontSize: 13, fontWeight: "700", color: "#FFFFFF" },
+  statsWrap: {
+    flexDirection: "row", marginTop: spacing.lg, alignSelf: "stretch", gap: 0,
+    backgroundColor: colors.surfaceSecondary,
+    borderRadius: radius.lg,
+    borderWidth: 2, borderColor: "#000",
+    shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 4, height: 4 }, elevation: 4,
+    overflow: "hidden",
+  },
+  statBox: { flex: 1, alignItems: "center", paddingVertical: spacing.lg },
+  statVal: { fontSize: 22, fontWeight: "900", color: colors.onSurface },
+  statLbl: { fontSize: 11, fontWeight: "700", color: colors.muted, marginTop: 2 },
+  actionsRow: { flexDirection: "row", gap: spacing.sm, marginTop: spacing.lg, alignSelf: "stretch" },
+  editBtn: {
     flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6,
-    paddingVertical: 10, borderRadius: radius.pill, backgroundColor: colors.brand,
+    paddingVertical: 12, borderRadius: radius.pill, backgroundColor: "#FFFFFF",
+    borderWidth: 2, borderColor: "#000",
+    shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 4, height: 4 }, elevation: 4,
   },
-  primaryBtnText: { color: colors.onBrand, fontWeight: "700", fontSize: 13 },
-  secondaryBtn: {
+  editBtnText: { color: "#000", fontWeight: "900", fontSize: 13 },
+  shareBtn: {
     flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 4,
-    paddingHorizontal: 12, paddingVertical: 10, borderRadius: radius.pill,
-    borderWidth: 1, borderColor: colors.brand, backgroundColor: colors.surfaceSecondary,
+    paddingHorizontal: 16, paddingVertical: 12, borderRadius: radius.pill,
+    borderWidth: 2, borderColor: "#000",
+    backgroundColor: "#F3F3F5",
+    shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 4, height: 4 }, elevation: 4,
   },
-  secondaryBtnText: { color: colors.brand, fontWeight: "700", fontSize: 13 },
+  shareBtnText: { color: "#000", fontWeight: "900", fontSize: 13 },
   segmentWrap: {
     flexDirection: "row", gap: spacing.sm, paddingHorizontal: spacing.lg, paddingVertical: spacing.md,
-    borderBottomWidth: 1, borderBottomColor: colors.border,
+    borderBottomWidth: 2, borderBottomColor: "#000",
   },
   segment: {
     flex: 1, alignItems: "center", paddingVertical: 10, borderRadius: radius.pill,
     backgroundColor: colors.surfaceTertiary,
+    borderWidth: 2, borderColor: "#000",
+    shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 2, height: 2 }, elevation: 2,
   },
-  segmentActive: { backgroundColor: colors.brand },
-  segmentText: { fontSize: 13, fontWeight: "700", color: colors.onSurfaceTertiary },
-  segmentTextActive: { color: colors.onBrand },
+  segmentActive: { backgroundColor: "#3366FF", borderColor: "#000" },
+  segmentText: { fontSize: 13, fontWeight: "800", color: colors.onSurfaceTertiary },
+  segmentTextActive: { color: "#FFFFFF" },
   center: { flex: 1, alignItems: "center", justifyContent: "center", padding: spacing.xxxl },
-  emptyTitle: { color: colors.onSurface, fontSize: 16, fontWeight: "700", textAlign: "center" },
-  card: {
+  loadingText: { fontSize: 14, color: colors.muted, fontWeight: "600" },
+  emptyText: { fontSize: 14, color: colors.muted, fontWeight: "700", textAlign: "center" },
+  postGrid: { flexDirection: "row", flexWrap: "wrap", padding: 1, gap: 1, paddingBottom: 120 },
+  postTile: { width: "33.33%", aspectRatio: 1, backgroundColor: colors.surfaceSecondary, borderWidth: 1, borderColor: colors.border, padding: 1 },
+  postTileImg: { ...StyleSheet.absoluteFillObject },
+  cardSmall: {
     backgroundColor: colors.surfaceSecondary, borderRadius: radius.lg,
-    borderWidth: 1, borderColor: colors.border, padding: spacing.lg, gap: 4,
+    borderWidth: 2, borderColor: "#000",
+    shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 4, height: 4 }, elevation: 4,
+    padding: spacing.lg, gap: 4,
   },
-  cardContent: { fontSize: 14, color: colors.onSurface, lineHeight: 20 },
-  cardMeta: { fontSize: 11, color: colors.muted, marginTop: 4 },
-  logout: {
-    flexDirection: "row", alignItems: "center", justifyContent: "center",
-    gap: spacing.sm, marginTop: spacing.lg, marginHorizontal: spacing.lg,
-    paddingVertical: 14, borderRadius: radius.pill,
-    borderWidth: 1, borderColor: colors.error,
+  cardContent: { fontSize: 14, fontWeight: "600", color: colors.onSurface, lineHeight: 20 },
+  cardMeta: { fontSize: 11, fontWeight: "600", color: colors.muted, marginTop: 4 },
+  logoutBtn: {
+    flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8,
+    marginHorizontal: spacing.lg, marginBottom: spacing.lg, paddingVertical: 14, borderRadius: radius.pill,
+    borderWidth: 2, borderColor: "#FF3366",
+    backgroundColor: colors.surfaceSecondary,
+    shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 4, height: 4 }, elevation: 4,
   },
-  logoutText: { color: colors.error, fontWeight: "700", fontSize: 14 },
+  logoutText: { color: "#FF3366", fontWeight: "900", fontSize: 14 },
   commentOverlay: { flex: 1, justifyContent: "flex-end", backgroundColor: "rgba(0,0,0,0.4)" },
   commentSheet: { backgroundColor: colors.surface, borderTopLeftRadius: 20, borderTopRightRadius: 20, maxHeight: "70%", minHeight: "50%" },
   commentHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", padding: spacing.lg, borderBottomWidth: 1, borderBottomColor: colors.border },

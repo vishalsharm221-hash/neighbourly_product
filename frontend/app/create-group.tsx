@@ -114,7 +114,7 @@ export default function CreateGroup() {
         <Pressable testID="create-cancel" onPress={() => router.back()} hitSlop={10}>
           <Feather name="x" size={24} color={colors.onSurface} />
         </Pressable>
-        <Text style={styles.title}>Create Group</Text>
+        <Text style={styles.title}>New Squad 👥</Text>
         <Pressable
           testID="create-submit"
           onPress={submit}

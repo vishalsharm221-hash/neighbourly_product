@@ -125,7 +125,7 @@ export default function NewsScreen() {
         </Pressable>
         <View style={{ flex: 1, marginLeft: spacing.md }}>
           <Text style={styles.headerEyebrow}>STAY INFORMED</Text>
-          <Text style={styles.headerTitle}>LOCAL NEWS</Text>
+          <Text style={styles.headerTitle}>Local News 📰</Text>
         </View>
         <View style={{ width: 24 }} />
       </View>
@@ -163,8 +163,8 @@ export default function NewsScreen() {
           ListEmptyComponent={
             <View style={styles.empty}>
               <Feather name="newspaper" size={48} color={colors.muted} />
-              <Text style={styles.emptyTitle}>No news articles</Text>
-              <Text style={styles.emptyText}>{tab === "all" ? "Check back later for local news." : `No ${tab} news yet.`}</Text>
+              <Text style={styles.emptyTitle}>No news rn 📰</Text>
+              <Text style={styles.emptyText}>{tab === "all" ? "Check back later bestie" : `No ${tab} news rn.`}</Text>
             </View>
           }
           renderItem={renderNewsItem}
@@ -224,61 +224,63 @@ export default function NewsScreen() {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: colors.surface },
+  root: { flex: 1, backgroundColor: "#FBFBF9" },
   center: { flex: 1, alignItems: "center", justifyContent: "center" },
   header: {
     flexDirection: "row", alignItems: "center",
     paddingHorizontal: spacing.lg, paddingVertical: spacing.md,
-    borderBottomWidth: 1, borderBottomColor: colors.border, gap: spacing.md,
+    borderBottomWidth: 3, borderBottomColor: "#000", gap: spacing.md, backgroundColor: "rgba(255,255,255,0.92)",
+    shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 0, height: 4 }, elevation: 6,
   },
-  headerEyebrow: { fontSize: 11, fontWeight: "700", color: colors.muted, letterSpacing: 1 },
-  headerTitle: { fontSize: 18, fontWeight: "800", color: colors.onSurface },
+  headerEyebrow: { fontSize: 11, fontWeight: "800", color: "#3366FF", letterSpacing: 1 },
+  headerTitle: { fontSize: 18, fontWeight: "900", color: "#000" },
   tabsRow: { paddingHorizontal: spacing.lg, gap: spacing.sm, paddingVertical: spacing.md },
   tab: {
     paddingHorizontal: spacing.lg, paddingVertical: spacing.sm,
-    borderRadius: radius.pill, backgroundColor: colors.surfaceTertiary,
-    borderWidth: 1, borderColor: colors.border,
+    borderRadius: 12, backgroundColor: "#F3F3F5",
+    borderWidth: 2, borderColor: "#000",
   },
-  tabActive: { backgroundColor: colors.brand, borderColor: colors.brand },
-  tabText: { fontSize: 13, fontWeight: "600", color: colors.onSurfaceTertiary },
-  tabTextActive: { color: colors.onBrand },
+  tabActive: { backgroundColor: "#3366FF", borderColor: "#000" },
+  tabText: { fontSize: 13, fontWeight: "800", color: "#000" },
+  tabTextActive: { color: "#FFFFFF", fontWeight: "900" },
   empty: { alignItems: "center", padding: spacing.xxxl, gap: spacing.md, marginTop: 60 },
-  emptyTitle: { fontSize: 16, fontWeight: "700", color: colors.onSurface },
-  emptyText: { fontSize: 13, color: colors.muted, textAlign: "center" },
+  emptyTitle: { fontSize: 16, fontWeight: "900", color: "#000" },
+  emptyText: { fontSize: 13, color: "#000", textAlign: "center", fontWeight: "500" },
   card: {
-    backgroundColor: colors.surfaceSecondary, borderRadius: radius.lg,
-    borderWidth: 1, borderColor: colors.border, overflow: "hidden",
+    backgroundColor: "#FFFFFF", borderRadius: 20,
+    borderWidth: 3, borderColor: "#000", overflow: "hidden",
+    shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 4, height: 4 }, elevation: 4,
   },
-  cardImage: { width: "100%", height: 180, backgroundColor: colors.surfaceTertiary },
+  cardImage: { width: "100%", height: 180, backgroundColor: "#F3F3F5", borderBottomWidth: 3, borderBottomColor: "#000" },
   cardBody: { padding: spacing.md, gap: 6 },
   cardBodyNoImage: { padding: spacing.lg },
   cardMetaRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   catBadge: {
-    backgroundColor: colors.brandTertiary, paddingHorizontal: spacing.sm,
-    paddingVertical: 3, borderRadius: radius.pill,
+    backgroundColor: "#F3F3F5", paddingHorizontal: spacing.sm,
+    paddingVertical: 3, borderRadius: 12, borderWidth: 2, borderColor: "#000",
   },
-  catBadgeText: { fontSize: 11, fontWeight: "700", color: colors.brand, textTransform: "uppercase" },
-  timeText: { fontSize: 12, color: colors.muted },
-  cardTitle: { fontSize: 15, fontWeight: "700", color: colors.onSurface, lineHeight: 20 },
-  cardSummary: { fontSize: 13, color: colors.onSurfaceTertiary, lineHeight: 18 },
+  catBadgeText: { fontSize: 11, fontWeight: "800", color: "#3366FF", textTransform: "uppercase" },
+  timeText: { fontSize: 12, color: "#000", fontWeight: "600" },
+  cardTitle: { fontSize: 15, fontWeight: "900", color: "#000", lineHeight: 20 },
+  cardSummary: { fontSize: 13, color: "#000", lineHeight: 18, fontWeight: "500" },
   metaItem: { flexDirection: "row", alignItems: "center", gap: 4 },
   cardMeta: { flexDirection: "row", alignItems: "center", gap: spacing.sm, marginTop: 2 },
-  cardMetaText: { fontSize: 12, color: colors.muted },
-  modalRoot: { flex: 1, backgroundColor: colors.surface },
+  cardMetaText: { fontSize: 12, color: "#000", fontWeight: "600" },
+  modalRoot: { flex: 1, backgroundColor: "#FBFBF9" },
   modalHeader: {
     flexDirection: "row", alignItems: "center", justifyContent: "space-between",
     paddingHorizontal: spacing.lg, paddingVertical: spacing.md,
-    borderBottomWidth: 1, borderBottomColor: colors.border,
+    borderBottomWidth: 3, borderBottomColor: "#000", backgroundColor: "rgba(255,255,255,0.92)",
   },
-  modalTitle: { fontSize: 16, fontWeight: "700", color: colors.onSurface },
-  modalImage: { width: "100%", height: 220, borderRadius: radius.lg, marginBottom: spacing.md },
-  modalHeadline: { fontSize: 20, fontWeight: "800", color: colors.onSurface, lineHeight: 26, marginBottom: spacing.sm },
+  modalTitle: { fontSize: 16, fontWeight: "900", color: "#000" },
+  modalImage: { width: "100%", height: 220, borderRadius: 20, marginBottom: spacing.md, borderWidth: 3, borderColor: "#000" },
+  modalHeadline: { fontSize: 20, fontWeight: "900", color: "#000", lineHeight: 26, marginBottom: spacing.sm },
   modalMeta: { flexDirection: "row", alignItems: "center", gap: spacing.md, marginBottom: spacing.md },
-  modalMetaText: { fontSize: 13, color: colors.muted },
-  modalBody: { fontSize: 15, color: colors.onSurface, lineHeight: 22 },
+  modalMetaText: { fontSize: 13, color: "#000", fontWeight: "600" },
+  modalBody: { fontSize: 15, color: "#000", lineHeight: 22, fontWeight: "500" },
   linkBtn: {
     flexDirection: "row", alignItems: "center", gap: spacing.sm,
     marginTop: spacing.lg, paddingVertical: spacing.sm,
   },
-  linkBtnText: { fontSize: 14, fontWeight: "600", color: colors.brand },
+  linkBtnText: { fontSize: 14, fontWeight: "800", color: "#3366FF" },
 });

@@ -186,8 +186,8 @@ export default function PollsScreen() {
       <View style={styles.emptyIcon}>
         <Feather name="bar-chart-2" size={48} color={colors.muted} />
       </View>
-      <Text style={styles.emptyTitle}>No polls in your area yet</Text>
-      <Text style={styles.emptySubtitle}>Be the first to create a poll and gather community opinions</Text>
+      <Text style={styles.emptyTitle}>No polls rn 📊</Text>
+      <Text style={styles.emptySubtitle}>Create one — ask the hood what they think!</Text>
     </View>
   );
 
@@ -195,7 +195,7 @@ export default function PollsScreen() {
     return (
       <SafeAreaView style={styles.root} edges={["top", "bottom"]}>
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>COMMUNITY POLLS</Text>
+          <Text style={styles.headerTitle}>Polls 📊</Text>
         </View>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.brand} />
@@ -208,7 +208,7 @@ export default function PollsScreen() {
     return (
       <SafeAreaView style={styles.root} edges={["top", "bottom"]}>
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>COMMUNITY POLLS</Text>
+          <Text style={styles.headerTitle}>Polls 📊</Text>
         </View>
         <View style={styles.errorContainer}>
           <Feather name="alert-circle" size={48} color={colors.error} />
@@ -225,7 +225,7 @@ export default function PollsScreen() {
   return (
     <SafeAreaView style={styles.root} edges={["top", "bottom"]}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>COMMUNITY POLLS</Text>
+        <Text style={styles.headerTitle}>Polls 📊</Text>
       </View>
       <FlatList
         data={polls}
@@ -245,20 +245,25 @@ export default function PollsScreen() {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: colors.surface },
+  root: { flex: 1, backgroundColor: "#FBFBF9" },
   header: {
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.sm,
     paddingBottom: spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-    backgroundColor: colors.surface,
+    borderBottomWidth: 3,
+    borderBottomColor: "#000",
+    backgroundColor: "rgba(255,255,255,0.92)",
+    shadowColor: "#000",
+    shadowOpacity: 1,
+    shadowRadius: 0,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 6,
   },
   headerTitle: {
     fontSize: 13,
-    fontWeight: "800",
+    fontWeight: "900",
     letterSpacing: 1.5,
-    color: colors.onSurface,
+    color: "#000",
     textAlign: "center",
   },
   listContent: {
@@ -270,17 +275,22 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   card: {
-    backgroundColor: colors.surfaceSecondary,
-    borderRadius: radius.lg,
-    borderWidth: 1,
-    borderColor: colors.border,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 20,
+    borderWidth: 3,
+    borderColor: "#000",
     padding: spacing.lg,
     gap: spacing.md,
+    shadowColor: "#000",
+    shadowOpacity: 1,
+    shadowRadius: 0,
+    shadowOffset: { width: 4, height: 4 },
+    elevation: 4,
   },
   question: {
     fontSize: 16,
-    fontWeight: "700",
-    color: colors.onSurface,
+    fontWeight: "900",
+    color: "#000",
     lineHeight: 22,
   },
   optionsRow: {
@@ -291,25 +301,25 @@ const styles = StyleSheet.create({
   optionPill: {
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
-    borderRadius: radius.pill,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.surfaceTertiary,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: "#000",
+    backgroundColor: "#F3F3F5",
   },
   optionPillVoted: {
-    borderColor: colors.brand,
-    backgroundColor: colors.brandTertiary,
+    borderColor: "#3366FF",
+    backgroundColor: "#FBFBF9",
   },
   optionPillText: {
     fontSize: 13,
-    fontWeight: "600",
-    color: colors.onSurfaceTertiary,
+    fontWeight: "800",
+    color: "#000",
   },
   optionPillTextVoted: {
-    color: colors.brand,
+    color: "#3366FF",
   },
   optionPillMore: {
-    backgroundColor: colors.surfaceTertiary,
+    backgroundColor: "#F3F3F5",
   },
   cardFooter: {
     gap: spacing.xs,
@@ -321,42 +331,54 @@ const styles = StyleSheet.create({
   },
   metaText: {
     fontSize: 12,
-    color: colors.muted,
-    fontWeight: "500",
+    color: "#000",
+    fontWeight: "600",
   },
   metaDot: {
     fontSize: 12,
-    color: colors.muted,
+    color: "#000",
     marginHorizontal: 2,
   },
   actionRow: {
     flexDirection: "row",
     justifyContent: "flex-end",
+    borderTopWidth: 2,
+    borderTopColor: "#000",
+    paddingTop: spacing.sm,
   },
   voteBtn: {
-    backgroundColor: colors.brand,
+    backgroundColor: "#3366FF",
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.sm,
-    borderRadius: radius.pill,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: "#000",
+    shadowColor: "#000",
+    shadowOpacity: 1,
+    shadowRadius: 0,
+    shadowOffset: { width: 4, height: 4 },
+    elevation: 4,
   },
   voteBtnText: {
-    color: colors.onBrand,
+    color: "#FFFFFF",
     fontSize: 14,
-    fontWeight: "700",
+    fontWeight: "900",
   },
   votedBadge: {
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.sm,
-    backgroundColor: colors.brandTertiary,
+    backgroundColor: "#66FF33",
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
-    borderRadius: radius.pill,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: "#000",
   },
   votedBadgeText: {
     fontSize: 13,
-    fontWeight: "700",
-    color: colors.brand,
+    fontWeight: "900",
+    color: "#000",
   },
   fab: {
     position: "absolute",
@@ -365,14 +387,16 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: colors.brand,
+    backgroundColor: "#3366FF",
     alignItems: "center",
     justifyContent: "center",
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 6,
+    shadowOpacity: 1,
+    shadowRadius: 0,
+    shadowOffset: { width: 4, height: 4 },
+    elevation: 4,
+    borderWidth: 3,
+    borderColor: "#000",
   },
   emptyContainer: {
     flex: 1,
@@ -384,22 +408,25 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: colors.surfaceTertiary,
+    backgroundColor: "#F3F3F5",
     alignItems: "center",
     justifyContent: "center",
     marginBottom: spacing.lg,
+    borderWidth: 3,
+    borderColor: "#000",
   },
   emptyTitle: {
     fontSize: 18,
-    fontWeight: "700",
-    color: colors.onSurface,
+    fontWeight: "900",
+    color: "#000",
     marginBottom: spacing.sm,
   },
   emptySubtitle: {
     fontSize: 14,
-    color: colors.muted,
+    color: "#000",
     textAlign: "center",
     paddingHorizontal: spacing.xxl,
+    fontWeight: "500",
   },
   loadingContainer: {
     flex: 1,
@@ -414,33 +441,41 @@ const styles = StyleSheet.create({
   },
   errorTitle: {
     fontSize: 18,
-    fontWeight: "700",
-    color: colors.onSurface,
+    fontWeight: "900",
+    color: "#000",
     marginTop: spacing.md,
   },
   errorMessage: {
     fontSize: 14,
-    color: colors.muted,
+    color: "#000",
     textAlign: "center",
     marginTop: spacing.sm,
+    fontWeight: "500",
   },
   retryBtn: {
-    backgroundColor: colors.brand,
+    backgroundColor: "#3366FF",
     paddingHorizontal: spacing.xl,
     paddingVertical: spacing.sm,
-    borderRadius: radius.pill,
+    borderRadius: 12,
     marginTop: spacing.lg,
+    borderWidth: 3,
+    borderColor: "#000",
+    shadowColor: "#000",
+    shadowOpacity: 1,
+    shadowRadius: 0,
+    shadowOffset: { width: 4, height: 4 },
+    elevation: 4,
   },
   retryBtnText: {
-    color: colors.onBrand,
+    color: "#FFFFFF",
     fontSize: 14,
-    fontWeight: "700",
+    fontWeight: "900",
   },
   miniFollow: {
-    paddingHorizontal: 8, paddingVertical: 2, borderRadius: radius.pill,
-    borderWidth: 1, borderColor: colors.brand, backgroundColor: colors.surfaceSecondary,
+    paddingHorizontal: 8, paddingVertical: 2, borderRadius: 12,
+    borderWidth: 2, borderColor: "#3366FF", backgroundColor: "#F3F3F5",
   },
-  miniFollowActive: { backgroundColor: colors.brand },
-  miniFollowText: { fontSize: 10, fontWeight: "700", color: colors.brand },
-  miniFollowTextActive: { color: colors.onBrand },
+  miniFollowActive: { backgroundColor: "#3366FF" },
+  miniFollowText: { fontSize: 10, fontWeight: "800", color: "#3366FF" },
+  miniFollowTextActive: { color: "#FFFFFF" },
 });

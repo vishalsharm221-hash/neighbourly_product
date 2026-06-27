@@ -107,7 +107,7 @@ export default function CreatePoll() {
         <Pressable onPress={() => router.back()} hitSlop={10} testID="poll-cancel">
           <Feather name="x" size={24} color={colors.onSurface} />
         </Pressable>
-        <Text style={styles.title}>Create Poll</Text>
+        <Text style={styles.title}>New Poll 📊</Text>
         <Pressable
           testID="poll-submit"
           onPress={submit}
@@ -220,16 +220,25 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row", alignItems: "center",
     paddingHorizontal: spacing.lg, paddingVertical: spacing.md,
-    borderBottomWidth: 1, borderBottomColor: colors.border, gap: spacing.md,
+    borderBottomWidth: 3, borderBottomColor: "#000",
+    backgroundColor: "rgba(255,255,255,0.92)",
+    shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 0, height: 4 }, elevation: 6,
+    gap: spacing.sm,
   },
-  title: { flex: 1, fontSize: 16, fontWeight: "700", color: colors.onSurface, textAlign: "center" },
-  postBtn: { backgroundColor: colors.brand, paddingHorizontal: 16, paddingVertical: 8, borderRadius: radius.pill },
-  postBtnText: { color: colors.onBrand, fontSize: 14, fontWeight: "700" },
-  label: { fontSize: 12, fontWeight: "700", color: colors.muted, letterSpacing: 1, marginBottom: spacing.sm },
+  title: { flex: 1, fontSize: 18, fontWeight: "900", color: colors.onSurface, textAlign: "center", letterSpacing: -0.3 },
+  postBtn: {
+    backgroundColor: "#3366FF",
+    paddingHorizontal: 16, paddingVertical: 10, borderRadius: radius.pill,
+    borderWidth: 2, borderColor: "#000",
+    shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 2, height: 2 }, elevation: 2,
+  },
+  postBtnText: { color: "#FFFFFF", fontSize: 13, fontWeight: "900" },
+  label: { fontSize: 12, fontWeight: "800", color: colors.onSurfaceTertiary, letterSpacing: 0.5, marginBottom: spacing.sm },
   input: {
-    backgroundColor: colors.surfaceSecondary, borderRadius: radius.md,
-    borderWidth: 1, borderColor: colors.border, padding: spacing.md, fontSize: 15,
-    color: colors.onSurface,
+    backgroundColor: "#F3F3F5", borderRadius: radius.md,
+    borderWidth: 2, borderColor: "#000",
+    shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 4, height: 4 }, elevation: 4,
+    padding: spacing.md, fontSize: 15, color: colors.onSurface,
   },
   charCount: { fontSize: 12, color: colors.muted, textAlign: "right", marginTop: 4 },
   optionInputRow: {
@@ -237,23 +246,26 @@ const styles = StyleSheet.create({
   },
   optionIndexCircle: {
     width: 24, height: 24, borderRadius: 12, backgroundColor: colors.surfaceTertiary,
+    borderWidth: 2, borderColor: "#000",
     alignItems: "center", justifyContent: "center",
   },
-  optionIndexText: { fontSize: 12, fontWeight: "700", color: colors.onSurfaceTertiary },
+  optionIndexText: { fontSize: 12, fontWeight: "900", color: colors.onSurfaceTertiary },
   optionInput: {
     flex: 1,
-    backgroundColor: colors.surfaceSecondary, borderRadius: radius.md,
-    borderWidth: 1, borderColor: colors.border, padding: spacing.md, fontSize: 15,
-    color: colors.onSurface,
+    backgroundColor: "#F3F3F5", borderRadius: radius.md,
+    borderWidth: 2, borderColor: "#000",
+    shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 4, height: 4 }, elevation: 4,
+    padding: spacing.md, fontSize: 15, color: colors.onSurface,
   },
   removeOptionBtn: {
     width: 32, height: 32, borderRadius: 16, backgroundColor: colors.surfaceTertiary,
+    borderWidth: 2, borderColor: "#000",
     alignItems: "center", justifyContent: "center",
   },
   addOptionBtn: {
     flexDirection: "row", alignItems: "center", gap: spacing.sm,
     paddingVertical: spacing.sm,
   },
-  addOptionText: { color: colors.brand, fontSize: 14, fontWeight: "600" },
-  err: { color: colors.error, fontSize: 13, marginTop: spacing.sm },
+  addOptionText: { color: colors.brand, fontSize: 14, fontWeight: "700" },
+  err: { color: "#FF3366", fontSize: 13, marginTop: spacing.sm, fontWeight: "700" },
 });

@@ -123,8 +123,8 @@ export default function SafetyScreen() {
           <Feather name="arrow-left" size={24} color={colors.onSurface} />
         </Pressable>
         <View style={{ flex: 1, marginLeft: spacing.md }}>
-          <Text style={styles.headerEyebrow}>LOCAL</Text>
-          <Text style={styles.headerTitle}>SAFETY ALERTS</Text>
+          <Text style={styles.headerEyebrow}>STAY SAFE</Text>
+          <Text style={styles.headerTitle}>Safety 🛡️</Text>
         </View>
         <View style={{ width: 24 }} />
       </View>
@@ -143,8 +143,8 @@ export default function SafetyScreen() {
           ListEmptyComponent={
             <View style={styles.empty}>
               <Feather name="shield" size={48} color={colors.muted} />
-              <Text style={styles.emptyTitle}>No active alerts</Text>
-              <Text style={styles.emptyText}>There are no safety alerts in your area right now.</Text>
+              <Text style={styles.emptyTitle}>All clear! 🛡️</Text>
+              <Text style={styles.emptyText}>No active alerts in your area</Text>
             </View>
           }
           renderItem={renderAlert}

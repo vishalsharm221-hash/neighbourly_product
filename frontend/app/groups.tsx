@@ -160,8 +160,8 @@ export default function GroupsScreen() {
       <View style={styles.emptyIcon}>
         <Feather name="users" size={48} color={colors.muted} />
       </View>
-      <Text style={styles.emptyTitle}>No groups yet</Text>
-      <Text style={styles.emptySubtitle}>Start a community group for your neighbourhood!</Text>
+      <Text style={styles.emptyTitle}>No squads yet</Text>
+      <Text style={styles.emptySubtitle}>Start one — find your people in the hood 👥</Text>
     </View>
   );
 
@@ -182,7 +182,7 @@ export default function GroupsScreen() {
     return (
       <SafeAreaView style={styles.root} edges={["top", "bottom"]}>
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>COMMUNITY GROUPS</Text>
+          <Text style={styles.headerTitle}>Squads 👥</Text>
         </View>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.brand} />
@@ -195,7 +195,7 @@ export default function GroupsScreen() {
     return (
       <SafeAreaView style={styles.root} edges={["top", "bottom"]}>
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>COMMUNITY GROUPS</Text>
+          <Text style={styles.headerTitle}>Squads 👥</Text>
         </View>
         <View style={styles.errorContainer}>
           <Feather name="alert-circle" size={48} color={colors.error} />
@@ -212,7 +212,7 @@ export default function GroupsScreen() {
   return (
     <SafeAreaView style={styles.root} edges={["top", "bottom"]}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>COMMUNITY GROUPS</Text>
+        <Text style={styles.headerTitle}>Squads 👥</Text>
       </View>
 
       <View style={styles.filterRow}>
@@ -240,20 +240,25 @@ export default function GroupsScreen() {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: colors.surface },
+  root: { flex: 1, backgroundColor: "#FBFBF9" },
   header: {
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.sm,
     paddingBottom: spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-    backgroundColor: colors.surface,
+    borderBottomWidth: 3,
+    borderBottomColor: "#000",
+    backgroundColor: "rgba(255,255,255,0.92)",
+    shadowColor: "#000",
+    shadowOpacity: 1,
+    shadowRadius: 0,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 6,
   },
   headerTitle: {
-    fontSize: 13,
-    fontWeight: "800",
-    letterSpacing: 1.5,
-    color: colors.onSurface,
+    fontSize: 20,
+    fontWeight: "900",
+    letterSpacing: -0.5,
+    color: "#000",
     textAlign: "center",
   },
   filterRow: {
@@ -265,22 +270,23 @@ const styles = StyleSheet.create({
   chip: {
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
-    borderRadius: radius.pill,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.surfaceSecondary,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: "#000",
+    backgroundColor: "#F3F3F5",
   },
   chipActive: {
-    backgroundColor: colors.brand,
-    borderColor: colors.brand,
+    backgroundColor: "#3366FF",
+    borderColor: "#000",
   },
   chipText: {
     fontSize: 13,
-    fontWeight: "600",
-    color: colors.onSurfaceTertiary,
+    fontWeight: "800",
+    color: "#000",
   },
   chipTextActive: {
-    color: colors.onBrand,
+    color: "#FFFFFF",
+    fontWeight: "900",
   },
   listContent: {
     paddingHorizontal: spacing.lg,
@@ -291,12 +297,17 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   card: {
-    backgroundColor: colors.surfaceSecondary,
-    borderRadius: radius.lg,
-    borderWidth: 1,
-    borderColor: colors.border,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 20,
+    borderWidth: 3,
+    borderColor: "#000",
     padding: spacing.lg,
     gap: spacing.sm,
+    shadowColor: "#000",
+    shadowOpacity: 1,
+    shadowRadius: 0,
+    shadowOffset: { width: 4, height: 4 },
+    elevation: 4,
   },
   cardHeader: {
     flexDirection: "row",
@@ -306,10 +317,12 @@ const styles = StyleSheet.create({
   cardIcon: {
     width: 40,
     height: 40,
-    borderRadius: radius.md,
-    backgroundColor: colors.brandTertiary,
+    borderRadius: 12,
+    backgroundColor: "#F3F3F5",
     alignItems: "center",
     justifyContent: "center",
+    borderWidth: 2,
+    borderColor: "#000",
   },
   cardTitleRow: {
     flex: 1,
@@ -320,25 +333,28 @@ const styles = StyleSheet.create({
   cardTitle: {
     flex: 1,
     fontSize: 16,
-    fontWeight: "700",
-    color: colors.onSurface,
+    fontWeight: "900",
+    color: "#000",
   },
   creatorBadge: {
     paddingHorizontal: spacing.sm,
     paddingVertical: 2,
-    borderRadius: radius.pill,
-    backgroundColor: colors.brandTertiary,
+    borderRadius: 12,
+    backgroundColor: "#F3F3F5",
+    borderWidth: 2,
+    borderColor: "#000",
   },
   creatorBadgeText: {
     fontSize: 10,
-    fontWeight: "700",
-    color: colors.brand,
+    fontWeight: "800",
+    color: "#3366FF",
     letterSpacing: 0.5,
   },
   cardDescription: {
     fontSize: 14,
-    color: colors.onSurfaceTertiary,
+    color: "#000",
     lineHeight: 20,
+    fontWeight: "500",
   },
   cardMeta: {
     flexDirection: "row",
@@ -346,12 +362,12 @@ const styles = StyleSheet.create({
     marginTop: spacing.xs,
   },
   miniFollow: {
-    paddingHorizontal: 8, paddingVertical: 2, borderRadius: radius.pill,
-    borderWidth: 1, borderColor: colors.brand, backgroundColor: colors.surfaceSecondary,
+    paddingHorizontal: 8, paddingVertical: 2, borderRadius: 12,
+    borderWidth: 2, borderColor: "#3366FF", backgroundColor: "#F3F3F5",
   },
-  miniFollowActive: { backgroundColor: colors.brand },
-  miniFollowText: { fontSize: 10, fontWeight: "700", color: colors.brand },
-  miniFollowTextActive: { color: colors.onBrand },
+  miniFollowActive: { backgroundColor: "#3366FF" },
+  miniFollowText: { fontSize: 10, fontWeight: "800", color: "#3366FF" },
+  miniFollowTextActive: { color: "#FFFFFF" },
   metaItem: {
     flexDirection: "row",
     alignItems: "center",
@@ -359,13 +375,14 @@ const styles = StyleSheet.create({
   },
   metaText: {
     fontSize: 12,
-    color: colors.muted,
-    fontWeight: "500",
+    color: "#000",
+    fontWeight: "600",
   },
   cardCreator: {
     fontSize: 12,
-    color: colors.muted,
+    color: "#000",
     marginTop: spacing.xs,
+    fontWeight: "500",
   },
   fab: {
     position: "absolute",
@@ -374,14 +391,16 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: colors.brand,
+    backgroundColor: "#3366FF",
     alignItems: "center",
     justifyContent: "center",
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 6,
+    shadowOpacity: 1,
+    shadowRadius: 0,
+    shadowOffset: { width: 4, height: 4 },
+    elevation: 4,
+    borderWidth: 3,
+    borderColor: "#000",
   },
   emptyContainer: {
     flex: 1,
@@ -393,22 +412,25 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: colors.surfaceTertiary,
+    backgroundColor: "#F3F3F5",
     alignItems: "center",
     justifyContent: "center",
     marginBottom: spacing.lg,
+    borderWidth: 3,
+    borderColor: "#000",
   },
   emptyTitle: {
     fontSize: 18,
-    fontWeight: "700",
-    color: colors.onSurface,
+    fontWeight: "900",
+    color: "#000",
     marginBottom: spacing.sm,
   },
   emptySubtitle: {
     fontSize: 14,
-    color: colors.muted,
+    color: "#000",
     textAlign: "center",
     paddingHorizontal: spacing.xxl,
+    fontWeight: "500",
   },
   loadingContainer: {
     flex: 1,
@@ -423,26 +445,34 @@ const styles = StyleSheet.create({
   },
   errorTitle: {
     fontSize: 18,
-    fontWeight: "700",
-    color: colors.onSurface,
+    fontWeight: "900",
+    color: "#000",
     marginTop: spacing.md,
   },
   errorMessage: {
     fontSize: 14,
-    color: colors.muted,
+    color: "#000",
     textAlign: "center",
     marginTop: spacing.sm,
+    fontWeight: "500",
   },
   retryBtn: {
-    backgroundColor: colors.brand,
+    backgroundColor: "#3366FF",
     paddingHorizontal: spacing.xl,
     paddingVertical: spacing.sm,
-    borderRadius: radius.pill,
+    borderRadius: 12,
     marginTop: spacing.lg,
+    borderWidth: 3,
+    borderColor: "#000",
+    shadowColor: "#000",
+    shadowOpacity: 1,
+    shadowRadius: 0,
+    shadowOffset: { width: 4, height: 4 },
+    elevation: 4,
   },
   retryBtnText: {
-    color: colors.onBrand,
+    color: "#FFFFFF",
     fontSize: 14,
-    fontWeight: "700",
+    fontWeight: "900",
   },
 });

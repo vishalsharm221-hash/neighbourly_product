@@ -89,7 +89,7 @@ export default function CreateMarket() {
         <Pressable onPress={() => router.back()} hitSlop={10} testID="market-cancel">
           <Feather name="x" size={24} color={colors.onSurface} />
         </Pressable>
-        <Text style={styles.title}>List Item</Text>
+        <Text style={styles.title}>New Listing 🛒</Text>
         <Pressable
           testID="market-submit"
           onPress={submit}
@@ -173,30 +173,42 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row", alignItems: "center",
     paddingHorizontal: spacing.lg, paddingVertical: spacing.md,
-    borderBottomWidth: 1, borderBottomColor: colors.border, gap: spacing.md,
+    borderBottomWidth: 3, borderBottomColor: "#000",
+    backgroundColor: "rgba(255,255,255,0.92)",
+    shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 0, height: 4 }, elevation: 6,
+    gap: spacing.sm,
   },
-  title: { flex: 1, fontSize: 16, fontWeight: "700", color: colors.onSurface, textAlign: "center" },
-  postBtn: { backgroundColor: colors.brand, paddingHorizontal: 16, paddingVertical: 8, borderRadius: radius.pill },
-  postBtnText: { color: colors.onBrand, fontSize: 14, fontWeight: "700" },
-  label: { fontSize: 12, fontWeight: "700", color: colors.muted, letterSpacing: 1, marginBottom: spacing.sm },
+  title: { flex: 1, fontSize: 18, fontWeight: "900", color: colors.onSurface, textAlign: "center", letterSpacing: -0.3 },
+  postBtn: {
+    backgroundColor: "#3366FF",
+    paddingHorizontal: 16, paddingVertical: 10, borderRadius: radius.pill,
+    borderWidth: 2, borderColor: "#000",
+    shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 2, height: 2 }, elevation: 2,
+  },
+  postBtnText: { color: "#FFFFFF", fontSize: 13, fontWeight: "900" },
+  label: { fontSize: 12, fontWeight: "800", color: colors.onSurfaceTertiary, letterSpacing: 0.5, marginBottom: spacing.sm },
   input: {
-    backgroundColor: colors.surfaceSecondary, borderRadius: radius.md,
-    borderWidth: 1, borderColor: colors.border, padding: spacing.md, fontSize: 15, color: colors.onSurface,
+    backgroundColor: "#F3F3F5", borderRadius: radius.md,
+    borderWidth: 2, borderColor: "#000",
+    shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 4, height: 4 }, elevation: 4,
+    padding: spacing.md, fontSize: 15, color: colors.onSurface,
   },
   imgPicker: {
     flexDirection: "row", alignItems: "center", gap: spacing.sm,
     paddingVertical: 14, paddingHorizontal: spacing.lg,
-    borderWidth: 1, borderStyle: "dashed", borderColor: colors.brand,
+    borderWidth: 2, borderColor: "#000", borderStyle: "dashed",
     borderRadius: radius.lg, backgroundColor: colors.brandTertiary,
+    shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 2, height: 2 }, elevation: 2,
   },
-  imgPickerText: { color: colors.brand, fontSize: 14, fontWeight: "600" },
-  preview: { width: "100%", aspectRatio: 4 / 3, borderRadius: radius.lg },
+  imgPickerText: { color: colors.brand, fontSize: 14, fontWeight: "700" },
+  preview: { width: "100%", aspectRatio: 4 / 3, borderRadius: radius.lg, borderWidth: 2, borderColor: "#000" },
   removeImg: {
     position: "absolute", top: 8, right: 8,
     width: 28, height: 28, borderRadius: 14,
-    backgroundColor: "rgba(0,0,0,0.6)", alignItems: "center", justifyContent: "center",
+    backgroundColor: "rgba(0,0,0,0.8)", borderWidth: 2, borderColor: "#000",
+    alignItems: "center", justifyContent: "center",
   },
-  err: { color: colors.error, fontSize: 13 },
+  err: { color: "#FF3366", fontSize: 13, fontWeight: "700" },
 });
 
 

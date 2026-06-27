@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { View, Text, StyleSheet, FlatList, TextInput, Pressable, KeyboardAvoidingView, Platform } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Feather } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "@/src/auth-context";
 import { colors, spacing, radius } from "@/src/theme";
@@ -126,20 +127,50 @@ export default function ChatRoom() {
     const isMyMessage = item.senderId === profile?.userId;
     
     return (
-      <View style={styles.messageRow(isMyMessage)}>
-        <View style={styles.messageBubble(isMyMessage)}>
-          <Text style={styles.messageText}>{item.content}</Text>
-          <View style={styles.messageFooter}>
-            <Text style={styles.messageTime}>{formatTime(item.$createdAt)}</Text>
-            {isMyMessage && (
-              <Feather 
-                name={item.sending ? 'clock' : 'check'} 
-                size={12} 
-                color={colors[isMyMessage ? 'onBrand' : 'onSurfaceTertiary']} 
-              />
-            )}
+      <View style={{
+        flexDirection: 'row',
+        justifyContent: isMyMessage ? 'flex-end' : 'flex-start',
+        marginBottom: 4,
+      }}>
+        {isMyMessage ? (
+          <LinearGradient
+            colors={["#FF3366", "#3366FF"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={{
+              padding: spacing.sm,
+              paddingHorizontal: spacing.md,
+              borderRadius: 20,
+              borderBottomRightRadius: 4,
+              maxWidth: '80%',
+              borderWidth: 2,
+              borderColor: "#000",
+            }}
+          >
+            <Text style={{ fontSize: 14, color: "#FFFFFF", lineHeight: 20, fontWeight: "600" }}>{item.content}</Text>
+            <View style={{ flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', marginTop: 4, gap: 4 }}>
+              <Text style={{ fontSize: 10, color: "rgba(255,255,255,0.7)", fontWeight: "600" }}>{formatTime(item.$createdAt)}</Text>
+              <Feather name={item.sending ? 'clock' : 'check'} size={12} color="rgba(255,255,255,0.7)" />
+            </View>
+          </LinearGradient>
+        ) : (
+          <View style={{
+            backgroundColor: "#FFFFFF",
+            padding: spacing.sm,
+            paddingHorizontal: spacing.md,
+            borderRadius: 20,
+            borderBottomLeftRadius: 4,
+            maxWidth: '80%',
+            borderWidth: 2,
+            borderColor: "#000",
+            shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 2, height: 2 }, elevation: 2,
+          }}>
+            <Text style={{ fontSize: 14, color: "#000", lineHeight: 20, fontWeight: "600" }}>{item.content}</Text>
+            <View style={{ flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', marginTop: 4 }}>
+              <Text style={{ fontSize: 10, color: "#000", fontWeight: "600" }}>{formatTime(item.$createdAt)}</Text>
+            </View>
           </View>
-        </View>
+        )}
       </View>
     );
   };
@@ -180,8 +211,8 @@ export default function ChatRoom() {
           <Feather name="arrow-left" size={24} color={colors.onSurface} />
         </Pressable>
         <View style={styles.headerInfo}>
-          <Text style={styles.headerName}>{otherParticipantName}</Text>
-          <Text style={styles.headerStatus}>Online</Text>
+          <Text style={styles.headerName}>{otherParticipantName} 💬</Text>
+          <Text style={styles.headerStatus}>🟢 Online</Text>
         </View>
         <View style={{ width: 24 }} />
       </View>
@@ -204,7 +235,7 @@ export default function ChatRoom() {
             style={styles.textInput}
             value={newMessage}
             onChangeText={setNewMessage}
-            placeholder="Type a message..."
+            placeholder="Type a message bestie..."
             multiline
             maxLength={1000}
           />
@@ -222,32 +253,19 @@ export default function ChatRoom() {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: colors.surface },
+  root: { flex: 1, backgroundColor: "#FBFBF9" },
   loadingContainer: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   errorContainer: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.lg },
-  errorTitle: { fontSize: 16, fontWeight: '700', color: colors.onSurface, marginVertical: spacing.md },
-  backButton: { backgroundColor: colors.brand, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderRadius: radius.md, marginTop: spacing.md },
-  backButtonText: { color: colors.onBrand, fontSize: 14, fontWeight: '600' },
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.lg, paddingVertical: spacing.md, borderBottomWidth: 1, borderBottomColor: colors.border },
+  errorTitle: { fontSize: 16, fontWeight: '800', color: "#000", marginVertical: spacing.md },
+  backButton: { backgroundColor: "#3366FF", paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderRadius: 16, marginTop: spacing.md, borderWidth: 3, borderColor: "#000", shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 4, height: 4 }, elevation: 4 },
+  backButtonText: { color: "#FFFFFF", fontSize: 14, fontWeight: "800" },
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.lg, paddingVertical: spacing.md, borderBottomWidth: 3, borderBottomColor: "#000", backgroundColor: "rgba(255,255,255,0.92)", shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 0, height: 4 }, elevation: 6 },
   headerInfo: { flex: 1, marginLeft: spacing.md },
-  headerName: { fontSize: 16, fontWeight: '700', color: colors.onSurface },
-  headerStatus: { fontSize: 12, color: colors.success, marginTop: 2 },
+  headerName: { fontSize: 16, fontWeight: "900", color: "#000", letterSpacing: 0.5 },
+  headerStatus: { fontSize: 12, color: "#66FF33", marginTop: 2, fontWeight: "700" },
   messagesList: { padding: spacing.lg, gap: spacing.sm },
-  messageRow: (isMyMessage: boolean) => ({
-    flexDirection: 'row',
-    justifyContent: isMyMessage ? 'flex-end' : 'flex-start',
-  }),
-  messageBubble: (isMyMessage: boolean) => ({
-    backgroundColor: isMyMessage ? colors.brandTertiary : colors.surfaceTertiary,
-    padding: spacing.sm,
-    borderRadius: radius.lg,
-    maxWidth: '80%',
-  }),
-  messageText: { fontSize: 14, color: colors.onSurface, lineHeight: 20 },
-  messageFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: spacing.xs },
-  messageTime: { fontSize: 10, color: colors.onSurfaceTertiary },
-  inputContainer: { borderTopWidth: 1, borderTopColor: colors.border },
+  inputContainer: { borderTopWidth: 3, borderTopColor: "#000", backgroundColor: "#FBFBF9" },
   inputWrapper: { flexDirection: 'row', alignItems: 'flex-end', padding: spacing.md, gap: spacing.sm },
-  textInput: { flex: 1, backgroundColor: colors.surfaceTertiary, borderRadius: radius.xl, paddingHorizontal: spacing.md, paddingVertical: spacing.sm, fontSize: 14, maxHeight: 100, textAlignVertical: 'top' },
-  sendButton: { width: 40, height: 40, borderRadius: 20, backgroundColor: colors.brand, alignItems: 'center', justifyContent: 'center' },
+  textInput: { flex: 1, backgroundColor: "#F3F3F5", borderRadius: 16, paddingHorizontal: spacing.md, paddingVertical: spacing.sm, fontSize: 14, maxHeight: 100, textAlignVertical: 'top', borderWidth: 2, borderColor: "#000", color: "#000" },
+  sendButton: { width: 40, height: 40, borderRadius: 20, backgroundColor: "#3366FF", alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: "#000", shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 4, height: 4 }, elevation: 4 },
 });

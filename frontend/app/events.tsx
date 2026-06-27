@@ -111,26 +111,28 @@ export default function Events() {
   return (
     <SafeAreaView style={styles.root} edges={["top"]}>
       <View style={styles.header}>
-        <Text style={styles.eyebrow}>WHAT IS HAPPENING</Text>
-        <Text style={styles.title}>Local Events</Text>
+        <View>
+          <Text style={styles.eyebrow}>WHAT'S HAPPENING</Text>
+          <Text style={styles.title}>Local Events 🎟️</Text>
+        </View>
       </View>
 
       {loading ? (
         <View style={styles.center}>
-          <ActivityIndicator color={colors.brand} />
+          <Text style={styles.loadingTxt}>Loading events... 🫠</Text>
         </View>
       ) : (
         <FlatList
           testID="events-list"
           data={events}
           keyExtractor={(e) => e.$id}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.brand} />}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#3366FF" />}
           contentContainerStyle={{ padding: spacing.lg, paddingBottom: 120, gap: spacing.md }}
           ListEmptyComponent={
-            <View style={styles.empty}>
-              <Feather name="calendar" size={32} color={colors.muted} />
-              <Text style={styles.emptyTitle}>No events near {profile?.locality}</Text>
-              <Text style={styles.emptyText}>Be the first to plan a meet-up.</Text>
+            <View style={styles.center}>
+              <Feather name="calendar" size={44} color={colors.muted} />
+              <Text style={styles.emptyTitle}>No events near {profile?.locality} 🎪</Text>
+              <Text style={styles.emptyText}>Your hood is quiet — host something!</Text>
             </View>
           }
           renderItem={({ item }) => {
@@ -145,11 +147,11 @@ export default function Events() {
                   </Text>
                   <Text style={styles.dateDay}>{new Date(item.date).getDate()}</Text>
                 </View>
-                <View style={{ flex: 1 }}>
+                <View style={{ flex: 1, gap: 4 }}>
                   <Text style={styles.evTitle}>{item.title}</Text>
                   <Text style={styles.evDesc} numberOfLines={2}>{item.description}</Text>
                   <View style={styles.evMetaRow}>
-                    <Feather name="map-pin" size={12} color={colors.muted} />
+                    <Feather name="map-pin" size={11} color={colors.muted} />
                     <Text style={styles.evMeta} numberOfLines={1}>{item.location}</Text>
                   </View>
                   <View style={styles.evMetaRow}>
@@ -160,8 +162,8 @@ export default function Events() {
                       }}
                       style={{ flexDirection: "row", alignItems: "center", gap: 4, flex: 1 }}
                     >
-                      <Feather name="user" size={12} color={colors.muted} />
-                      <Text style={[styles.evMeta, { color: colors.brand, fontWeight: "600" }]} numberOfLines={1}>
+                      <Feather name="user" size={11} color={colors.muted} />
+                      <Text style={[styles.evMeta, { color: colors.brand, fontWeight: "700" }]} numberOfLines={1}>
                         by {item.hostName}
                       </Text>
                     </Pressable>
@@ -171,24 +173,20 @@ export default function Events() {
                         style={[styles.miniFollow, followMap[item.hostId] && styles.miniFollowActive]}
                       >
                         <Text style={[styles.miniFollowText, followMap[item.hostId] && styles.miniFollowTextActive]}>
-                          {followMap[item.hostId] ? "Following" : "Follow"}
+                          {followMap[item.hostId] ? "✓" : "+"}
                         </Text>
                       </Pressable>
                     )}
-                    <Text style={styles.evMeta}>· {count} going</Text>
+                    <Text style={styles.evMeta}>· {count}</Text>
                   </View>
                   <Pressable
                     testID={`rsvp-${item.$id}`}
                     onPress={() => onRsvp(item)}
                     style={[styles.rsvpBtn, going && styles.rsvpBtnActive]}
                   >
-                    <Feather
-                      name={going ? "check" : "plus"}
-                      size={14}
-                      color={going ? colors.onBrand : colors.brand}
-                    />
+                    <Feather name={going ? "check" : "plus"} size={14} color={going ? "#FFFFFF" : colors.brand} />
                     <Text style={[styles.rsvpText, going && styles.rsvpTextActive]}>
-                      {going ? "Going" : "RSVP"}
+                      {going ? "Going ✅" : "RSVP"}
                     </Text>
                   </Pressable>
                 </View>
@@ -203,7 +201,7 @@ export default function Events() {
         onPress={() => router.push("/create-event")}
         style={styles.fab}
       >
-        <Feather name="plus" size={26} color={colors.onBrand} />
+        <Feather name="plus" size={26} color="#FFFFFF" />
       </Pressable>
     </SafeAreaView>
   );
@@ -213,49 +211,58 @@ const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.surface },
   header: {
     paddingHorizontal: spacing.lg, paddingTop: spacing.sm, paddingBottom: spacing.md,
-    borderBottomWidth: 1, borderBottomColor: colors.border,
+    borderBottomWidth: 3, borderBottomColor: "#000",
+    backgroundColor: "rgba(255,255,255,0.92)",
+    shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 0, height: 4 }, elevation: 6,
   },
-  eyebrow: { fontSize: 10, fontWeight: "700", color: colors.brand, letterSpacing: 1.2 },
-  title: { fontSize: 24, fontWeight: "800", color: colors.onSurface, marginTop: 2 },
+  eyebrow: { fontSize: 10, fontWeight: "800", color: colors.brand, letterSpacing: 1.2 },
+  title: { fontSize: 24, fontWeight: "900", color: colors.onSurface, marginTop: 2, letterSpacing: -0.5 },
   center: { flex: 1, alignItems: "center", justifyContent: "center" },
+  loadingTxt: { fontSize: 14, color: colors.muted, fontWeight: "600" },
   empty: { alignItems: "center", padding: spacing.xxxl, gap: spacing.md },
   emptyTitle: { color: colors.onSurface, fontSize: 16, fontWeight: "700", textAlign: "center" },
   emptyText: { color: colors.muted, fontSize: 13, textAlign: "center", lineHeight: 19 },
   card: {
     flexDirection: "row", gap: spacing.md,
     backgroundColor: colors.surfaceSecondary, borderRadius: radius.lg, padding: spacing.lg,
-    borderWidth: 1, borderColor: colors.border,
+    borderWidth: 2, borderColor: "#000",
+    shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 4, height: 4 }, elevation: 4,
   },
   dateBox: {
     width: 56, height: 64, borderRadius: radius.md,
-    backgroundColor: colors.brandTertiary, alignItems: "center", justifyContent: "center",
+    backgroundColor: "#E6EFE9", alignItems: "center", justifyContent: "center",
+    borderWidth: 2, borderColor: "#000",
+    shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 2, height: 2 }, elevation: 2,
   },
-  dateMonth: { fontSize: 10, fontWeight: "700", color: colors.brand, letterSpacing: 1 },
-  dateDay: { fontSize: 22, fontWeight: "800", color: colors.brand },
-  evTitle: { fontSize: 15, fontWeight: "700", color: colors.onSurface },
-  evDesc: { fontSize: 13, color: colors.onSurfaceTertiary, marginTop: 2, lineHeight: 18 },
+  dateMonth: { fontSize: 10, fontWeight: "800", color: colors.brand, letterSpacing: 1 },
+  dateDay: { fontSize: 22, fontWeight: "900", color: colors.brand },
+  evTitle: { fontSize: 15, fontWeight: "800", color: colors.onSurface },
+  evDesc: { fontSize: 13, fontWeight: "600", color: colors.onSurfaceTertiary, marginTop: 2, lineHeight: 18 },
   evMetaRow: { flexDirection: "row", alignItems: "center", gap: 4, marginTop: 4 },
-  evMeta: { fontSize: 12, color: colors.muted, flex: 1 },
+  evMeta: { fontSize: 12, fontWeight: "700", color: colors.muted, flex: 1 },
   miniFollow: {
     paddingHorizontal: 8, paddingVertical: 2, borderRadius: radius.pill,
     borderWidth: 1, borderColor: colors.brand, backgroundColor: colors.surfaceSecondary,
+    shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 1, height: 1 }, elevation: 1,
   },
   miniFollowActive: { backgroundColor: colors.brand },
-  miniFollowText: { fontSize: 10, fontWeight: "700", color: colors.brand },
+  miniFollowText: { fontSize: 10, fontWeight: "800", color: colors.brand },
   miniFollowTextActive: { color: colors.onBrand },
   rsvpBtn: {
     flexDirection: "row", alignItems: "center", gap: 4, alignSelf: "flex-start",
     paddingHorizontal: 12, paddingVertical: 6, borderRadius: radius.pill,
-    borderWidth: 1, borderColor: colors.brand, marginTop: spacing.sm,
+    borderWidth: 2, borderColor: "#000", marginTop: spacing.sm,
     backgroundColor: colors.surfaceSecondary,
+    shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 2, height: 2 }, elevation: 2,
   },
-  rsvpBtnActive: { backgroundColor: colors.brand },
-  rsvpText: { fontSize: 12, fontWeight: "700", color: colors.brand },
+  rsvpBtnActive: { backgroundColor: colors.brand, borderColor: "#000" },
+  rsvpText: { fontSize: 12, fontWeight: "800", color: colors.brand },
   rsvpTextActive: { color: colors.onBrand },
   fab: {
     position: "absolute", right: spacing.lg, bottom: 80,
     width: 56, height: 56, borderRadius: 28, backgroundColor: colors.brand,
     alignItems: "center", justifyContent: "center",
-    shadowColor: "#000", shadowOpacity: 0.2, shadowRadius: 8, shadowOffset: { width: 0, height: 4 }, elevation: 6,
+    shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 4, height: 4 }, elevation: 6,
+    borderWidth: 2, borderColor: "#000",
   },
 });
