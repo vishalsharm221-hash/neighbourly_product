@@ -30,6 +30,11 @@ for (const file of jsFiles) {
     'function i(t,a="/neighbourly_product/"){return a?'
   );
   content = content.replace(/"\/assets\//g, '"assets/');
+  content = content.replace(
+    'config:R,',
+    'config:Object.assign({},R,{path:"/neighbourly_product/"}),'
+  );
+  content = content.replace("i=i.replace(e,'')", "i=i.replace(e,'/')");
   
   const replacedCount = (content.length - originalSize) / 
     ('/neighbourly_product/"'.length - '""'.length);
