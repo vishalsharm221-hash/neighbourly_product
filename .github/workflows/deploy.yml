@@ -14,9 +14,9 @@ jobs:
           node-version: 22
       - working-directory: frontend
         env:
-          EXPO_PUBLIC_APPWRITE_ENDPOINT: ${{ secrets.EXPO_PUBLIC_APPWRITE_ENDPOINT }}
-          EXPO_PUBLIC_APPWRITE_PROJECT_ID: ${{ secrets.EXPO_PUBLIC_APPWRITE_PROJECT_ID }}
-          EXPO_PUBLIC_APPWRITE_PLATFORM: ${{ secrets.EXPO_PUBLIC_APPWRITE_PLATFORM }}
+          EXPO_PUBLIC_APPWRITE_ENDPOINT: ${{ secrets.EXPO_PUBLIC_APPWRITE_ENDPOINT || 'https://sgp.cloud.appwrite.io/v1' }}
+          EXPO_PUBLIC_APPWRITE_PROJECT_ID: ${{ secrets.EXPO_PUBLIC_APPWRITE_PROJECT_ID || '6a3b7680002e8d01dd74' }}
+          EXPO_PUBLIC_APPWRITE_PLATFORM: ${{ secrets.EXPO_PUBLIC_APPWRITE_PLATFORM || 'in.localy.app' }}
         run: |
           npm install --legacy-peer-deps
           npx expo export --platform web
