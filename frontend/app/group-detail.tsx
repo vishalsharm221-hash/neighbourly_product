@@ -24,7 +24,7 @@ import {
   listGroupPosts,
   createGroupPost,
   deleteGroup,
-  updateGroup,
+  getGroupMembership,
 } from "@/src/db";
 import { colors, spacing, radius } from "@/src/theme";
 import type { GroupDoc, GroupPostDoc } from "@/src/db";
@@ -56,7 +56,8 @@ export default function GroupDetailScreen() {
       setGroup(groupData);
       setPosts(postsData);
       if (groupData && profile?.userId) {
-        setIsMember(groupData.creatorId === profile.userId);
+        const membership = await getGroupMembership(groupData.$id, profile.userId);
+        setIsMember(groupData.creatorId === profile.userId || !!membership);
       }
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "Failed to load group");

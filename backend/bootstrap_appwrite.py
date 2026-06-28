@@ -55,7 +55,7 @@ def safe(fn, *args, **kwargs):
 
 # ----- Database -----
 print("Creating database…")
-    safe(db.create, DB_ID, "Localy")
+safe(db.create, DB_ID, "Localy")
 
 # ----- Collections -----
 print("Creating collections…")

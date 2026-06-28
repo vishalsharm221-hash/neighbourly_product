@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   View, Text, StyleSheet, Pressable, ScrollView, ActivityIndicator, TextInput, Animated,
 } from "react-native";
@@ -17,7 +17,7 @@ type Step = 1 | 2 | 3;
 
 export default function Onboarding() {
   const router = useRouter();
-  const { saveLocation } = useAuth();
+  const { profile, saveLocation, saveProfileSetup } = useAuth();
   const [step, setStep] = useState<Step>(1);
   const [city, setCity] = useState<City | null>(null);
   const [mode, setMode] = useState<Mode | null>(null);
@@ -29,6 +29,13 @@ export default function Onboarding() {
   const [err, setErr] = useState<string | null>(null);
 
   const progress = useRef(new Animated.Value(0.33)).current;
+
+  useEffect(() => {
+    if (!profile) return;
+    setName((current) => current || profile.name || "");
+    setDob((current) => current || profile.dob || "");
+    setGender((current) => current || profile.gender || "");
+  }, [profile]);
 
   const animateProgress = (val: number) => {
     Animated.spring(progress, { toValue: val, friction: 7, tension: 40, useNativeDriver: false }).start();
@@ -42,10 +49,32 @@ export default function Onboarding() {
 
   const options = !city ? [] : mode === "student" ? COLLEGES[city] : LOCALITIES[city];
 
+  const normalizeDob = (value: string) => {
+    const trimmed = value.trim();
+    if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) return trimmed;
+    const match = trimmed.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+    if (!match) return null;
+    return `${match[3]}-${match[2]}-${match[1]}`;
+  };
+
   const submit = async () => {
     if (!city || !mode || !pick) return;
+    const normalizedDob = normalizeDob(dob);
+    if (!name.trim()) {
+      setErr("Enter your name");
+      return;
+    }
+    if (!normalizedDob) {
+      setErr("Birthday format: YYYY-MM-DD or DD/MM/YYYY");
+      return;
+    }
+    if (!gender.trim()) {
+      setErr("Choose a gender option");
+      return;
+    }
     setBusy(true); setErr(null);
     try {
+      await saveProfileSetup({ name: name.trim(), gender: gender.trim(), dob: normalizedDob });
       await saveLocation(
         city,
         pick,
@@ -195,7 +224,7 @@ export default function Onboarding() {
                   />
                 </View>
                 <View>
-                  <Text style={styles.inputLabel2}>Gender (Optional)</Text>
+                  <Text style={styles.inputLabel2}>Gender</Text>
                   <View style={styles.genderRow}>
                     {["male", "female", "other"].map((g) => (
                       <Pressable
@@ -216,7 +245,11 @@ export default function Onboarding() {
               <Pressable onPress={() => setStep(2)} style={[styles.cta, styles.ctaOutline, { flex: 0.4 }]}>
                 <Text style={styles.ctaOutlineText}>Back</Text>
               </Pressable>
-              <Pressable onPress={submit} disabled={!pick} style={[styles.cta, { flex: 1 }, busy && { opacity: 0.6 }]}>
+              <Pressable
+                onPress={submit}
+                disabled={!pick || !name.trim() || !dob.trim() || !gender.trim() || busy}
+                style={[styles.cta, { flex: 1 }, (!pick || !name.trim() || !dob.trim() || !gender.trim() || busy) && { opacity: 0.6 }]}
+              >
                 {busy ? <ActivityIndicator color="#FFFFFF" /> : (
                   <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
                     <Text style={styles.ctaText}>Enter the Hood 🚀</Text>

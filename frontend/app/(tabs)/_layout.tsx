@@ -108,6 +108,9 @@ export default function TabsLayout() {
           ),
         }}
       />
+      <Tabs.Screen name="search" options={{ href: null }} />
+      <Tabs.Screen name="events" options={{ href: null }} />
+      <Tabs.Screen name="marketplace" options={{ href: null }} />
       <Tabs.Screen
         name="profile"
         options={{

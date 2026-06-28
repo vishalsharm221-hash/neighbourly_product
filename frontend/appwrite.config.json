@@ -1,0 +1,22 @@
+{
+    "projectId": "6a3b7680002e8d01dd74",
+    "endpoint": "https://sgp.cloud.appwrite.io/v1",
+    "sites": [
+        {
+            "$id": "6a40cb0f001a61549ba1",
+            "name": "Localy",
+            "enabled": true,
+            "logging": true,
+            "framework": "react-native",
+            "timeout": 30,
+            "installCommand": "npm install --legacy-peer-deps",
+            "buildCommand": "npx expo export --platform web && node scripts/patch-dist.js",
+            "outputDirectory": "./dist",
+            "specification": "s-2vcpu-2gb",
+            "buildRuntime": "node-22",
+            "adapter": "static",
+            "fallbackFile": "index.html",
+            "path": "."
+        }
+    ]
+}

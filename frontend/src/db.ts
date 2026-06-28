@@ -339,7 +339,6 @@ export async function createChat(participantIds: string[]): Promise<ChatDoc> {
     documentId: ID.unique(),
     data: {
       participantIds,
-      $createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     },
     permissions: [Permission.read(Role.users())],
@@ -369,7 +368,7 @@ export async function sendMessage(
     databaseId: DB,
     collectionId: COL.messages,
     documentId: ID.unique(),
-    data: { chatId, senderId, receiverId, content, $createdAt: new Date().toISOString() },
+    data: { chatId, senderId, receiverId, content },
     permissions: [Permission.read(Role.users())],
   });
   // Update chat's lastMessage
@@ -493,7 +492,7 @@ export async function listComments(postId: string): Promise<CommentDoc[]> {
 export async function createComment(postId: string, authorId: string, authorName: string, content: string): Promise<CommentDoc> {
   return await databases.createDocument<AppwriteDoc<CommentDoc>>({
     databaseId: DB, collectionId: COL.comments, documentId: ID.unique(),
-    data: { postId, authorId, authorName, content, $createdAt: new Date().toISOString() },
+    data: { postId, authorId, authorName, content },
     permissions: [Permission.read(Role.users()), Permission.delete(Role.user(authorId))],
   });
 }
@@ -509,7 +508,7 @@ export async function listEventComments(eventId: string): Promise<CommentDoc[]> 
 export async function createEventComment(eventId: string, authorId: string, authorName: string, content: string): Promise<CommentDoc> {
   return await databases.createDocument<AppwriteDoc<CommentDoc>>({
     databaseId: DB, collectionId: COL.comments, documentId: ID.unique(),
-    data: { postId: eventId, authorId, authorName, content, $createdAt: new Date().toISOString() },
+    data: { postId: eventId, authorId, authorName, content },
     permissions: [Permission.read(Role.users()), Permission.delete(Role.user(authorId))],
   });
 }
@@ -525,7 +524,7 @@ export async function listMarketComments(marketId: string): Promise<CommentDoc[]
 export async function createMarketComment(marketId: string, authorId: string, authorName: string, content: string): Promise<CommentDoc> {
   return await databases.createDocument<AppwriteDoc<CommentDoc>>({
     databaseId: DB, collectionId: COL.comments, documentId: ID.unique(),
-    data: { postId: marketId, authorId, authorName, content, $createdAt: new Date().toISOString() },
+    data: { postId: marketId, authorId, authorName, content },
     permissions: [Permission.read(Role.users()), Permission.delete(Role.user(authorId))],
   });
 }
@@ -543,6 +542,14 @@ export type GroupDoc = {
   memberCount: number;
   isPublic: boolean;
   imageFileId?: string | null;
+  $createdAt: string;
+};
+
+export type GroupMemberDoc = {
+  $id: string;
+  groupId: string;
+  userId: string;
+  joinedAt: string;
   $createdAt: string;
 };
 
@@ -589,8 +596,11 @@ export async function deleteGroup(groupId: string): Promise<void> {
 }
 
 export async function joinGroup(groupId: string, userId: string): Promise<void> {
+  const existing = await getGroupMembership(groupId, userId);
+  if (existing) return;
+
   await databases.createDocument<AppwriteDoc<any>>({
-    databaseId: DB, collectionId: COL.groups, documentId: ID.unique(),
+    databaseId: DB, collectionId: COL.group_members, documentId: ID.unique(),
     data: { groupId, userId, joinedAt: new Date().toISOString() },
     permissions: [Permission.read(Role.users()), Permission.delete(Role.user(userId))],
   });
@@ -603,14 +613,22 @@ export async function joinGroup(groupId: string, userId: string): Promise<void> 
 
 export async function leaveGroup(groupId: string, userId: string): Promise<void> {
   const res = await databases.listDocuments<AppwriteDoc<any>>({
-    databaseId: DB, collectionId: COL.groups,
+    databaseId: DB, collectionId: COL.group_members,
     queries: [Query.equal("groupId", groupId), Query.equal("userId", userId), Query.limit(1)],
   });
   if (res.documents[0]) {
-    await databases.deleteDocument({ databaseId: DB, collectionId: COL.groups, documentId: res.documents[0].$id });
+    await databases.deleteDocument({ databaseId: DB, collectionId: COL.group_members, documentId: res.documents[0].$id });
     const group = await getGroupById(groupId);
     if (group) await updateGroup(groupId, { memberCount: Math.max(0, (group.memberCount || 0) - 1) });
   }
+}
+
+export async function getGroupMembership(groupId: string, userId: string): Promise<GroupMemberDoc | null> {
+  const res = await databases.listDocuments<AppwriteDoc<GroupMemberDoc>>({
+    databaseId: DB, collectionId: COL.group_members,
+    queries: [Query.equal("groupId", groupId), Query.equal("userId", userId), Query.limit(1)],
+  });
+  return res.documents[0] || null;
 }
 
 export type GroupPostDoc = {
@@ -856,7 +874,7 @@ export async function listSavedItems(userId: string): Promise<SavedItemDoc[]> {
 export async function saveItem(userId: string, itemType: string, itemId: string): Promise<SavedItemDoc> {
   return await databases.createDocument<AppwriteDoc<SavedItemDoc>>({
     databaseId: DB, collectionId: COL.saved_items, documentId: ID.unique(),
-    data: { userId, itemType, itemId, $createdAt: new Date().toISOString() },
+    data: { userId, itemType, itemId },
     permissions: [Permission.read(Role.users()), Permission.delete(Role.user(userId))],
   });
 }
@@ -921,7 +939,7 @@ export type ReportDoc = {
 export async function createReport(data: Omit<ReportDoc, "$id" | "$createdAt" | "status" | "resolvedBy" | "resolvedAt">): Promise<ReportDoc> {
   return await databases.createDocument<AppwriteDoc<ReportDoc>>({
     databaseId: DB, collectionId: COL.reports, documentId: ID.unique(),
-    data: { ...data, status: "pending", $createdAt: new Date().toISOString() },
+    data: { ...data, status: "pending" },
     permissions: [Permission.read(Role.users())],
   });
 }
@@ -959,7 +977,7 @@ export async function listNotifications(userId: string): Promise<NotificationDoc
 export async function createNotification(data: Omit<NotificationDoc, "$id" | "$createdAt">): Promise<NotificationDoc> {
   return await databases.createDocument<AppwriteDoc<NotificationDoc>>({
     databaseId: DB, collectionId: COL.notifications, documentId: ID.unique(),
-    data: { ...data, $createdAt: new Date().toISOString() },
+    data,
     permissions: [Permission.read(Role.user(data.userId))],
   });
 }

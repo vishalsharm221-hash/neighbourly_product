@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -52,6 +52,10 @@ export default function AuthScreen() {
       animateIn();
     });
   };
+
+  useEffect(() => {
+    animateIn();
+  }, []);
 
   const requestOtp = async () => {
     setErr(null);
@@ -162,7 +166,7 @@ export default function AuthScreen() {
                 {step === "email" && (
                   <Animated.View style={{ opacity: fadeAnim }}>
                     <BlurView intensity={60} tint="light" style={[styles.card, { backgroundColor: "rgba(255,255,255,0.92)" }]}>
-                      <Text style={styles.cardTitle}>What's your email? bestie 💌</Text>
+                      <Text style={styles.cardTitle}>What is your email?</Text>
                       <View style={styles.inputWrap}>
                         <Text style={styles.inputLabel}>Email Address</Text>
                         <TextInput

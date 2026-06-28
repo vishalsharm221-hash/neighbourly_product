@@ -21,7 +21,11 @@ COLLECTIONS = {
     "market": "Marketplace",
     "likes": "Likes",
     "rsvps": "RSVPs",
+    "chats": "Chats",
+    "messages": "Messages",
+    "comments": "Comments",
     "groups": "Neighborhood Groups",
+    "group_members": "Group Members",
     "group_posts": "Group Posts",
     "businesses": "Businesses",
     "reviews": "Reviews",
@@ -84,6 +88,10 @@ attribute_tasks = [
     (db.create_integer_attribute, dict(database_id=DB_ID, collection_id="groups", key="memberCount", required=False, default=0)),
     (db.create_boolean_attribute, dict(database_id=DB_ID, collection_id="groups", key="isPublic", required=False, default=True)),
     (db.create_string_attribute, dict(database_id=DB_ID, collection_id="groups", key="imageFileId", size=64, required=False)),
+    # group_members
+    (db.create_string_attribute, dict(database_id=DB_ID, collection_id="group_members", key="groupId", size=64, required=True)),
+    (db.create_string_attribute, dict(database_id=DB_ID, collection_id="group_members", key="userId", size=64, required=True)),
+    (db.create_string_attribute, dict(database_id=DB_ID, collection_id="group_members", key="joinedAt", size=32, required=True)),
     # group_posts
     (db.create_string_attribute, dict(database_id=DB_ID, collection_id="group_posts", key="groupId", size=64, required=True)),
     (db.create_string_attribute, dict(database_id=DB_ID, collection_id="group_posts", key="authorId", size=64, required=True)),
@@ -167,7 +175,7 @@ attribute_tasks = [
     (db.create_string_attribute, dict(database_id=DB_ID, collection_id="polls", key="creatorId", size=64, required=True)),
     (db.create_string_attribute, dict(database_id=DB_ID, collection_id="polls", key="creatorName", size=128, required=True)),
     (db.create_string_attribute, dict(database_id=DB_ID, collection_id="polls", key="question", size=500, required=True)),
-    (db.create_string_attribute, dict(database_id=DB_ID, collection_id="polls", key="options", size=2000, required=True)),
+    (db.create_string_attribute, dict(database_id=DB_ID, collection_id="polls", key="options", size=2000, required=True, array=True)),
     (db.create_string_attribute, dict(database_id=DB_ID, collection_id="polls", key="city", size=64, required=True)),
     (db.create_string_attribute, dict(database_id=DB_ID, collection_id="polls", key="locality", size=128, required=False)),
     (db.create_string_attribute, dict(database_id=DB_ID, collection_id="polls", key="groupId", size=64, required=False)),
@@ -212,6 +220,8 @@ attribute_tasks = [
     (db.create_integer_attribute, dict(database_id=DB_ID, collection_id="services", key="reviewCount", required=False, default=0)),
     (db.create_boolean_attribute, dict(database_id=DB_ID, collection_id="services", key="verified", required=False, default=False)),
     # extend existing: profiles
+    (db.create_string_attribute, dict(database_id=DB_ID, collection_id="profiles", key="gender", size=24, required=False)),
+    (db.create_string_attribute, dict(database_id=DB_ID, collection_id="profiles", key="dob", size=24, required=False)),
     (db.create_string_attribute, dict(database_id=DB_ID, collection_id="profiles", key="handle", size=32, required=False)),
     (db.create_string_attribute, dict(database_id=DB_ID, collection_id="profiles", key="bio", size=500, required=False)),
     (db.create_string_attribute, dict(database_id=DB_ID, collection_id="profiles", key="avatarFileId", size=64, required=False)),
@@ -231,6 +241,19 @@ attribute_tasks = [
     (db.create_integer_attribute, dict(database_id=DB_ID, collection_id="events", key="attendeeCount", required=False, default=0)),
     # extend existing: market
     (db.create_string_attribute, dict(database_id=DB_ID, collection_id="market", key="imageFileId", size=64, required=False)),
+    # comments
+    (db.create_string_attribute, dict(database_id=DB_ID, collection_id="comments", key="postId", size=64, required=True)),
+    (db.create_string_attribute, dict(database_id=DB_ID, collection_id="comments", key="authorId", size=64, required=True)),
+    (db.create_string_attribute, dict(database_id=DB_ID, collection_id="comments", key="authorName", size=128, required=True)),
+    (db.create_string_attribute, dict(database_id=DB_ID, collection_id="comments", key="content", size=2000, required=True)),
+    # chats
+    (db.create_string_attribute, dict(database_id=DB_ID, collection_id="chats", key="participantIds", size=64, required=True, array=True)),
+    (db.create_string_attribute, dict(database_id=DB_ID, collection_id="chats", key="updatedAt", size=32, required=True)),
+    # messages
+    (db.create_string_attribute, dict(database_id=DB_ID, collection_id="messages", key="chatId", size=64, required=True)),
+    (db.create_string_attribute, dict(database_id=DB_ID, collection_id="messages", key="senderId", size=64, required=True)),
+    (db.create_string_attribute, dict(database_id=DB_ID, collection_id="messages", key="receiverId", size=64, required=True)),
+    (db.create_string_attribute, dict(database_id=DB_ID, collection_id="messages", key="content", size=4000, required=True)),
 ]
 
 for fn, kw in attribute_tasks:
@@ -243,6 +266,8 @@ time.sleep(7)
 print("Creating indexes…")
 for db_id, col, key, idx_type, attrs in [
     (DB_ID, "groups", "city_idx", "key", ["city"]),
+    (DB_ID, "group_members", "group_user_idx", "key", ["groupId", "userId"]),
+    (DB_ID, "group_members", "user_idx", "key", ["userId"]),
     (DB_ID, "group_posts", "group_idx", "key", ["groupId"]),
     (DB_ID, "businesses", "city_idx", "key", ["city"]),
     (DB_ID, "businesses", "category_idx", "key", ["category"]),
@@ -268,7 +293,9 @@ for db_id, col, key, idx_type, attrs in [
     (DB_ID, "posts", "college_idx", "key", ["college"]),
     (DB_ID, "events", "date_idx", "key", ["date"]),
     (DB_ID, "market", "seller_idx", "key", ["sellerId"]),
+    (DB_ID, "comments", "post_idx", "key", ["postId"]),
     (DB_ID, "chats", "participant_idx", "key", ["participantIds"]),
+    (DB_ID, "messages", "chat_idx", "key", ["chatId"]),
 ]:
     safe(db.create_index, database_id=db_id, collection_id=col, key=key, type=idx_type, attributes=attrs)
 

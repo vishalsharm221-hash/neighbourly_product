@@ -28,7 +28,7 @@ export const storage = new Storage(client);
 export const realtime = new Realtime(client);
 export { ID, Permission, Role, Query };
 
-export const DB = "neighbourly";
+export const DB = process.env.EXPO_PUBLIC_APPWRITE_DATABASE_ID || "localy";
 export const COL = {
   profiles: "profiles",
   posts: "posts",
@@ -40,6 +40,7 @@ export const COL = {
   messages: "messages",
   comments: "comments",
   groups: "groups",
+  group_members: "group_members",
   group_posts: "group_posts",
   businesses: "businesses",
   reviews: "reviews",

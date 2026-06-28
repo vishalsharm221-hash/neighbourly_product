@@ -112,7 +112,7 @@ export default function Events() {
     <SafeAreaView style={styles.root} edges={["top"]}>
       <View style={styles.header}>
         <View>
-          <Text style={styles.eyebrow}>WHAT'S HAPPENING</Text>
+          <Text style={styles.eyebrow}>LOCAL HAPPENINGS</Text>
           <Text style={styles.title}>Local Events</Text>
         </View>
       </View>
