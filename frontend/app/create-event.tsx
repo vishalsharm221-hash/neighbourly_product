@@ -34,7 +34,8 @@ export default function CreateEvent() {
       setErr("Fill all fields");
       return;
     }
-    if (!profile || !user) return;
+    if (!user) { setErr("Not signed in"); return; }
+    if (!profile) { setErr("Profile not loaded"); return; }
     setBusy(true);
     setErr(null);
     try {

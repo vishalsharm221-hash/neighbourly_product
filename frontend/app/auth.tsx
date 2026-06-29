@@ -86,8 +86,8 @@ export default function AuthScreen() {
     setBusy(true);
     try {
       await verifyOtp(userId, code);
-      await new Promise((r) => setTimeout(r, 300));
-      router.replace("/(tabs)");
+      await new Promise((r) => setTimeout(r, 600));
+      router.replace("/");
     } catch (e: unknown) {
       setErr(getErrorMessage(e, "Wrong or expired code"));
     } finally {

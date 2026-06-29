@@ -89,10 +89,8 @@ export default function CreateListing() {
       setErr(parsed.error.issues[0].message);
       return;
     }
-    if (!profile || !user) {
-      setErr("Not signed in");
-      return;
-    }
+    if (!user) { setErr("Not signed in"); return; }
+    if (!profile) { setErr("Profile not loaded"); return; }
     setBusy(true);
     setErr(null);
     try {

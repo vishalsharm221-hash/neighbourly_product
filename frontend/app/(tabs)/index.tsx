@@ -74,7 +74,7 @@ export default function Feed() {
   }, [posts.length, profile?.userId]);
 
   const load = useCallback(async () => {
-    if (!profile?.city) return;
+    if (!profile?.city) { setPosts([]); setLoading(false); return; }
     try {
       const collegeScope = profile.userType === "student" ? profile.college : null;
       const data = await listPosts(profile.city, filter, collegeScope);

@@ -72,27 +72,41 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const saveProfileSetup = async (data: { name: string; gender?: string; dob?: string }) => {
-    if (!profile || !user) return;
-    // Also update auth account name
+    if (!user) throw new Error("Not signed in");
+    let p = profile;
+    if (!p) {
+      p = await createProfile(user.$id, user.email, data.name);
+      setProfile(p);
+    }
     try {
       await account.updateName({ name: data.name });
     } catch {}
-    const updated = await updateProfile(profile.$id, data);
+    const updated = await updateProfile(p.$id, data);
     setProfile(updated);
   };
 
   const saveLocation = async (city: string, locality: string, opts?: { userType?: "resident" | "student"; college?: string | null }) => {
-    if (!profile) return;
+    if (!user) throw new Error("Not signed in");
+    let p = profile;
+    if (!p) {
+      p = await createProfile(user.$id, user.email);
+      setProfile(p);
+    }
     const patch: Record<string, string | null | undefined> = { city, locality };
     if (opts?.userType) patch.userType = opts.userType;
     if (opts && "college" in opts) patch.college = opts.college;
-    const updated = await updateProfile(profile.$id, patch);
+    const updated = await updateProfile(p.$id, patch);
     setProfile(updated);
   };
 
   const updateMe = async (patch: Partial<Profile>) => {
-    if (!profile) return;
-    const updated = await updateProfile(profile.$id, patch);
+    if (!user) throw new Error("Not signed in");
+    let p = profile;
+    if (!p) {
+      p = await createProfile(user.$id, user.email);
+      setProfile(p);
+    }
+    const updated = await updateProfile(p.$id, patch);
     setProfile(updated);
   };
 

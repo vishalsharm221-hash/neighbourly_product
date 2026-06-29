@@ -35,7 +35,8 @@ export default function Profile() {
 
   useFocusEffect(
     useCallback(() => {
-      refresh();
+      setLoading(true);
+      refresh().finally(() => setLoading(false));
     }, [refresh])
   );
 
@@ -107,12 +108,12 @@ export default function Profile() {
             {profile?.verified && <Feather name="check-circle" size={18} color="#FFFFFF" />}
           </View>
           {profile?.handle && <Text style={styles.handle}>@{profile.handle}</Text>}
-          <Text style={styles.bio}>{profile?.bio || "CS major at DU 💻 | Foodie 🍕 | Exploring Delhi one momo stall at a time."}</Text>
+          <Text style={styles.bio}>{profile?.bio || "No bio yet"}</Text>
 
           <View style={styles.locRow}>
             <Feather name="map-pin" size={13} color="#FFFFFF" />
             <Text testID="profile-locality" style={styles.locText}>
-              {profile?.locality || "North Campus"} · {profile?.city || "Delhi"}
+              {[profile?.locality, profile?.city].filter(Boolean).join(" · ") || "Set your location"}
             </Text>
           </View>
 

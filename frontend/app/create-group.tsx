@@ -69,10 +69,8 @@ export default function CreateGroup() {
       setErr("Please select locality or college");
       return;
     }
-    if (!profile || !user) {
-      setErr("Not signed in");
-      return;
-    }
+    if (!user) { setErr("Not signed in"); return; }
+    if (!profile) { setErr("Profile not loaded"); return; }
     setBusy(true);
     setErr(null);
     try {

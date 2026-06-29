@@ -50,7 +50,8 @@ export default function CreateMarket() {
       setErr("Fill all fields and provide a valid price");
       return;
     }
-    if (!profile || !user) return;
+    if (!user) { setErr("Not signed in"); return; }
+    if (!profile) { setErr("Profile not loaded"); return; }
     setBusy(true);
     setErr(null);
     try {
