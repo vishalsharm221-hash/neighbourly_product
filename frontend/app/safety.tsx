@@ -126,7 +126,9 @@ export default function SafetyScreen() {
           <Text style={styles.headerEyebrow}>STAY SAFE</Text>
           <Text style={styles.headerTitle}>Safety</Text>
         </View>
-        <View style={{ width: 24 }} />
+        <Pressable style={styles.reportBtn} onPress={() => router.push("/report-issue" as any)}>
+          <Feather name="plus" size={18} color={colors.onBrand} />
+        </Pressable>
       </View>
 
       {loading ? (
@@ -164,6 +166,10 @@ const styles = StyleSheet.create({
   },
   headerEyebrow: { fontSize: 11, fontWeight: "700", color: colors.muted, letterSpacing: 1 },
   headerTitle: { fontSize: 18, fontWeight: "800", color: colors.onSurface },
+  reportBtn: {
+    width: 36, height: 36, borderRadius: 18, backgroundColor: colors.brand,
+    alignItems: "center", justifyContent: "center", borderWidth: 2, borderColor: "#000",
+  },
   empty: { alignItems: "center", padding: spacing.xxxl, gap: spacing.md, marginTop: 60 },
   emptyTitle: { fontSize: 16, fontWeight: "700", color: colors.onSurface },
   emptyText: { fontSize: 13, color: colors.muted, textAlign: "center" },

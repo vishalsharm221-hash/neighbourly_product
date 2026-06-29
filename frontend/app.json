@@ -12,9 +12,10 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.localy.app",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#000"
+        "backgroundColor": "#000000"
       },
       "edgeToEdgeEnabled": true
     },
@@ -37,6 +38,13 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "614c700d-1d15-49f1-89de-1b2b1d950f9c"
+      }
+    },
+    "owner": "vsharma67s-team"
   }
 }

@@ -10,10 +10,12 @@ type Action = { key: string; label: string; icon: string; route: string; tileCol
 const ACTIONS: Action[] = [
   { key: "post", label: "Post", icon: "file-text", route: "/create-post", tileColor: "#FF3366", tileBg: "#FFE0EC" },
   { key: "event", label: "Event", icon: "calendar", route: "/create-event", tileColor: "#B58500", tileBg: "#FFF4D9" },
+  { key: "market", label: "Sale Item", icon: "shopping-bag", route: "/create-market", tileColor: "#22C55E", tileBg: "#D4F5E2" },
   { key: "listing", label: "Listing", icon: "home", route: "/create-listing", tileColor: "#2E5C3B", tileBg: "#E6EFE9" },
-  { key: "recommendation", label: "Reco", icon: "star", route: "/create-recommendation", tileColor: "#437A53", tileBg: "#E0F0E4" },
+  { key: "recommendation", label: "Recommend", icon: "star", route: "/create-recommendation", tileColor: "#437A53", tileBg: "#E0F0E4" },
   { key: "poll", label: "Poll", icon: "bar-chart-2", route: "/create-poll", tileColor: "#3366FF", tileBg: "#D9E5FF" },
   { key: "service", label: "Service", icon: "tool", route: "/create-service", tileColor: "#FF6B35", tileBg: "#FFE8D9" },
+  { key: "report", label: "Report", icon: "alert-triangle", route: "/report-issue", tileColor: "#B58500", tileBg: "#FFF4D9" },
 ];
 
 export default function CreatePicker() {

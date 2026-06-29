@@ -5,10 +5,9 @@ import { Feather } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "@/src/auth-context";
-import { colors, spacing, radius } from "@/src/theme";
-import { databases, ID, Permission, Role, Query, DB, COL } from "@/src/appwrite";
-import type { Models } from "react-native-appwrite";
-import { getChatByParticipants, createChat, sendMessage, listMessages, createConversation, getMessagesByChatId } from "@/src/db";
+import { colors, spacing } from "@/src/theme";
+import { databases, DB, COL } from "@/src/appwrite";
+import { getChatByParticipants, sendMessage, listMessages } from "@/src/db";
 import type { AppwriteDoc, ChatDoc, MessageDoc } from "@/src/db";
 
 interface Message extends MessageDoc {
@@ -65,7 +64,7 @@ export default function ChatRoom() {
           setError('Chat not found');
         }
       }
-    } catch (err) {
+    } catch {
       setError('Failed to load chat');
     } finally {
       setIsLoading(false);
@@ -211,8 +210,8 @@ export default function ChatRoom() {
           <Feather name="arrow-left" size={24} color={colors.onSurface} />
         </Pressable>
         <View style={styles.headerInfo}>
-          <Text style={styles.headerName}>{otherParticipantName} 💬</Text>
-          <Text style={styles.headerStatus}>🟢 Online</Text>
+          <Text style={styles.headerName}>{otherParticipantName}</Text>
+          <Text style={styles.headerStatus}>Conversation</Text>
         </View>
         <View style={{ width: 24 }} />
       </View>
@@ -235,7 +234,7 @@ export default function ChatRoom() {
             style={styles.textInput}
             value={newMessage}
             onChangeText={setNewMessage}
-            placeholder="Type a message bestie..."
+            placeholder="Type a message"
             multiline
             maxLength={1000}
           />
@@ -261,8 +260,8 @@ const styles = StyleSheet.create({
   backButtonText: { color: "#FFFFFF", fontSize: 14, fontWeight: "800" },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.lg, paddingVertical: spacing.md, borderBottomWidth: 3, borderBottomColor: "#000", backgroundColor: "rgba(255,255,255,0.92)", shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 0, height: 4 }, elevation: 6 },
   headerInfo: { flex: 1, marginLeft: spacing.md },
-  headerName: { fontSize: 16, fontWeight: "900", color: "#000", letterSpacing: 0.5 },
-  headerStatus: { fontSize: 12, color: "#66FF33", marginTop: 2, fontWeight: "700" },
+  headerName: { fontSize: 16, fontWeight: "900", color: "#000", letterSpacing: 0 },
+  headerStatus: { fontSize: 12, color: colors.muted, marginTop: 2, fontWeight: "700" },
   messagesList: { padding: spacing.lg, gap: spacing.sm },
   inputContainer: { borderTopWidth: 3, borderTopColor: "#000", backgroundColor: "#FBFBF9" },
   inputWrapper: { flexDirection: 'row', alignItems: 'flex-end', padding: spacing.md, gap: spacing.sm },

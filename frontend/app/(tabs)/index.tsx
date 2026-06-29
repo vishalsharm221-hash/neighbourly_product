@@ -171,9 +171,12 @@ export default function Feed() {
             {" "}{profile?.userType === "student" ? profile?.college : profile?.locality}
           </Text>
         </View>
+        <Pressable onPress={() => router.push("/notifications" as any)} style={styles.headerBtn}>
+          <Feather name="bell" size={20} color={colors.onSurface} />
+          <View style={styles.headerBtnDot} />
+        </Pressable>
         <Pressable onPress={() => router.push("/messages" as any)} style={styles.headerBtn}>
           <Feather name="send" size={20} color={colors.onSurface} />
-          <View style={styles.headerBtnDot} />
         </Pressable>
       </View>
 
@@ -210,7 +213,7 @@ export default function Feed() {
             <View style={styles.empty}>
               <Feather name="camera" size={48} color={colors.muted} />
               <Text style={styles.emptyTitle}>No posts yet</Text>
-              <Text style={styles.emptyText}>This hood is quiet... be the first to post!</Text>
+              <Text style={styles.emptyText}>This neighborhood is quiet. Be the first to post.</Text>
             </View>
           }
           renderItem={({ item }) => {
@@ -247,7 +250,7 @@ export default function Feed() {
                       )}
                     </View>
                     <Text style={styles.meta}>
-                      {item.locality} · {timeAgo(item.$createdAt)}
+                      {[item.locality, timeAgo(item.$createdAt)].filter(Boolean).join(" · ")}
                     </Text>
                   </View>
                   <View style={styles.catPill}>

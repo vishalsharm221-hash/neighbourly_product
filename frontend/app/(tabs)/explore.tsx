@@ -1,9 +1,11 @@
-import { useCallback, useState } from "react";
-import { View, Text, StyleSheet, FlatList, Pressable, RefreshControl, ActivityIndicator } from "react-native";
+import { useState } from "react";
+import { View, Text, StyleSheet, Pressable, RefreshControl, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
 import { Feather } from "@expo/vector-icons";
+import { Image } from "expo-image";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { useAuth } from "@/src/auth-context";
 import { colors, spacing, radius } from "@/src/theme";
 
 type Section = { key: string; label: string; icon: string; route: string; tileColor: string; tileBg: string };
@@ -15,11 +17,14 @@ const SECTIONS: Section[] = [
   { key: "marketplace", label: "Market", icon: "shopping-bag", route: "/marketplace", tileColor: "#22C55E", tileBg: "#D4F5E2" },
   { key: "services", label: "Services", icon: "tool", route: "/services", tileColor: "#3366FF", tileBg: "#D9E5FF" },
   { key: "safety", label: "Safety", icon: "shield", route: "/safety", tileColor: "#EF4444", tileBg: "#FFE0D9" },
+  { key: "report", label: "Report", icon: "alert-triangle", route: "/report-issue", tileColor: "#B58500", tileBg: "#FFF4D9" },
 ];
 
 export default function Explore() {
   const router = useRouter();
+  const { profile } = useAuth();
   const [refreshing, setRefreshing] = useState(false);
+  const place = profile?.userType === "student" ? profile?.college : profile?.locality;
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -53,7 +58,7 @@ export default function Explore() {
           </View>
           <View style={styles.locBadge}>
             <Feather name="map-pin" size={14} color="#FF3366" />
-            <Text style={styles.locBadgeText}>North Campus, DU</Text>
+            <Text style={styles.locBadgeText} numberOfLines={1}>{place || profile?.city || "Nearby"}</Text>
           </View>
         </View>
 
@@ -120,15 +125,12 @@ export default function Explore() {
         </View>
 
         <View style={styles.center}>
-          <Text style={styles.emptyText}>More sections coming soon</Text>
+          <Text style={styles.emptyText}>More useful local sections are on the way.</Text>
         </View>
       </ScrollView>
     </SafeAreaView>
   );
 }
-
-import { Image } from "expo-image";
-import { ScrollView } from "react-native";
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.surface },
@@ -140,18 +142,19 @@ const styles = StyleSheet.create({
     borderBottomWidth: 3, borderBottomColor: "#000",
     shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 0, height: 4 }, elevation: 6,
   },
-  headerRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
+  headerRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", gap: spacing.md },
   eyebrow: { fontSize: 10, fontWeight: "800", color: "rgba(255,255,255,0.8)", letterSpacing: 1.2 },
-  headerTitle: { fontSize: 28, fontWeight: "900", color: "#FFFFFF", marginTop: 2, letterSpacing: -1 },
+  headerTitle: { fontSize: 28, fontWeight: "900", color: "#FFFFFF", marginTop: 2, letterSpacing: 0 },
   locBadge: {
     flexDirection: "row", alignItems: "center", gap: 4,
     backgroundColor: "#FFFFFF",
     paddingHorizontal: 12, paddingVertical: 6,
     borderRadius: radius.pill,
     borderWidth: 2, borderColor: "#000",
+    maxWidth: "52%",
     shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 2, height: 2 }, elevation: 2,
   },
-  locBadgeText: { fontSize: 12, fontWeight: "800", color: "#000" },
+  locBadgeText: { fontSize: 12, fontWeight: "800", color: "#000", flexShrink: 1 },
   chipsRow: { flexDirection: "row", gap: spacing.sm, marginTop: spacing.md, paddingRight: spacing.lg },
   chip: {
     paddingHorizontal: 14, paddingVertical: 8,
@@ -163,7 +166,9 @@ const styles = StyleSheet.create({
   chipText: { fontSize: 12, fontWeight: "800", color: "#000", flexShrink: 0 },
   grid: { flexDirection: "row", flexWrap: "wrap", gap: spacing.md },
   gridItem: {
-    width: "30%",
+    flexBasis: "30%",
+    flexGrow: 1,
+    maxWidth: "32%",
     aspectRatio: 1,
     backgroundColor: colors.surfaceSecondary,
     borderRadius: radius.lg,
@@ -178,7 +183,7 @@ const styles = StyleSheet.create({
   },
   gridLabel: { fontSize: 12, fontWeight: "900", color: colors.onSurface, textAlign: "center" },
   trendingHead: { flexDirection: "row", alignItems: "center", gap: 8, marginBottom: spacing.md },
-  trendingTitle: { fontSize: 22, fontWeight: "900", color: colors.onSurface, letterSpacing: -0.5 },
+  trendingTitle: { fontSize: 22, fontWeight: "900", color: colors.onSurface, letterSpacing: 0 },
   trendCard: {
     flexDirection: "row", alignItems: "center", gap: spacing.md,
     padding: spacing.lg,

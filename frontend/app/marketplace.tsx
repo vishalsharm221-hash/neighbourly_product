@@ -6,7 +6,6 @@ import {
   FlatList,
   Pressable,
   RefreshControl,
-  ActivityIndicator,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { Image } from "expo-image";
@@ -81,7 +80,7 @@ export default function Marketplace() {
             <Feather name="shopping-bag" size={28} color={colors.brand} />
           )}
         </View>
-        <View style={{ padding: spacing.md, gap: 4 }}>
+        <View style={styles.cardBody}>
           <Text style={styles.itemTitle} numberOfLines={1}>{item.title}</Text>
           <Text style={styles.price}>₹{Math.round(item.price).toLocaleString("en-IN")}</Text>
           <Text style={styles.desc} numberOfLines={2}>{item.description}</Text>
@@ -107,9 +106,7 @@ export default function Marketplace() {
                 </Text>
               </Pressable>
             )}
-            <Text style={styles.meta} numberOfLines={1}>
-              · {item.locality}
-            </Text>
+            {item.locality ? <Text style={styles.locality} numberOfLines={1}>· {item.locality}</Text> : null}
           </View>
         </View>
       </View>
@@ -170,7 +167,7 @@ const styles = StyleSheet.create({
   },
   eyebrow: { fontSize: 10, fontWeight: "800", color: colors.brand, letterSpacing: 1.2 },
   title: { fontSize: 24, fontWeight: "900", color: colors.onSurface, marginTop: 2, letterSpacing: -0.5 },
-  center: { flex: 1, alignItems: "center", justifyContent: "center" },
+  center: { flex: 1, alignItems: "center", justifyContent: "center", padding: spacing.xxxl, gap: spacing.md },
   loadingTxt: { fontSize: 14, color: colors.muted, fontWeight: "600" },
   empty: { alignItems: "center", padding: spacing.xxxl, gap: spacing.md },
   emptyTitle: { color: colors.onSurface, fontSize: 16, fontWeight: "700", textAlign: "center" },
@@ -181,16 +178,18 @@ const styles = StyleSheet.create({
     shadowColor: "#000", shadowOpacity: 1, shadowRadius: 0, shadowOffset: { width: 4, height: 4 }, elevation: 4,
     overflow: "hidden",
   },
+  cardBody: { padding: spacing.md, gap: 4 },
   thumb: {
     height: 110, backgroundColor: "#E6EFE9",
     alignItems: "center", justifyContent: "center",
     borderBottomWidth: 2, borderBottomColor: "#000",
   },
-  itemTitle: { fontSize: 13, fontWeight: "800", color: colors.onSurface, paddingHorizontal: spacing.md, paddingTop: spacing.md },
-  price: { fontSize: 16, fontWeight: "900", color: colors.brand, paddingHorizontal: spacing.md },
-  desc: { fontSize: 12, fontWeight: "600", color: colors.onSurfaceTertiary, lineHeight: 16, paddingHorizontal: spacing.md },
-  metaRow: { flexDirection: "row", alignItems: "center", gap: 4, marginTop: 4, paddingHorizontal: spacing.md },
-  meta: { fontSize: 11, fontWeight: "700", color: colors.muted, flex: 1 },
+  itemTitle: { fontSize: 13, fontWeight: "800", color: colors.onSurface },
+  price: { fontSize: 16, fontWeight: "900", color: colors.brand },
+  desc: { fontSize: 12, fontWeight: "600", color: colors.onSurfaceTertiary, lineHeight: 16 },
+  metaRow: { flexDirection: "row", alignItems: "center", gap: 4, marginTop: 4 },
+  meta: { fontSize: 11, fontWeight: "700", color: colors.muted, flexShrink: 1 },
+  locality: { fontSize: 11, fontWeight: "700", color: colors.muted, flex: 1 },
   miniFollow: {
     paddingHorizontal: 6, paddingVertical: 2, borderRadius: radius.pill,
     borderWidth: 1, borderColor: colors.brand, backgroundColor: colors.surfaceSecondary,

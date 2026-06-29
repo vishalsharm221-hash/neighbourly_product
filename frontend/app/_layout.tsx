@@ -85,6 +85,11 @@ export default function RootLayout() {
                 <Stack.Screen name="search" options={{ animation: "slide_from_right" }} />
                 <Stack.Screen name="saved" options={{ animation: "slide_from_right" }} />
                 <Stack.Screen name="map" options={{ animation: "slide_from_right" }} />
+                <Stack.Screen name="notifications" options={{ animation: "slide_from_right" }} />
+                <Stack.Screen
+                  name="report-issue"
+                  options={{ presentation: "modal", animation: "slide_from_bottom" }}
+                />
                 <Stack.Screen
                   name="create-listing"
                   options={{ presentation: "modal", animation: "slide_from_bottom" }}
