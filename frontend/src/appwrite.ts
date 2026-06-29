@@ -12,9 +12,9 @@ import {
   Query,
 } from "react-native-appwrite";
 
-const ENDPOINT = process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT as string;
-const PROJECT_ID = process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID as string;
-const PLATFORM = process.env.EXPO_PUBLIC_APPWRITE_PLATFORM as string;
+const ENDPOINT = process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT || "https://sgp.cloud.appwrite.io/v1";
+const PROJECT_ID = process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID || "6a3b7680002e8d01dd74";
+const PLATFORM = process.env.EXPO_PUBLIC_APPWRITE_PLATFORM || "in.localy.app";
 
 export const client = new Client().setEndpoint(ENDPOINT).setProject(PROJECT_ID);
 

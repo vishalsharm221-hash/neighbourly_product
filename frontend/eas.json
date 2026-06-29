@@ -9,11 +9,23 @@
         "buildType": "apk",
         "gradleCommand": ":app:assembleRelease"
       },
-      "distribution": "internal"
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_APPWRITE_ENDPOINT": "https://sgp.cloud.appwrite.io/v1",
+        "EXPO_PUBLIC_APPWRITE_PROJECT_ID": "6a3b7680002e8d01dd74",
+        "EXPO_PUBLIC_APPWRITE_DATABASE_ID": "localy",
+        "EXPO_PUBLIC_APPWRITE_PLATFORM": "in.localy.app"
+      }
     },
     "production": {
       "android": {
         "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_APPWRITE_ENDPOINT": "https://sgp.cloud.appwrite.io/v1",
+        "EXPO_PUBLIC_APPWRITE_PROJECT_ID": "6a3b7680002e8d01dd74",
+        "EXPO_PUBLIC_APPWRITE_DATABASE_ID": "localy",
+        "EXPO_PUBLIC_APPWRITE_PLATFORM": "in.localy.app"
       }
     }
   }
