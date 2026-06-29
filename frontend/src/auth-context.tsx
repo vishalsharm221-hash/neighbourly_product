@@ -10,7 +10,7 @@ type AuthCtx = {
   loading: boolean;
   // OTP flow
   sendOtp: (email: string) => Promise<string>; // returns userId
-  verifyOtp: (userId: string, otp: string) => Promise<void>;
+  verifyOtp: (userId: string, otp: string) => Promise<{ user: AuthUser; profile: Profile }>;
   signOut: () => Promise<void>;
   // Profile mgmt
   saveProfileSetup: (data: { name: string; gender?: string; dob?: string }) => Promise<void>;
@@ -60,7 +60,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const verifyOtp = async (userId: string, otp: string) => {
     await account.createSession({ userId, secret: otp });
-    await refresh();
+    const u = await account.get();
+    const auth = { $id: u.$id, email: u.email, name: u.name };
+    setUser(auth);
+    let p = await getProfileByUserId(u.$id);
+    if (!p) {
+      p = await createProfile(u.$id, u.email, u.name || "");
+    }
+    setProfile(p);
+    return { user: auth, profile: p };
   };
 
   const signOut = async () => {

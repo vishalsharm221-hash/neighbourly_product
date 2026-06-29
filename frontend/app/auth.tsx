@@ -85,9 +85,14 @@ export default function AuthScreen() {
     }
     setBusy(true);
     try {
-      await verifyOtp(userId, code);
-      await new Promise((r) => setTimeout(r, 600));
-      router.replace("/");
+      const { profile: p } = await verifyOtp(userId, code);
+      if (!p.name || !p.gender || !p.dob) {
+        router.replace("/profile-setup");
+      } else if (!p.city || !p.locality) {
+        router.replace("/onboarding");
+      } else {
+        router.replace("/(tabs)");
+      }
     } catch (e: unknown) {
       setErr(getErrorMessage(e, "Wrong or expired code"));
     } finally {
