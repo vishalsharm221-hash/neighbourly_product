@@ -10,7 +10,9 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "build:web": "expo export --platform web",
-    "postbuild": "node scripts/patch-dist.js"
+    "postbuild": "node scripts/patch-dist.js",
+    "deploy": "yarn expo export -p web && wrangler deploy",
+    "preview": "yarn expo export -p web && wrangler dev"
   },
   "dependencies": {
     "@expo/metro-runtime": "6.1.2",
@@ -57,7 +59,8 @@
     "@types/react": "~19.1.0",
     "eslint": "9.25.0",
     "eslint-config-expo": "~10.0.0",
-    "typescript": "~5.9.3"
+    "typescript": "~5.9.3",
+    "wrangler": "^4.105.0"
   },
   "resolutions": {
     "@eslint/plugin-kit": "0.3.4",
